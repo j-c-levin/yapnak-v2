@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Yapnak</string>
+    <string name="action_settings">Settings</string>
+    <string name="login_usp">Local meals\nfor just £5</string>
+    <string name="login_logintext">Login</string>
+    <string name="login_signuptext">Sign up</string>
+    <string name="login_facebooktext">Connect with facebook</string>
+</resources>

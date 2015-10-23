@@ -1,0 +1,5 @@
+<resources>
+    <style name="Yapnak" parent="android:Theme">
+        <item name="android:buttonStyle">@style/login_button</item>
+    </style>
+</resources>
