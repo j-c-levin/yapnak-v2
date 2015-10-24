@@ -1,22 +1,70 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".login">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.uq.yapnak.LoginActivity">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/Background"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/wok_dark" />
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/Email"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="118dp"
+        android:hint="Email"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textColorHint="#ffffff"
+        android:textColorHighlight="#ffffff"
+        android:singleLine="false"
+        android:autoText="false"
+        android:background="@drawable/logintheme_edit_text_holo_light"
+        android:typeface="normal" />
 
-    </android.support.design.widget.AppBarLayout>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/Password"
+        android:hint="Password"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textColorHint="#ffffff"
+        android:textColorHighlight="#ffffff"
+        android:singleLine="false"
+        android:autoText="false"
+        android:background="@drawable/logintheme_edit_text_holo_light"
+        android:inputType="textPassword"
+        android:password="false"
+        android:layout_below="@+id/Email"
+        android:layout_alignStart="@+id/Email"
+        android:layout_marginTop="20dp"
+        android:typeface="normal" />
 
-    <include layout="@layout/content_login" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/button"
+        android:layout_below="@+id/Password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        style="@style/login_button"
+        android:hint="Login"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:textSize="20sp" />
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

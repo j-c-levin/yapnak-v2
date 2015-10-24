@@ -1,17 +1,19 @@
 package com.uq.yapnak;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class login extends AppCompatActivity {
+public class Landing extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_landing);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Yapnak");
@@ -37,5 +39,16 @@ public class login extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**Navigate to login screen*/
+    public void toLogin(View view) {
+        try {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, 0);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:weightSum="1"
-    tools:showIn="@layout/activity_login">
+    tools:showIn="@layout/activity_landing"
+    android:paddingTop="55dp">
 
     <ImageView
         android:layout_width="match_parent"
@@ -16,18 +17,18 @@
         android:backgroundTint="#454545"
         android:backgroundTintMode="multiply"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
         android:adjustViewBounds="false"
         android:baselineAlignBottom="false"
         android:scaleType="centerCrop"
-        android:src="@drawable/wok_dark" />
+        android:src="@drawable/wok_dark"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:id="@+id/Logo"
         android:src="@drawable/yapnakmonster"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="30dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -57,7 +58,8 @@
         android:textSize="20sp"
         style="@style/login_button"
         android:layout_alignStart="@+id/Facebook"
-        android:layout_above="@+id/Facebook" />
+        android:layout_above="@+id/Facebook"
+        android:onClick="toLogin" />
 
     <Button
         android:layout_width="130dp"
