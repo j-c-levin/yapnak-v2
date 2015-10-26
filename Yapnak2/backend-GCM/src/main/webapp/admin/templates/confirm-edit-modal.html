@@ -1,0 +1,29 @@
+
+<div class="modal-header">
+    <h3 class="modal-title">Sorry to bother you...</h3>
+</div>
+
+<div class="modal-body">
+    <p>
+        You are about to edit the following details:
+    </p>
+    <br>
+    <p>
+        {{getEditList()}}
+    </p>
+    <br>
+    <p>
+        Are you sure you intend to do this?
+    </p>
+    </p>
+</div>
+
+<div class="modal-footer">
+    <button ng-click="closeModal()" class="btn btn-primary left-float" type="button">
+        No, take me back.
+    </button>
+
+    <button ng-click="confirmUpdate()" class="btn btn-primary" type="button">
+        Yes, I'm sure.
+    </button>
+</div>

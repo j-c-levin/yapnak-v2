@@ -1,0 +1,135 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.content {
+  background-color: #ddd;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.input, .input-box {
+  max-width: 300px;
+  margin: auto;
+}
+
+.submit-button-container {
+  text-align: center;
+  max-width: 100%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.inline {
+  display: inline;
+}
+
+.submit-button {
+  max-width: 500px;
+}
+
+.points {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.points-container {
+  margin-top: 20px;
+}
+
+.switch-false {
+  text-align: center;
+}
+
+.logo img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.center-image, .center-text {
+  text-align:center;
+}
+
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+ul {
+  list-style-type: none;
+  height:100px;
+  overflow:hidden;
+  overflow-y:scroll;
+}
+
+.crop-area {
+  overflow: hidden;
+  width:100%;
+  height:350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.crop-result, .current-image {
+  border-radius: 100px;
+  margin-top: 20px
+}
+
+.crop-container {
+  text-align: center;
+}
+
+.crop-selector div{
+  width: 300px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+}
+
+.image-upload {
+  margin-top: 20px;
+}

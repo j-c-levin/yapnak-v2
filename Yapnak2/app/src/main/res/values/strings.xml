@@ -19,4 +19,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="login_error_title">Incorrect details</string>
+    <string name="login_error">Whoops, those login details don\'t seem to be correct.</string>
+    <string name="login_error_try_again">I\'ll try again</string>
+    <string name="internet_error_title">Internet unavailable</string>
+    <string name="internet_error">Hold up a second, could you check you\'re connected to the internet?</string>
+    <string name="internet_error_try_again">I\'ll fix it</string>
+
+    <string name="title_activity_main_list">Yapnak</string>
 </resources>

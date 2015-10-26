@@ -1,0 +1,187 @@
+<div class="content container" >
+
+
+    <!--Allow removing of client photo -->
+
+    <div>
+        <select class="form-control" ng-model="chosenClient" ng-options="client.clientName for client in clientList" ng-change="retrieveClient()"></select>
+    </div>
+
+
+    <div ng-switch="gotDetails">
+
+        <div ng-switch-when="client">
+            <div class="form-signin center-text">
+                <label ng-switch="isActive">
+                    <button ng-switch-when="false" ng-click="toggleOn()" class="btn btn-primary" type="button">
+                        Toggle client on
+                    </button>
+                    <button ng-switch-when="true" ng-click="toggleOff()" class="btn btn-primary" type="button">
+                        Toggle client off
+                    </button>
+                </label>
+                <button ng-click="generateMasterkey()" class="btn" type="button">
+                    Generate masterkey
+                </button>
+                <label ng-show="masterkey !== ''">Masterkey: {{masterkey}}</label>
+            </div>
+
+            <div collapse="!isActive">
+
+                <div ng-controller = "myCtrl">
+                    <div class="crop-area" ng-show="myImage !== ''">
+                        <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+                    </div>
+                    <div class="current-image">
+                        <img height="100" ng-src="{{photoUrl}}" ng-show="myImage == ''" class="current-image">
+                    </div>
+                    <div class="upload-button">
+                        Select an image file:
+                        <input class="input-file-unique" type="file" file-model="newImage" id="fileInput" onchange="angular.element(this).scope().handleFileSelect()" />
+                    </div>
+                    <div class="image-upload">
+                        <button ng-show="myImage !== ''" class="btn btn-default" ng-click="uploadFile()">Update image</button>
+                    </div>
+                </div>
+                <!-- <div class="well">
+                <div ng-controller = "myCtrl">
+                <input type="file" file-model="myFile" onchange="angular.element(this).scope().addFile()"/>
+                <button ng-controller="ConsoleController" ng-click="uploadFile()">Upload new</button>
+              </div>
+            </div> -->
+
+
+                <div class="form-signin">
+                    <label>Client Email: {{clientData.email}}</label>
+                </div>
+
+                <div class="form-signin">
+
+                    <label>Restaurant Name</label>
+                    <input type="text"
+                           class="form-control" name="name" ng-model="clientData.newName" id="name" placeholder="{{clientData.name}}">
+                </div>
+
+                <div class="form-signin">
+                    <label>Restaurant Type</label>
+                    <input type="text" class="form-control" ng-model="clientData.newFoodStyle" name="type" id="type"
+                           placeholder="{{clientData.foodStyle}}">
+                </div>
+
+                <div class="form-signin">
+                    <label>Address</label>
+
+                    <input type="text" ng-model="clientData.newLocation" placeholder="{{clientData.locationText}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
+
+                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                    <div ng-show="noResults">
+                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                    </div>
+
+                </div>
+
+                <div class="form-signin">
+
+                    <label>
+                        <input type="checkbox" name = "show-offer"
+                               value="show-offer" ng-model="clientData.offer1Shown" ng-click="showOffer()"> Offer one
+                    </label>
+
+                    <hr>
+                    <div collapse="!clientData.offer1Shown">
+
+                        <select class="form-control" ng-model="clientData.offer1text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
+
+                        <input ng-show="clientData.offer1text.offerId == 0" type="text"
+                               class="form-control" maxlength="40" ng-model="clientData.newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+                        <label>Days active</label>
+                        <ul>
+                            <li ng-repeat="day in offer1Days">
+                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                            </li>
+                        </ul>
+
+                        <label>Offer start</label>
+                        <select class="form-control" ng-model="clientData.offer1StartTime" ng-options="time.humanHour for time in offerTimes" ng-change="changed()"></select>
+
+                        <label>Offer end</label>
+                        <select class="form-control" ng-model="clientData.offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                    </div>
+                </div>
+
+                <div class="form-signin">
+
+                    <label>
+                        <input type="checkbox" name = "show-offer"
+                               value="show-offer" ng-model="clientData.offer2Shown" ng-click="showOffer()"> Offer two
+                    </label>
+
+                    <hr>
+                    <div collapse="!clientData.offer2Shown">
+
+                        <select class="form-control" ng-model="clientData.offer2text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
+
+                        <input ng-show="clientData.offer2text.offerId == 0" type="text"
+                               class="form-control" maxlength="40" ng-model="clientData.newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+                        <label>Days active</label>
+                        <ul>
+                            <li ng-repeat="day in offer2Days">
+                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                            </li>
+                        </ul>
+
+                        <label>Offer start</label>
+                        <select class="form-control" ng-model="clientData.offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                        <label>Offer end</label>
+                        <select class="form-control" ng-model="clientData.offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+                    </div>
+                </div>
+
+                <div class="form-signin">
+
+                    <label>
+                        <input type="checkbox" name = "show-offer"
+                               value="show-offer" ng-model="clientData.offer3Shown" ng-click="showOffer()" DISABLED> Offer three
+                    </label>
+
+                    <hr>
+                    <div collapse="!clientData.offer3Shown">
+
+                        <select class="form-control" ng-model="clientData.offer3text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
+
+                        <input ng-show="clientData.offer3text.offerId == 0" type="text"
+                               class="form-control" maxlength="40" ng-model="clientData.newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+                        <label>Days active</label>
+                        <ul>
+                            <li ng-repeat="day in offer3Days">
+                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                            </li>
+                        </ul>
+
+                        <label>Offer start</label>
+                        <select class="form-control" ng-model="offer3StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                        <label>Offer end</label>
+                        <select class="form-control" ng-model="offer3EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                    </div>
+                </div>
+
+                <div class="form-signin">
+                    <button class="btn btn-default btn-block" ng-click="updateInfo()">Update
+                        information
+                    </button>
+                </div>
+
+            </div><!--isActive-->
+
+        </div> <!--switch-when-client-->
+
+    </div><!--gotDetails-->
+
+</div><!--container-->

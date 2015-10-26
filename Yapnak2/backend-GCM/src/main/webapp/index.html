@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <style>
+        .apps{
+        width:45% !important;
+        }
+
+        #formfield{
+        padding: 5px 5px;
+        margin:5px;
+        }
+
+        input, textarea, select, button {
+        width : 250px;
+        margin: 0;
+
+        -webkit-box-sizing: border-box; /* For legacy WebKit based browsers */
+        -moz-box-sizing: border-box; /* For legacy (Firefox <29) Gecko based browsers */
+        box-sizing: border-box;
+        }
+    </style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Yapnak - Luxury lunches for £5</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+</head>
+<body>
+
+<video autoplay loop poster="pic2.png" id="bgvid">
+    <source src="Yapnak.m4v" type="video/mp4">
+    Video Not Supported
+</video>
+
+<div class="content">
+    <img class="logo" src="yapnaklogo.png">
+
+    <h3 style="color:white; padding: 20px 0px 0px 0px; text-align:center; line-height:50px;">Join
+        the exclusive Yapnak club</br>
+        The trendiest lunch club in London</h3>
+
+    <div class="center form-signin" style="text-align:center; padding: 0px 0px 20px 0px">
+        <form action="/mailinglist" method="POST">
+            <h5 style="color: white; padding:10px 15px; display: inline-block;">
+                Your email:
+            </h5>
+            </br>
+            <input id="email" name="email" class="form-control" type="email"
+                   placeholder="Enter your email address" required/><br>
+            <input type="submit" class="btn btn-lg btn-primary btn-block" value="Learn more"/>
+        </form>
+    </div>
+
+    <div class="applinks">
+
+        <h4>Coming soon on</h4>
+        <ul>
+            <li><img class="apps" src="playstore2.png"><img class="apps" src="appstore2.png"></li>
+        </ul>
+
+    </div>
+</div>
+
+<!--
+<div class="background-wrap">
+    <video id="video-bg-elem" preload="auto" autoplay="true" loop="loop" muted="muted">
+        <source src="06.mp4" type="video/mp4">
+        Video not supported
+    </video>
+</div>
+
+<div class="content">
+    <h2>Yapnak</h2>
+</div>
+-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>

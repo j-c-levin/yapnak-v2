@@ -3,12 +3,19 @@ package com.uq.yapnak;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
+
+    EditText email;
+    EditText password;
+    private ProgressBar mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void login(View view) {
+        //Check internet status
+        if (new ConnectionStatus(this).isConnected()) {
+            email = (EditText) findViewById(R.id.Email);
+            password = (EditText) findViewById(R.id.Password);
+            new Login_Async(this).execute(password.getText().toString(), email.getText().toString());
+        }
     }
 }
 
