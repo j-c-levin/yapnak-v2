@@ -1,0 +1,369 @@
+@font-face {
+  font-family: "Love Ya Like A Sister";
+  src:url('http://s3.amazonaws.com/Webzai_Fonts/VuKtfLk8qkWk2JezBv1NvA.eot');
+  src:url('http://s3.amazonaws.com/Webzai_Fonts/VuKtfLk8qkWk2JezBv1NvA.eot') format('embedded-opentype'),url('http://s3.amazonaws.com/Webzai_Fonts/VuKtfLk8qkWk2JezBv1NvA.ttf') format('truetype');
+}
+
+body {
+  font-family: Love Ya Like A Sister;
+}
+
+.landing-page-image {
+  background-image: url('../images/greedycow.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin-bottom: 10px;
+  background-position: center center;
+}
+
+.nav-links ul {
+  list-style-type: none;
+  display: inline;
+  width: 400px;
+  float: right;
+  text-align: right;
+  margin-right:30px
+}
+
+.nav-links ul li {
+  display: inline;
+  color:#fff;
+  margin-left:5%;
+  font-size: 1.2em;
+  text-shadow: 1px 1px #000;
+}
+
+.landing-main-container {
+  text-align: center;
+}
+
+.landing-main-logo, .quick-image {
+  position: relative;
+  bottom: 30px;
+  max-width: 150px;
+  height:auto;
+}
+
+.app-links {
+  margin-top: 10px;
+  font-size:35px;
+  color: rgb(255, 255, 255) !important;
+  text-shadow: 2px 2px #000;
+}
+
+.app-links span {
+  display: block;
+}
+
+.app-links img {
+  display: block;
+  text-align: center;
+}
+
+.app-links a {
+  margin-top: 10px;
+}
+
+.ios-badge {
+  display:inline-block;
+  overflow:hidden;
+  background:url(http://linkmaker.itunes.apple.com/images/badges/en-us/badge_appstore-lrg.svg) no-repeat;
+  background-position: center center;
+  width:165px;
+  height:40px;
+}
+
+.play-badge {
+  width:140px;
+}
+
+.app-badge {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a {
+  color:#fff;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color:inherit;
+}
+
+.current a {
+  text-decoration: underline;
+}
+
+.quick-links img {
+  max-width:100px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.quick-links p {
+  text-align: center;
+}
+
+.quick-links div {
+  margin-bottom: 20px;
+}
+
+.join-form {
+  background-color: #eee;
+}
+
+.quick-image {
+  bottom: 0px;
+}
+
+.join-form {
+  width: 100%;
+  border-bottom: solid;
+  border-width: 1px;
+  border-color: #bdbdbd;
+}
+
+.join-form input{
+  width:100%;
+  height: 2.5em;
+  margin-bottom: 10px;
+}
+
+.join-form .join-form-image {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.join-form .join-form-image img {
+  max-width: 150px;
+  height: auto;
+  position: relative;
+  top: 10px;
+}
+
+.join-form h2 {
+  margin-left: auto;
+  margin-right: auto;
+  width:auto;
+  font-size:1em;
+}
+
+.join-form button, .join-form-button {
+  float:right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.bottom-bar {
+  height:100px
+}
+
+.bottom-bar .right, .bottom-bar .left {
+  position: relative;
+  top: 40%;
+}
+
+.bottom-bar .right {
+  float:right;
+}
+
+.bottom-bar .left {
+  float:left;
+  width: 200px;
+}
+
+.bottom-bar a {
+  color:inherit;
+}
+
+.bottom-bar .icons {
+  width: 100%;
+  text-align: center;
+}
+
+.restaurant-jumbotron {
+  background-image: url("../images/the-wall.jpg");
+  background-size: cover;
+  background-position: center center;
+  height: 400px;
+}
+
+.jumbotron-title {
+  text-align: center;
+  color: #fff !important;
+  font-size: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 90px;
+  text-shadow: 2px 2px #000
+}
+
+#landing-jumbotron .jumbotron-title {
+  font-size: 5em;
+  margin-top: 1em;
+}
+
+@media only screen and (min-width: 320px) {
+  .jumbotron-title {
+    font-size: 4em;
+  }
+
+  #landing-jumbotron .jumbotron-title {
+    font-size: 6em;
+    margin-top: 0.6em;
+  }
+}
+
+@media only screen and (min-width: 360px) {
+  .jumbotron-title {
+    font-size: 4em;
+  }
+
+  #landing-jumbotron .jumbotron-title {
+    font-size: 7em;
+    margin-top: 0.5em;
+  }
+}
+
+@media screen and (min-width: 650px) {
+  #restaurant-jumbotron .jumbotron-title {
+    font-size: 4.5em;
+  }
+
+  #landing-jumbotron .jumbotron-title {
+    font-size: 8em;
+    margin-top: 0.4em;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  #restaurant-jumbotron .jumbotron-title {
+    font-size: 5em;
+  }
+
+  #landing-jumbotron .jumbotron-title {
+    font-size: 9em;
+    margin-top: 0.3em;
+  }
+}
+
+@media screen and (min-width: 980px) {
+  #restaurant-jumbotron .jumbotron-title {
+    font-size: 5.5em;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  #restaurant-jumbotron .jumbotron-title {
+    font-size: 6em;
+  }
+}
+
+.top-break {
+  height:100px;
+}
+
+.restaurant-column {
+  text-align: center;
+}
+
+/*.restaurant-image {
+height: 300px;
+}*/
+
+.feedback-row {
+  text-align: center;
+}
+
+.col-centered{
+  margin-left: 100px;
+}
+
+.feedback-row p {
+  margin-top: 40px;
+}
+
+.feedback-center {
+  border-top: solid;
+  border-bottom: solid;
+  border-color: #bdbdbd;
+  border-width: 1px;
+}
+
+@media screen and (min-width: 992px) {
+
+  .feedback-center {
+    border-top: none;
+    border-bottom: none;
+    border-left: solid;
+    border-right: solid;
+    border-color: #bdbdbd;
+    border-width: 1px;
+  }
+}
+
+.feedback-field {
+  margin-top:50px;
+}
+
+.feedback-field p {
+  font-size: 20px;
+}
+
+.feedback-btn, .feedback-strip {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.feedback-strip, .feedback-success-alert, .feedback-fail-alert {
+  width:100px;
+  margin-left: auto;
+}
+
+.feedback-success-alert {
+  background-color: #4caf50;
+}
+
+.feedback-fail-alert {
+  background-color: #ff8f00;
+}
+
+.feedback-fail-alert, .feedback-success-alert {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.feedback-fail-alert img, .feedback-success-alert img {
+  width: 50px;
+}
+
+
+.feedback-btn button {
+  color: #fff;
+  background-color: #616161;
+  width: 100px;
+}
+
+.map-container {
+  height:500px;
+  border:solid;
+  border-width: 10px;
+}
+
+/*From the google maps javascript guide*/
+/*html, body { height: 100%; margin: 0; padding: 0; }*/
+#map {
+  height: 400px;
+  margin-top: 20px;
+}
+
+.icons-cc {
+  font-size: 0.7em;
+}

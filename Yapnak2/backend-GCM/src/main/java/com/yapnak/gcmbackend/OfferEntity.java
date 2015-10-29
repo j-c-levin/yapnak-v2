@@ -18,6 +18,15 @@ public class OfferEntity {
     String offerText;
     String clientPhoto;
     String distance;
+    String clientOfferPhoto;
+
+    public String getClientOfferPhoto() {
+        return clientOfferPhoto;
+    }
+
+    public void setClientOfferPhoto(String clientOfferPhoto) {
+        this.clientOfferPhoto = clientOfferPhoto;
+    }
 
     public String getDistance() {
         return distance;

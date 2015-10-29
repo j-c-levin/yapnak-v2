@@ -308,12 +308,12 @@ public class UserEndpoint {
             }
             try {
                 PreparedStatement statement;
-                if (email.equals("")) {
+                if (!email.equals("")) {
                     String query = "SELECT userID FROM user WHERE email = ? AND password = ?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, email);
                     logger.info("beginning user authentication for: " + email);
-                } else if (mobNo.equals("")) {
+                } else if (!mobNo.equals("")) {
                     String query = "SELECT userID FROM user WHERE mobNo = ? AND password = ?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, mobNo);
@@ -685,6 +685,7 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
+                        offer.setClientOfferPhoto("https://yapnak-app.appspot.com/images/coffee_room_blt.jpg");
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
