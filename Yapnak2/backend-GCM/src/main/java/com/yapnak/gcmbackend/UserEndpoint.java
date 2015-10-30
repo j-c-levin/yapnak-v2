@@ -1122,7 +1122,7 @@ public class UserEndpoint {
                     stmt.setString(2, details[i]);
                     rs = stmt.executeQuery();
                     rs.next();
-                    if (rs.getString("userID") != null) {
+                    if (rs.getInt(1) > 0) {
                         isUser.add(rs.getString("userID"));
                     } else {
                         isUser.add("");

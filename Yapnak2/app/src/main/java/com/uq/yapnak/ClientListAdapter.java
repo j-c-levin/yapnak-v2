@@ -1,10 +1,6 @@
 package com.uq.yapnak;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +9,6 @@ import android.widget.TextView;
 
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
-
-import java.io.InputStream;
 
 /**
  * Created by Joshua on 26/10/2015.
@@ -70,30 +64,5 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
     @Override
     public int getItemCount() {
         return offerList.getOfferList().size();
-    }
-}
-
-class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
-
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
-    }
-
-    protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            Log.w("Error", e.getMessage());
-            e.printStackTrace();
-        }
-        return mIcon11;
-    }
-
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
     }
 }

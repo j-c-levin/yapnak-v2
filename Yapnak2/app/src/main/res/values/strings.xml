@@ -27,4 +27,5 @@
     <string name="internet_error_try_again">I\'ll fix it</string>
 
     <string name="title_activity_main_list">Yapnak</string>
+    <string name="get">GET</string>
 </resources>

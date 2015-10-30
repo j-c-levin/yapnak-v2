@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".MainList" >
         </activity>
+        <activity android:name=".QRCodeActivity" android:theme="@style/myDialogTheme" >
+        </activity>
     </application>
 
 </manifest>
