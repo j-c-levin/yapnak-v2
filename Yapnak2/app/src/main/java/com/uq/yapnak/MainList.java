@@ -7,8 +7,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
+import com.parse.ParsePush;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainList extends AppCompatActivity {
 
@@ -17,8 +25,9 @@ public class MainList extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private View currentCard;
     int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
-    int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.heart, R.id.favourite, R.id.location, R.id.recommend};
-    int[] clickableViewIds = {R.id.get, R.id.heart, R.id.favourite, R.id.location, R.id.recommend};
+    int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
+    int[] clickableViewIds = {R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
+    private String userId;
 
 
     @Override
@@ -35,6 +44,7 @@ public class MainList extends AppCompatActivity {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        userId = (String) getIntent().getExtras().get("userId");
         new GetClients_Async(this).execute();
     }
 
@@ -54,8 +64,8 @@ public class MainList extends AppCompatActivity {
                 doFade(currentCard, i);
             }
             for (int i : clickableViewIds) {
-                card.findViewById(i).setEnabled(false);
-                card.findViewById(i).setClickable(false);
+                currentCard.findViewById(i).setEnabled(false);
+                currentCard.findViewById(i).setClickable(false);
             }
         }
         if (card.getTag() != 1) {
@@ -122,16 +132,35 @@ public class MainList extends AppCompatActivity {
     public void onGetClick(View card) {
         Intent intent = new Intent(this, QRCodeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("qrCode", "testing");
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", userId);
+            json.put("isReward", false);
+            View parent = (View) card.getParent();
+            TextView clientId = (TextView) parent.findViewById(R.id.clientId);
+            json.put("client", clientId.getText());
+            TextView offerId = (TextView) parent.findViewById(R.id.offerId);
+            json.put("offer", offerId.getText());
+            SimpleDateFormat s = new SimpleDateFormat("yyyyMMddhhmmss");
+            String rightNow = s.format(new Date());
+            json.put("datetime", rightNow);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        intent.putExtra("qrCode", json.toString());
         this.startActivity(intent);
     }
 
-    public void onHeartClick(View card) {
+    public void onRateClick(View card) {
 
     }
 
     public void onFavouriteClick(View card) {
-
+        View parent = (View) card.getParent();
+        TextView offerId = (TextView) parent.findViewById(R.id.offerId);
+        final String offer = "offer" + offerId.getText().toString();
+        ParsePush.subscribeInBackground(offer);
+        new FavouriteOffer_Async().execute(offerId.getText().toString(), userId);
     }
 
     public void onLocationClick(View card) {

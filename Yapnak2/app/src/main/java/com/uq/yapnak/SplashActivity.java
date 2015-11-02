@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
@@ -20,10 +19,11 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
-        String userId = data.getString("userID", null);
+        final String userId = data.getString("userID", null);
         if (userId != null) {
             ParsePush.subscribeInBackground(userId);
-            Log.d("debug", "Subscribed to: " + ParseInstallation.getCurrentInstallation().getList("channels"));
+            ParseInstallation.getCurrentInstallation().put("userId", userId);
+            ParseInstallation.getCurrentInstallation().saveInBackground();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -32,6 +32,7 @@ public class SplashActivity extends Activity {
                     Intent intent = new Intent(SplashActivity.this, MainList.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra("userId", userId);
                     startActivity(intent);
                     // close this activity
                     finish();

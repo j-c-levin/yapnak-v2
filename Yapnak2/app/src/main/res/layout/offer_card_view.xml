@@ -112,34 +112,36 @@
             android:onClick="onGetClick"
             android:alpha="0"
             android:nestedScrollingEnabled="false"
-            android:clickable="false" />
-
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/heart"
-            android:src="@drawable/heart"
-            android:scaleType="fitXY"
-            android:background="#00050505"
-            android:tint="#ff0000"
-            android:layout_marginRight="23dp"
-            android:onClick="onHeartClick"
-            android:layout_alignTop="@+id/favourite"
-            android:layout_toLeftOf="@+id/get"
-            android:layout_toStartOf="@+id/get"
-            android:alpha="0"
-            android:nestedScrollingEnabled="false"
-            android:clickable="false" />
+            android:clickable="false"
+            android:enabled="false" />
 
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/favourite"
+            android:src="@drawable/heart"
+            android:scaleType="fitXY"
+            android:background="#00050505"
+            android:tint="#ff0000"
+            android:layout_marginRight="23dp"
+            android:onClick="onFavouriteClick"
+            android:layout_alignTop="@+id/rate"
+            android:layout_toLeftOf="@+id/get"
+            android:layout_toStartOf="@+id/get"
+            android:alpha="0"
+            android:nestedScrollingEnabled="false"
+            android:clickable="false"
+            android:enabled="false" />
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/rate"
             android:src="@drawable/favourite"
             android:background="#00050505"
             android:tint="#ff0000"
             android:scaleType="fitXY"
-            android:onClick="onFavouriteClick"
+            android:onClick="onRateClick"
             android:layout_alignBottom="@+id/offer_text"
             android:layout_alignLeft="@+id/get"
             android:layout_alignStart="@+id/get"
@@ -160,7 +162,7 @@
             android:layout_alignRight="@+id/get"
             android:layout_alignEnd="@+id/get"
             android:alpha="0"
-            android:layout_alignTop="@+id/favourite"
+            android:layout_alignTop="@+id/rate"
             android:nestedScrollingEnabled="false"
             android:clickable="false" />
 
@@ -180,6 +182,26 @@
             android:layout_toRightOf="@+id/location"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="80dp"
+            android:clickable="false" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/clientId"
+            android:layout_alignTop="@+id/get"
+            android:layout_toLeftOf="@+id/location"
+            android:layout_toStartOf="@+id/location"
+            android:visibility="gone"
+            android:clickable="false" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/offerId"
+            android:layout_alignTop="@+id/get"
+            android:layout_toLeftOf="@+id/location"
+            android:layout_toStartOf="@+id/location"
+            android:visibility="gone"
             android:clickable="false" />
 
     </RelativeLayout>

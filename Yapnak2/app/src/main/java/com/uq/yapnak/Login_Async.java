@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 
@@ -46,9 +48,13 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
                 editor.putString("userID", response.getUserId());
                 // Commit the edits!
                 editor.commit();
+                ParsePush.subscribeInBackground( response.getUserId());
+                ParseInstallation.getCurrentInstallation().put("userId",  response.getUserId());
+                ParseInstallation.getCurrentInstallation().saveInBackground();
                 Intent intent = new Intent(login, MainList.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("userId", response.getUserId());
                 login.startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();

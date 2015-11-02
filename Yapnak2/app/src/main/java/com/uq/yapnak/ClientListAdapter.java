@@ -17,13 +17,14 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
 
     private OfferListEntity offerList;
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         private ImageView offerImage;
         private TextView offerText;
         private TextView clientName;
         private TextView offerDistance;
+        private TextView clientId;
+        private TextView offerId;
 
         public ViewHolder(View v) {
             super(v);
@@ -31,6 +32,8 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
             clientName = (TextView) v.findViewById(R.id.client_name);
             offerDistance = (TextView) v.findViewById(R.id.offer_distance);
             offerImage = (ImageView) v.findViewById(R.id.offer_image);
+            clientId = (TextView) v.findViewById(R.id.clientId);
+            offerId = (TextView) v.findViewById(R.id.offerId);
         }
     }
 
@@ -38,7 +41,6 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
     public ClientListAdapter(OfferListEntity offerList) {
         this.offerList = offerList;
     }
-
 
     @Override
     public ClientListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -58,6 +60,8 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         holder.clientName.setText(offer.getClientName());
         holder.offerText.setText(offer.getOfferText());
         holder.offerDistance.setText(offer.getDistance());
+        holder.clientId.setText(String.valueOf(offer.getClientId()));
+        holder.offerId.setText(String.valueOf(offer.getOfferId()));
         new DownloadImageTask(holder.offerImage).execute(offerList.getOfferList().get(position).getClientOfferPhoto());
     }
 
