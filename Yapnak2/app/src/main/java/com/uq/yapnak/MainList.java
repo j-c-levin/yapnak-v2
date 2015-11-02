@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
@@ -17,6 +16,9 @@ public class MainList extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private View currentCard;
+    int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
+    int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.heart, R.id.favourite, R.id.location, R.id.recommend};
+    int[] clickableViewIds = {R.id.get, R.id.heart, R.id.favourite, R.id.location, R.id.recommend};
 
 
     @Override
@@ -41,9 +43,6 @@ public class MainList extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
-    int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.heart, R.id.favourite, R.id.location, R.id.recommend};
-
     public void onCardClick(View card) {
         if (card != currentCard && currentCard != null) {
             //Another card is already selected, deselect
@@ -53,7 +52,10 @@ public class MainList extends AppCompatActivity {
             }
             for (int i : fadedViewIds) {
                 doFade(currentCard, i);
-                currentCard.findViewById(i).setEnabled(false);
+            }
+            for (int i : clickableViewIds) {
+                card.findViewById(i).setEnabled(false);
+                card.findViewById(i).setClickable(false);
             }
         }
         if (card.getTag() != 1) {
@@ -64,7 +66,10 @@ public class MainList extends AppCompatActivity {
             }
             for (int i : fadedViewIds) {
                 unFade(card, i);
+            }
+            for (int i : clickableViewIds) {
                 card.findViewById(i).setEnabled(true);
+                card.findViewById(i).setClickable(true);
             }
             currentCard = card;
         } else {
@@ -75,7 +80,10 @@ public class MainList extends AppCompatActivity {
             }
             for (int i : fadedViewIds) {
                 doFade(card, i);
+            }
+            for (int i : clickableViewIds) {
                 card.findViewById(i).setEnabled(false);
+                card.findViewById(i).setClickable(false);
             }
             currentCard = null;
         }
@@ -112,52 +120,25 @@ public class MainList extends AppCompatActivity {
     }
 
     public void onGetClick(View card) {
-        Log.d("debug", "Get");
-        if (card.getTag() == 1) {
-            Log.d("debug", "qrcode");
-            Intent intent = new Intent(this, QRCodeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("qrCode", "testing");
-            this.startActivity(intent);
-        } else {
-            Log.d("debug", "other");
-            onCardClick(card);
-        }
+        Intent intent = new Intent(this, QRCodeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("qrCode", "testing");
+        this.startActivity(intent);
     }
 
     public void onHeartClick(View card) {
-        Log.d("debug", "Heart");
-        if (card.getTag() != 1) {
 
-        } else {
-            onCardClick(card);
-        }
     }
 
     public void onFavouriteClick(View card) {
-        Log.d("debug", "Favourite");
-        if (card.getTag() != 1) {
 
-        } else {
-            onCardClick(card);
-        }
     }
 
     public void onLocationClick(View card) {
-        Log.d("debug", "Location");
-        if (card.getTag() != 1) {
 
-        } else {
-            onCardClick(card);
-        }
     }
 
     public void onRecommendClick(View card) {
-        Log.d("debug", "Recommend");
-        if (card.getTag() != 1) {
 
-        } else {
-            onCardClick(card);
-        }
     }
 }

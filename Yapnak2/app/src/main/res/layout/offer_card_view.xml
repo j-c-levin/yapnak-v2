@@ -7,7 +7,8 @@
     card_view:cardCornerRadius="4dp"
     android:onClick="onCardClick"
     android:background="#00ffffff"
-    style="@style/login_button">
+    style="@style/login_button"
+    android:clickable="true">
 
     <RelativeLayout
         android:layout_width="350dp"
@@ -23,7 +24,8 @@
             android:layout_alignParentRight="false"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/wok" />
+            android:src="@drawable/wok"
+            android:contentDescription="@string/offer_image" />
 
         <ImageView
             android:id="@+id/offer_dark"
@@ -108,7 +110,9 @@
             android:textSize="30sp"
             android:layout_marginTop="34dp"
             android:onClick="onGetClick"
-            android:alpha="0" />
+            android:alpha="0"
+            android:nestedScrollingEnabled="false"
+            android:clickable="false" />
 
         <ImageButton
             android:layout_width="30dp"
@@ -123,7 +127,9 @@
             android:layout_alignTop="@+id/favourite"
             android:layout_toLeftOf="@+id/get"
             android:layout_toStartOf="@+id/get"
-            android:alpha="0" />
+            android:alpha="0"
+            android:nestedScrollingEnabled="false"
+            android:clickable="false" />
 
         <ImageButton
             android:layout_width="30dp"
@@ -138,7 +144,9 @@
             android:layout_alignLeft="@+id/get"
             android:layout_alignStart="@+id/get"
             android:layout_marginLeft="2dp"
-            android:alpha="0" />
+            android:alpha="0"
+            android:nestedScrollingEnabled="false"
+            android:clickable="false" />
 
         <ImageButton
             android:layout_width="30dp"
@@ -152,7 +160,9 @@
             android:layout_alignRight="@+id/get"
             android:layout_alignEnd="@+id/get"
             android:alpha="0"
-            android:layout_alignTop="@+id/favourite" />
+            android:layout_alignTop="@+id/favourite"
+            android:nestedScrollingEnabled="false"
+            android:clickable="false" />
 
         <ImageButton
             android:layout_width="30dp"
@@ -161,11 +171,16 @@
             android:background="#00050505"
             android:tint="#ff0000"
             android:scaleType="fitXY"
-            android:onClick="onLocationClick"
+            android:onClick="onRecommendClick"
             android:alpha="0"
-            android:layout_alignBottom="@+id/offer_text"
-            android:layout_toRightOf="@+id/offer_text"
-            android:layout_toEndOf="@+id/offer_text" />
+            android:src="@drawable/recommend"
+            android:nestedScrollingEnabled="false"
+            android:layout_alignTop="@+id/location"
+            android:layout_toStartOf="@+id/offer_distance"
+            android:layout_toRightOf="@+id/location"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="80dp"
+            android:clickable="false" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
