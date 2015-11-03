@@ -1,6 +1,5 @@
 package com.uq.yapnak;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -8,7 +7,6 @@ import android.os.AsyncTask;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 
@@ -19,15 +17,14 @@ import java.io.IOException;
  */
 public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
 
-    Context login;
+    LoginActivity login;
 
-    public Login_Async(Context login) {
+    public Login_Async(LoginActivity login) {
         this.login = login;
     }
 
     @Override
     protected AuthenticateEntity doInBackground(String...params) {
-        //Start spinner
         UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
         AuthenticateEntity response = new AuthenticateEntity();
         try {
@@ -40,6 +37,7 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
     }
 
     protected void onPostExecute(AuthenticateEntity response) {
+        login.spinner.hide();
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
             try {
@@ -48,7 +46,6 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
                 editor.putString("userID", response.getUserId());
                 // Commit the edits!
                 editor.commit();
-                ParsePush.subscribeInBackground( response.getUserId());
                 ParseInstallation.getCurrentInstallation().put("userId",  response.getUserId());
                 ParseInstallation.getCurrentInstallation().saveInBackground();
                 Intent intent = new Intent(login, MainList.class);
@@ -61,7 +58,7 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
             }
         } else {
             //Incorrect login details, alert
-            new LoginFailed_Dialog(login);
+            new Alert_Dialog(login).incorrectLogin();
         }
     }
 }

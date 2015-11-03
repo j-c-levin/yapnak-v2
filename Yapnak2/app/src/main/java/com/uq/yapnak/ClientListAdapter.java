@@ -25,6 +25,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         private TextView offerDistance;
         private TextView clientId;
         private TextView offerId;
+        private TextView gps;
 
         public ViewHolder(View v) {
             super(v);
@@ -34,6 +35,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
             offerImage = (ImageView) v.findViewById(R.id.offer_image);
             clientId = (TextView) v.findViewById(R.id.clientId);
             offerId = (TextView) v.findViewById(R.id.offerId);
+            gps = (TextView) v.findViewById(R.id.gps);
         }
     }
 
@@ -62,6 +64,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         holder.offerDistance.setText(offer.getDistance());
         holder.clientId.setText(String.valueOf(offer.getClientId()));
         holder.offerId.setText(String.valueOf(offer.getOfferId()));
+        holder.gps.setText(String.valueOf(offer.getLatitude() + "," + offer.getLongitude()));
         new DownloadImageTask(holder.offerImage).execute(offerList.getOfferList().get(position).getClientOfferPhoto());
     }
 

@@ -1,11 +1,11 @@
 package com.uq.yapnak;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 
 /**
@@ -15,7 +15,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText email;
     EditText password;
-    private ProgressBar mProgress;
+    ProgressDialog spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,19 @@ public class LoginActivity extends AppCompatActivity {
         if (new ConnectionStatus(this).isConnected()) {
             email = (EditText) findViewById(R.id.Email);
             password = (EditText) findViewById(R.id.Password);
+            spinner();
             new Login_Async(this).execute(password.getText().toString(), email.getText().toString());
         }
+    }
+
+    void spinner() {
+        spinner = new ProgressDialog(this);
+        spinner.setIndeterminate(true);
+        spinner.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        spinner.setTitle("Logging in");
+        spinner.setMessage("Just checking my records, won't be a mo'");
+        spinner.setCancelable(false);
+        spinner.show();
     }
 }
 

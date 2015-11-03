@@ -8,8 +8,8 @@ android {
         applicationId "com.uq.yapnak"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 20
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -29,5 +29,6 @@ dependencies {
     compile 'com.google.zxing:core:3.2.1'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
+    compile 'com.google.android.gms:play-services-location:8.1.0'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
 }

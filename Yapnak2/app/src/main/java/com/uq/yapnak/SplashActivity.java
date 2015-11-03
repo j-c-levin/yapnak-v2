@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
 
 public class SplashActivity extends Activity {
 
@@ -21,7 +20,6 @@ public class SplashActivity extends Activity {
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
         final String userId = data.getString("userID", null);
         if (userId != null) {
-            ParsePush.subscribeInBackground(userId);
             ParseInstallation.getCurrentInstallation().put("userId", userId);
             ParseInstallation.getCurrentInstallation().saveInBackground();
             new Handler().postDelayed(new Runnable() {

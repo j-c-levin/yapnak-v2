@@ -29,14 +29,10 @@ public class ConnectionStatus {
         } catch (Exception e) {
             Log.w("debug", "Mobile internet error: " + e);
         }
-//        if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
-//            lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-//        } else {
-//            Log.d("debug", "no mobile internet");
-//        }
         if(!(wifi||lte)) {
             new InternetConnectionError_Dialog(context);
         }
+        Log.d("debug", String.valueOf((wifi||lte)));
         return (wifi||lte);
     }
 }
