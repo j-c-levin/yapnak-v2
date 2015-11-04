@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -144,7 +143,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void getClients() {
-        Log.d("debug", "at: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
         new GetClients_Async(this).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
     }
 
@@ -291,7 +289,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        Log.d("debug", "connecting");
         mGoogleApiClient.connect();
     }
 

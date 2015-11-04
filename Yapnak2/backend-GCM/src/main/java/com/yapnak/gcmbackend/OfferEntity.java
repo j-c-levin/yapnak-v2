@@ -19,6 +19,15 @@ public class OfferEntity {
     String clientPhoto;
     String distance;
     String clientOfferPhoto;
+    double clientRating;
+
+    public double getClientRating() {
+        return clientRating;
+    }
+
+    public void setClientRating(double clientRating) {
+        this.clientRating = clientRating;
+    }
 
     public String getClientOfferPhoto() {
         return clientOfferPhoto;

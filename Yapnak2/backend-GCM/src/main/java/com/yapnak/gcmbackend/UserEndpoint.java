@@ -687,6 +687,8 @@ public class UserEndpoint {
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
                         offer.setClientOfferPhoto("https://yapnak-app.appspot.com/images/coffee_room_blt.jpg");
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+                        logger.info(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+                        offer.setClientRating(4.0);
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
                         if (days.get(dayOfWeek) == true) {
@@ -730,28 +732,19 @@ public class UserEndpoint {
                     response.add(i, removedEntity);
                 }
             }
-            logger.info("pass complete");
         }
-        logger.info("sorted");
-        for (OfferEntity o : response) {
-            o.setDistance(null);
-        }
-        //stagger
-
-        //sql logging?
 
         return response;
     }
 
     static String distance(double longitudeOrigin, double latitudeOrigin, double longitudeDest, double latitudeDest) {
         //a^2=b^2+c^2
-        String response = "";
         double b = (longitudeOrigin - longitudeDest);
         double c = (latitudeOrigin - latitudeDest);
         double a = Math.sqrt((b * b) + (c * c));
         //number of minutes
         double minutes = Math.floor(a / 0.00128489);
-        response = String.valueOf(minutes);
+        String response = String.valueOf(minutes);
         logger.info(response);
         return response;
     }
@@ -1423,5 +1416,66 @@ public class UserEndpoint {
         }
         response.setStatus("True");
         return response;
+    }
+
+    @ApiMethod(
+            name = "aboutUs",
+            path = "aboutUs",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public AboutUsEntity aboutUs() {
+        AboutUsEntity response = new AboutUsEntity();
+        response.setStatus("True");
+        String s = "This is the Yapnak about us page.  This text will change in due course";
+        response.setAboutUs(s);
+        return response;
+    }
+
+    @ApiMethod(
+            name = "getFavourites",
+            path = "getFavourites",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public FavouritesEntity getFavourites(@Named("userId") String userId) {
+        FavouritesEntity response = new FavouritesEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT offerID FROM favourites WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //What does it mean?
+                    response.setStatus("False");
+                    response.setMessage("Failed to retrieve favourites for " + userId);
+                    logger.warning("Failed to retrieve favourites for " + userId);
+                    break queryBlock;
+                }
+                //What does it mean?
+                logger.info("Retrieved favourites for " + userId);
+                response.setStatus("True");
+                List<String> list = new ArrayList<>();
+                do {
+                    list.add(rs.getString("offerID"));
+                } while (rs.next());
+                response.setFavourites(list);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+
     }
 }
