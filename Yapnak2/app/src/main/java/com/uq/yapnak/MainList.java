@@ -2,6 +2,7 @@ package com.uq.yapnak;
 
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -52,9 +53,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         //Save userId locally
         userId = (String) getIntent().getExtras().get("userId");
 
-        //Get user details
-        new UserDetails_Async(this).execute(userId);
-
         //Setup the recycler view
         setupRecycler();
 
@@ -66,6 +64,9 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             //Start a progress dialog whilst initial loading
             initialSpinner();
             buildGoogleApiClient();
+
+            //Get user details
+            new UserDetails_Async(this).execute(userId);
         }
     }
 
@@ -118,17 +119,33 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
 
     public void swipeRefreshSetup() {
         //Swipe refresh listener
+        final Context context = MainList.this;
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("debug", "refreshing");
-                if (new ConnectionStatus(getBaseContext()).isConnected()) {
-                    mGoogleApiClient.connect();
+                if (new ConnectionStatus(context).isConnected()) {
+                    if (mGoogleApiClient.isConnected()) {
+                        if (mLastLocation == null) {
+                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                            getClients();
+                        } else {
+                            getClients();
+                        }
+                    } else {
+                        mGoogleApiClient.connect();
+                    }
+                } else {
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         });
+    }
+
+    public void getClients() {
+        Log.d("debug", "at: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
+        new GetClients_Async(this).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
     }
 
     public void loadOffers(OfferListEntity response) {
@@ -280,22 +297,16 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d("debug", "connected");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation == null) {
-            Log.d("debug", "null");
         } else {
-            Log.d("debug", "executing get clients");
-            new GetClients_Async(this).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            getClients();
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
     }
 
     @Override

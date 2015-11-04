@@ -32,7 +32,6 @@ public class ConnectionStatus {
         if(!(wifi||lte)) {
             new InternetConnectionError_Dialog(context);
         }
-        Log.d("debug", String.valueOf((wifi||lte)));
         return (wifi||lte);
     }
 }
