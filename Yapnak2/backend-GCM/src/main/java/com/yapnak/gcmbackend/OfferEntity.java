@@ -20,6 +20,15 @@ public class OfferEntity {
     String distance;
     String clientOfferPhoto;
     double clientRating;
+    boolean favourite;
+
+    public boolean getFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public double getClientRating() {
         return clientRating;

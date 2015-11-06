@@ -1,7 +1,6 @@
 package com.uq.yapnak;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -34,8 +33,9 @@ public class GetClients_Async extends AsyncTask<Double, Void, OfferListEntity> {
     }
 
     protected void onPostExecute(OfferListEntity response) {
-        Log.d("debug", "get clients done");
-        mainList.spinner.hide();
+        if (mainList.spinner != null) {
+            mainList.spinner.hide();
+        }
         mainList.swipeRefreshLayout.setRefreshing(false);
         if (Boolean.parseBoolean(response.getStatus())) {
             mainList.loadOffers(response);

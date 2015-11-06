@@ -34,9 +34,20 @@
     <string name="login_error_try_again">I\'ll try again</string>
     <string name="internet_error_title">Internet unavailable</string>
     <string name="internet_error">Hold up a second, could you check you\'re connected to the internet?</string>
-    <string name="internet_error_try_again">I\'ll fix it</string>
+    <string name="internet_error_try_again">Wifi</string>
+    <string name="internet_error_cancel">I\'ll toggle mobile data</string>
     <string name="connection_error_title">Connection error</string>
-    <string name="connection_error">Some sort of play connection error</string>
-    <string name="connection_error_try_again">I\'ll fix it</string>
+    <string name="connection_error">Some sort of play services connection error.  Is it up to date?</string>
+    <string name="connection_error_try_again">Hm...</string>
+    <string name="gps_error_title">Location error</string>
+    <string name="gps_error">We can\'t seem to find your location, have you enabled location from the device settings menu?</string>
+    <string name="gps_error_try_again">Good question, I\'ll go check</string>
+    <string name="default_offer"><![CDATA[Chicken salad & soft drink]]></string>
+    <string name="default_client_name">Babylon</string>
+    <string name="default_offer_distance">17 Minutes Away</string>
+    <string name="favourite_button">favourite button</string>
+    <string name="rate_button">rate button</string>
+    <string name="location_button">location button</string>
+    <string name="recommend_button">recommend button</string>
 
 </resources>

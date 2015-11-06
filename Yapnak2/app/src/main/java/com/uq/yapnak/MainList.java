@@ -59,7 +59,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         refreshOnlyAtTop();
         swipeRefreshSetup();
 
-        if (new ConnectionStatus(this).isConnected()) {
+        if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
             //Start a progress dialog whilst initial loading
             initialSpinner();
             buildGoogleApiClient();
@@ -124,8 +124,8 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (new ConnectionStatus(context).isConnected()) {
-                    if (mGoogleApiClient.isConnected()) {
+                if (new ConnectionStatus(context).isConnected() && new GpsStatus(context).isEnabled()) {
+                    if (mGoogleApiClient != null) {
                         if (mLastLocation == null) {
                             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                             getClients();
@@ -133,7 +133,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
                             getClients();
                         }
                     } else {
-                        mGoogleApiClient.connect();
+                        buildGoogleApiClient();
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);

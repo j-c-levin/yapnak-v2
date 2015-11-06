@@ -25,7 +25,7 @@ public class QRCodeActivity extends Activity {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 3/4;
+        smallerDimension = smallerDimension * 3/5;
         //Encode with a QR Code image
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(getIntent().getStringExtra("qrCode"),
                 null,

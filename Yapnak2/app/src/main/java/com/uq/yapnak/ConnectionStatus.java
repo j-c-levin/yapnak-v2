@@ -30,7 +30,7 @@ public class ConnectionStatus {
             Log.w("debug", "Mobile internet error: " + e);
         }
         if(!(wifi||lte)) {
-            new InternetConnectionError_Dialog(context);
+            new Alert_Dialog(context).internetConnectionError();
         }
         return (wifi||lte);
     }

@@ -672,8 +672,10 @@ public class UserEndpoint {
                 logger.info("day is " + dayOfWeek);
                 JSONParser parse = new JSONParser();
                 JSONArray days;
+                String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
                 if (rs.next()) {
                     rs.beforeFirst();
+                    int x = 0;
                     while (rs.next()) {
                         logger.info("Retrieving client: " + rs.getString("clientName"));
                         offer = new OfferEntity();
@@ -685,9 +687,10 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
-                        offer.setClientOfferPhoto("https://yapnak-app.appspot.com/images/coffee_room_blt.jpg");
+                        x += 1;
+                        x %= 4;
+                        offer.setClientOfferPhoto(images[x]);
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
-                        logger.info(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         offer.setClientRating(4.0);
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
@@ -696,7 +699,9 @@ public class UserEndpoint {
                         }
                     }
                     //sort list here by top three priority and then distance
+                    logger.info(list.get(0).getClientName());
                     response.setOfferList(sort(list));
+                    logger.info(list.get(0).getClientName());
                     response.setStatus("True");
                     response.setFoundOffers(true);
                 } else {
@@ -706,6 +711,133 @@ public class UserEndpoint {
                     response.setFoundOffers(false);
                     break queryBlock;
                 }
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "getOffers",
+            path = "getOffers",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public OfferListEntity getOffers(@Named("longitude") double longitude, @Named("latitude") double latitude, @Named("userId") String userId) {
+        OfferListEntity response = new OfferListEntity();
+        OfferEntity offer;
+        List<OfferEntity> list = new ArrayList<>();
+        Connection connection;
+        double distance = 0.05;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT COUNT(*) FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                logger.info("getOffers, Search for user: " + userId);
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) == 0) {
+                    //userID not found
+                    response.setStatus("False");
+                    response.setMessage("getOffers, userId " + userId + " not found");
+                    logger.warning("getOffers, userId " + userId + " not found");
+                    break queryBlock;
+                }
+                //user exists, update details
+                logger.info("user exists, getting clients");
+                Date date = new Date();   // given date
+                Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT")); // creates a new calendar instance
+                calendar.setTime(date);   // assigns calendar to given date
+                calendar.setFirstDayOfWeek(Calendar.MONDAY);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+                hour = (hour + 1) % 24;
+                if (hour >= 0 && hour <= 4) {
+                    hour = 23 + (hour + 1);
+                }
+                logger.info("Hour is: " + hour);
+                query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                double t = longitude - distance;
+                statement.setDouble(2, t);
+                t = longitude + distance;
+                statement.setDouble(3, t);
+                t = latitude - distance;
+                statement.setDouble(4, t);
+                t = latitude + distance;
+                statement.setDouble(5, t);
+                statement.setInt(6, hour);
+                statement.setInt(7, hour);
+                logger.info("search for clients at (lng/lat): " + longitude + " : " + latitude);
+                rs = statement.executeQuery();
+                //Needed to compensate for the fact that monday = 1
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                dayOfWeek = (dayOfWeek + 5) % 7;
+                if (hour > 23) {
+                    if (dayOfWeek == 0) {
+                        dayOfWeek = 6;
+                    } else {
+                        dayOfWeek -= 1;
+                    }
+                }
+                logger.info("day is " + dayOfWeek);
+                JSONParser parse = new JSONParser();
+                JSONArray days;
+                String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
+                if (rs.next()) {
+                    rs.beforeFirst();
+                    int x = 0;
+                    while (rs.next()) {
+                        logger.info("Retrieving client: " + rs.getString("clientName"));
+                        offer = new OfferEntity();
+                        offer.setOfferId(rs.getInt("offerID"));
+                        offer.setClientId(rs.getInt("clientID"));
+                        offer.setClientName(rs.getString("clientName"));
+                        offer.setOfferText(rs.getString("offer"));
+                        offer.setLongitude(rs.getDouble("clientX"));
+                        offer.setLatitude(rs.getDouble("clientY"));
+                        offer.setFoodStyle(rs.getString("clientFoodStyle"));
+                        offer.setClientPhoto(rs.getString("clientPhotoUrl"));
+                        x += 1;
+                        x %= 4;
+                        offer.setClientOfferPhoto(images[x]);
+                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+                        offer.setClientRating(4.0);
+                        offer.setFavourite(rs.getInt("favouriteID") != 0);
+                        //Check if the offer is active on that day;
+                        days = (JSONArray) parse.parse(rs.getString("offerDays"));
+                        if (days.get(dayOfWeek) == true) {
+                            list.add(offer);
+                        }
+                    }
+                    //sort list here by top three priority and then distance
+                    logger.info(list.get(0).getClientName());
+                    response.setOfferList(sort(list));
+                    logger.info(list.get(0).getClientName());
+                    response.setStatus("True");
+                    response.setFoundOffers(true);
+                } else {
+                    //No clients found
+                    response.setStatus("True");
+                    logger.info("No clients found");
+                    response.setFoundOffers(false);
+                    break queryBlock;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 connection.close();
                 return response;
@@ -733,7 +865,17 @@ public class UserEndpoint {
                 }
             }
         }
-
+        for (int i = 0; i < response.size(); i++) {
+            try {
+                if (Double.parseDouble(response.get(i).getDistance()) >= 30) {
+                    response.get(i).setDistance("Really far away");
+                } else {
+                    response.get(i).setDistance(response.get(i).getDistance().split("\\.")[0] + " minutes");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return response;
     }
 
@@ -744,8 +886,8 @@ public class UserEndpoint {
         double a = Math.sqrt((b * b) + (c * c));
         //number of minutes
         double minutes = Math.floor(a / 0.00128489);
-        String response = String.valueOf(minutes);
-        logger.info(response);
+        String response;
+        response = String.valueOf(minutes);
         return response;
     }
 
@@ -1434,8 +1576,8 @@ public class UserEndpoint {
             name = "getFavourites",
             path = "getFavourites",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public FavouritesEntity getFavourites(@Named("userId") String userId) {
-        FavouritesEntity response = new FavouritesEntity();
+    public FavouritesListEntity getFavourites(@Named("userId") String userId, @Named("longitude") double longitude, @Named("latitude") double latitude) {
+        FavouritesListEntity response = new FavouritesListEntity();
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -1450,7 +1592,7 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT offerID FROM favourites WHERE userID = ?";
+                String query = "SELECT f.offerID, o.offerText, o.isActive, o.showOffer, c.clientName, c.clientX, c.clientY, c.clientID FROM favourites f, offers o, client c WHERE f.offerID = o.offerID AND o.clientID = c.clientID AND f.userID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 ResultSet rs = statement.executeQuery();
@@ -1464,10 +1606,26 @@ public class UserEndpoint {
                 //What does it mean?
                 logger.info("Retrieved favourites for " + userId);
                 response.setStatus("True");
-                List<String> list = new ArrayList<>();
+                List<FavouritesEntity> list = new ArrayList<>();
+                FavouritesEntity f;
+                int x = 0;
+                String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
                 do {
-                    list.add(rs.getString("offerID"));
+                    f = new FavouritesEntity();
+                    f.setClientRating(4.0);
+                    f.setClientId(rs.getInt("clientID"));
+                    f.setClientName(rs.getString("clientName"));
+                    x += 1;
+                    x %= 4;
+                    f.setClientOfferPhoto(images[x]);
+                    f.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+                    f.setLatitude(rs.getDouble("clientY"));
+                    f.setLongitude(rs.getDouble("clientX"));
+                    f.setOfferId(rs.getInt("offerID"));
+                    f.setOfferText(rs.getString("offerText"));
+                    list.add(f);
                 } while (rs.next());
+                list = sortFavourites(list);
                 response.setFavourites(list);
             } finally {
                 connection.close();
@@ -1476,6 +1634,38 @@ public class UserEndpoint {
         } finally {
             return response;
         }
+    }
 
+    static List<FavouritesEntity> sortFavourites(List<FavouritesEntity> rawOffers) {
+        List<FavouritesEntity> response = rawOffers;
+        //set up checking variables
+        boolean hasChanged = true;
+
+        while (hasChanged) {
+            hasChanged = false;
+            //bubble sort
+            for (int i = 0; i < response.size() - 1; i++) {
+                if (Double.valueOf(response.get(i).getDistance()) > Double.valueOf(response.get(i + 1).getDistance())) {
+                    hasChanged = true;
+                    FavouritesEntity removedEntity = response.remove(i + 1);
+                    response.add(i + 1, response.get(i));
+                    response.remove(i);
+                    response.add(i, removedEntity);
+                }
+            }
+        }
+        logger.info("end sorting");
+        for (int i = 0; i < response.size(); i++) {
+            try {
+                if (Double.parseDouble(response.get(i).getDistance()) >= 30) {
+                    response.get(i).setDistance("Really far away");
+                } else {
+                    response.get(i).setDistance(response.get(i).getDistance().split("\\.")[0] + " minutes");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return response;
     }
 }
