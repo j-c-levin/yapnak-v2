@@ -6,6 +6,8 @@
     <string name="login_signuptext">Sign up</string>
     <string name="login_facebooktext">Connect with facebook</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_about">About Us</string>
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

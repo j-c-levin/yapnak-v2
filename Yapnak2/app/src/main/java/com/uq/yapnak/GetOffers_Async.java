@@ -12,12 +12,14 @@ import java.io.IOException;
 /**
  * Created by Joshua on 27/10/2015.
  */
-public class GetClients_Async extends AsyncTask<Double, Void, OfferListEntity> {
+public class GetOffers_Async extends AsyncTask<Double, Void, OfferListEntity> {
 
     private MainList mainList;
+    private String userId;
 
-    public GetClients_Async(MainList mainList) {
+    public GetOffers_Async(MainList mainList, String userId) {
         this.mainList = mainList;
+        this.userId = userId;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class GetClients_Async extends AsyncTask<Double, Void, OfferListEntity> {
         UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         OfferListEntity response = new OfferListEntity();
         try {
-            response = userApi.getClients(doubles[0], doubles[1]).execute();
+            response = userApi.getOffers(doubles[0], doubles[1], userId).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,9 +35,6 @@ public class GetClients_Async extends AsyncTask<Double, Void, OfferListEntity> {
     }
 
     protected void onPostExecute(OfferListEntity response) {
-        if (mainList.spinner != null) {
-            mainList.spinner.hide();
-        }
         mainList.swipeRefreshLayout.setRefreshing(false);
         if (Boolean.parseBoolean(response.getStatus())) {
             mainList.loadOffers(response);

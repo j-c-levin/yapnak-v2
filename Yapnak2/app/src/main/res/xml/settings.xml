@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="notifications"
+        android:summary=""
+        android:title="Push Notifications" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="password"
+        android:title="Change Password" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="contacts"
+        android:summary="This helps you recommend offers to friends"
+        android:title="Use contacts" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="data"
+        android:summary="This will allow the app to download offers over your mobile data plan"
+        android:title="Use Mobile Data" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="remember_me"
+        android:summary="This keeps you signed in on the app"
+        android:title="Remember Me" />
+</PreferenceScreen>

@@ -8,7 +8,7 @@
     android:gravity = "center">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="400dp"
         android:background="@drawable/layoutborder"
         android:elevation="2dp"
@@ -114,9 +114,8 @@
             android:tint="#ffffff"
             android:onClick="close"
             android:layout_alignTop="@+id/rate_title"
-            android:layout_alignRight="@+id/isAccepted"
-            android:layout_alignEnd="@+id/isAccepted"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 </FrameLayout>

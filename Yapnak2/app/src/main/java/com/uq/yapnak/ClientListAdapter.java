@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         private TextView clientId;
         private TextView offerId;
         private TextView gps;
+        private ImageButton favourite;
 
         public ViewHolder(View v) {
             super(v);
@@ -36,6 +38,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
             clientId = (TextView) v.findViewById(R.id.clientId);
             offerId = (TextView) v.findViewById(R.id.offerId);
             gps = (TextView) v.findViewById(R.id.gps);
+            favourite = (ImageButton) v.findViewById(R.id.favourite);
         }
     }
 
@@ -65,7 +68,13 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         holder.clientId.setText(String.valueOf(offer.getClientId()));
         holder.offerId.setText(String.valueOf(offer.getOfferId()));
         holder.gps.setText(String.valueOf(offer.getLatitude() + "," + offer.getLongitude()));
-        new DownloadImageTask(holder.offerImage).execute(offerList.getOfferList().get(position).getClientOfferPhoto());
+        new DownloadImageTask(holder.offerImage).execute(offer.getClientOfferPhoto());
+        if (offer.getFavourite()) {
+            holder.favourite.setImageResource(R.drawable.heart_filled);
+            holder.favourite.setTag(1);
+        } else {
+            holder.favourite.setTag(0);
+        }
     }
 
     @Override

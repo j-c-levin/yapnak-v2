@@ -1567,7 +1567,7 @@ public class UserEndpoint {
     public AboutUsEntity aboutUs() {
         AboutUsEntity response = new AboutUsEntity();
         response.setStatus("True");
-        String s = "This is the Yapnak about us page.  This text will change in due course";
+        String s = "This is the Yapnak about us page.  This text will change in due course.";
         response.setAboutUs(s);
         return response;
     }
@@ -1576,8 +1576,8 @@ public class UserEndpoint {
             name = "getFavourites",
             path = "getFavourites",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public FavouritesListEntity getFavourites(@Named("userId") String userId, @Named("longitude") double longitude, @Named("latitude") double latitude) {
-        FavouritesListEntity response = new FavouritesListEntity();
+    public OfferListEntity getFavourites(@Named("userId") String userId, @Named("longitude") double longitude, @Named("latitude") double latitude) {
+        OfferListEntity response = new OfferListEntity();
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -1606,12 +1606,12 @@ public class UserEndpoint {
                 //What does it mean?
                 logger.info("Retrieved favourites for " + userId);
                 response.setStatus("True");
-                List<FavouritesEntity> list = new ArrayList<>();
-                FavouritesEntity f;
+                List<OfferEntity> list = new ArrayList<>();
+                OfferEntity f;
                 int x = 0;
                 String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
                 do {
-                    f = new FavouritesEntity();
+                    f = new OfferEntity();
                     f.setClientRating(4.0);
                     f.setClientId(rs.getInt("clientID"));
                     f.setClientName(rs.getString("clientName"));
@@ -1623,10 +1623,11 @@ public class UserEndpoint {
                     f.setLongitude(rs.getDouble("clientX"));
                     f.setOfferId(rs.getInt("offerID"));
                     f.setOfferText(rs.getString("offerText"));
+                    f.setFavourite(true);
                     list.add(f);
                 } while (rs.next());
-                list = sortFavourites(list);
-                response.setFavourites(list);
+                list = sort(list);
+                response.setOfferList(list);
             } finally {
                 connection.close();
                 return response;
@@ -1634,38 +1635,5 @@ public class UserEndpoint {
         } finally {
             return response;
         }
-    }
-
-    static List<FavouritesEntity> sortFavourites(List<FavouritesEntity> rawOffers) {
-        List<FavouritesEntity> response = rawOffers;
-        //set up checking variables
-        boolean hasChanged = true;
-
-        while (hasChanged) {
-            hasChanged = false;
-            //bubble sort
-            for (int i = 0; i < response.size() - 1; i++) {
-                if (Double.valueOf(response.get(i).getDistance()) > Double.valueOf(response.get(i + 1).getDistance())) {
-                    hasChanged = true;
-                    FavouritesEntity removedEntity = response.remove(i + 1);
-                    response.add(i + 1, response.get(i));
-                    response.remove(i);
-                    response.add(i, removedEntity);
-                }
-            }
-        }
-        logger.info("end sorting");
-        for (int i = 0; i < response.size(); i++) {
-            try {
-                if (Double.parseDouble(response.get(i).getDistance()) >= 30) {
-                    response.get(i).setDistance("Really far away");
-                } else {
-                    response.get(i).setDistance(response.get(i).getDistance().split("\\.")[0] + " minutes");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return response;
     }
 }

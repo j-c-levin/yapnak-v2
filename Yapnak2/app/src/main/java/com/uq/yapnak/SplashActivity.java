@@ -19,6 +19,7 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
         final String userId = data.getString("userID", null);
+        new About_Async(this).execute();
         if (userId != null) {
             ParseInstallation.getCurrentInstallation().put("userId", userId);
             ParseInstallation.getCurrentInstallation().saveInBackground();

@@ -4,13 +4,17 @@ import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -43,14 +47,20 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     Location mLastLocation;
     SwipeRefreshLayout swipeRefreshLayout;
     UserDetailsEntity userDetails;
+    DrawerLayout lMenu;
+    ActionBarDrawerToggle lMenuToggle;
+    SwipeRefreshLayout content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_list);
+        lMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
+        content = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         //Save userId locally
-        userId = (String) getIntent().getExtras().get("userId");
+        SharedPreferences data = getSharedPreferences("Yapnak", 0);
+        userId = data.getString("userID", null);
 
         //Setup the recycler view
         setupRecycler();
@@ -59,14 +69,94 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         refreshOnlyAtTop();
         swipeRefreshSetup();
 
+        //Setup side drawer menu
+        drawerSetup();
+
         if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
             //Start a progress dialog whilst initial loading
-            initialSpinner();
             buildGoogleApiClient();
 
             //Get user details
             new UserDetails_Async(this).execute(userId);
         }
+    }
+
+    public void drawerSetup() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        lMenuToggle = new ActionBarDrawerToggle(this, lMenu, R.string.app_name, R.string.app_id) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                content.setClickable(true);
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                content.setClickable(false);
+            }
+        };
+        lMenu.setDrawerListener(lMenuToggle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle
+        // If it returns true, then it has handled
+        // the nav drawer indicator touch event
+        if (lMenuToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        lMenuToggle.syncState();
+    }
+
+    public void drawerMeals(View item) {
+        getClients();
+    }
+
+    public void drawerFavourites(View item) {
+        getFavourites();
+    }
+
+    public void drawerLoyalty(View item) {
+
+    }
+
+    public void drawerProfile(View item) {
+
+    }
+
+    public void drawerAbout(View item) {
+        Intent intent = new Intent(this, About.class);
+        startActivity(intent);
+    }
+
+    public void drawerSettings(View item) {
+        Intent intent = new Intent(this, Settings.class);
+        startActivity(intent);
+    }
+
+    public void drawerHelp(View item) {
+
+    }
+
+    public void drawerSignOut(View item) {
+        SharedPreferences data = getSharedPreferences("Yapnak", 0);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString("userID", null);
+        editor.commit();
+        Intent intent = new Intent(this, Landing.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     public void onTaskComplete(UserDetailsEntity userDetails) {
@@ -106,16 +196,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
-    public void initialSpinner() {
-        spinner = new ProgressDialog(this);
-        spinner.setIndeterminate(true);
-        spinner.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        spinner.setTitle("Loading");
-        spinner.setMessage("Sniffing for food nearby...");
-        spinner.setCancelable(false);
-        spinner.show();
-    }
-
     public void swipeRefreshSetup() {
         //Swipe refresh listener
         final Context context = MainList.this;
@@ -143,7 +223,39 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void getClients() {
-        new GetClients_Async(this).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
+            if (mGoogleApiClient != null) {
+                if (mLastLocation == null) {
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    swipeRefreshLayout.setRefreshing(true);
+                    new GetOffers_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                } else {
+                    swipeRefreshLayout.setRefreshing(true);
+                    new GetOffers_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                }
+            } else {
+                buildGoogleApiClient();
+            }
+            lMenu.closeDrawers();
+        }
+    }
+
+    public void getFavourites() {
+        if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
+            if (mGoogleApiClient != null) {
+                if (mLastLocation == null) {
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    swipeRefreshLayout.setRefreshing(true);
+                    new GetFavourites_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                } else {
+                    swipeRefreshLayout.setRefreshing(true);
+                    new GetFavourites_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                }
+            } else {
+                buildGoogleApiClient();
+            }
+            lMenu.closeDrawers();
+        }
     }
 
     public void loadOffers(OfferListEntity response) {
@@ -262,12 +374,25 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void onFavouriteClick(View card) {
-        View parent = (View) card.getParent();
-        TextView offerId = (TextView) parent.findViewById(R.id.offerId);
-        final String offer = "offer" + offerId.getText().toString();
-        ParsePush.subscribeInBackground(offer);
-        new FavouriteOffer_Async().execute(offerId.getText().toString(), userId);
-        ((ImageButton) card).setImageResource(R.drawable.heart_filled);
+        if (card.getTag() == 0) {
+            //Add card to favourites
+            View parent = (View) card.getParent();
+            TextView offerId = (TextView) parent.findViewById(R.id.offerId);
+            final String offer = "offer" + offerId.getText().toString();
+            ParsePush.subscribeInBackground(offer);
+            new FavouriteOffer_Async().execute(offerId.getText().toString(), userId);
+            ((ImageButton) card).setImageResource(R.drawable.heart_filled);
+            card.setTag(1);
+        } else {
+            //Unfavourite card
+            View parent = (View) card.getParent();
+            TextView offerId = (TextView) parent.findViewById(R.id.offerId);
+            final String offer = "offer" + offerId.getText().toString();
+            ParsePush.unsubscribeInBackground(offer);
+            new RemoveFavouriteOffer_Async().execute(offerId.getText().toString(), userId);
+            ((ImageButton) card).setImageResource(R.drawable.heart);
+            card.setTag(0);
+        }
     }
 
     public void onLocationClick(View card) {

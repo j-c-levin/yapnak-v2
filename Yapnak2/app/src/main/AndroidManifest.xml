@@ -81,8 +81,25 @@
             android:name="com.parse.push.notification_icon"
             android:resource="@drawable/ic_stat_yapnakmonster_notification" />
 
-        <activity android:name=".RatingActivity"
+        <activity
+            android:name=".RatingActivity"
             android:theme="@style/myDialogTheme" >
+        </activity>
+        <activity
+            android:name=".About"
+            android:label="@string/title_activity_about" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainList" />
+        </activity>
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainList" />
+        </activity>
+        <activity android:name=".NewPassword" android:theme="@style/myDialogTheme" android:label="" >
         </activity>
     </application>
 
