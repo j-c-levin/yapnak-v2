@@ -37,7 +37,8 @@
     <string name="internet_error_title">Internet unavailable</string>
     <string name="internet_error">Hold up a second, could you check you\'re connected to the internet?</string>
     <string name="internet_error_try_again">Wifi</string>
-    <string name="internet_error_cancel">I\'ll toggle mobile data</string>
+    <string name="internet_error_cancel">I\'ll my data on</string>
+    <string name="internet_error_toggle">Change app settings</string>
     <string name="connection_error_title">Connection error</string>
     <string name="connection_error">Some sort of play services connection error.  Is it up to date?</string>
     <string name="connection_error_try_again">Hm...</string>
@@ -51,5 +52,17 @@
     <string name="rate_button">rate button</string>
     <string name="location_button">location button</string>
     <string name="recommend_button">recommend button</string>
+    <string name="password_reset_success_title">Password reset success</string>
+    <string name="password_reset_success">Okay, it\'s all changed</string>
+    <string name="password_reset_success_button">Cool stuff</string>
+    <string name="password_reset_fail_title">Password reset failed</string>
+    <string name="password_reset_fail">Something went wrong, did you type in your current password correctly?</string>
+    <string name="password_reset_fail_button">Let me see...</string>
+    <string name="password_reset_mismatch_title">Password mismatch</string>
+    <string name="password_reset_mismatch">Your new passwords don\'t match</string>
+    <string name="password_reset_mismatch_button">I\'ll go fix that</string>
+    <string name="password_reset_missing_title">Fields missing</string>
+    <string name="password_reset_missing">You appear to have missed some fields</string>
+    <string name="password_reset_missing_button">I\'ll fill them in</string>
 
 </resources>

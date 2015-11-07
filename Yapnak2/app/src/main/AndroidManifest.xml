@@ -58,9 +58,10 @@
         <service android:name="com.parse.PushService" />
 
         <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
+            android:name="com.uq.yapnak.Receiver"
             android:exported="false" >
             <intent-filter>
+                <action android:name="com.example.UPDATE_STATUS" />
                 <action android:name="com.parse.push.intent.RECEIVE" />
                 <action android:name="com.parse.push.intent.DELETE" />
                 <action android:name="com.parse.push.intent.OPEN" />
@@ -93,7 +94,7 @@
                 android:value="com.uq.yapnak.MainList" />
         </activity>
         <activity
-            android:name=".Settings"
+            android:name=".AppSettings"
             android:label="@string/title_activity_settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -8,7 +8,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
-public class Settings extends AppCompatActivity {
+public class AppSettings extends AppCompatActivity {
 
     SharedPreferences prefs;
 
@@ -20,11 +20,13 @@ public class Settings extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.OnSharedPreferenceChangeListener listener =
                 new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    final Context context = Settings.this;
+                    final Context context = AppSettings.this;
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                         if (key.equals("password")) {
-                            Intent intent = new Intent(context, NewPassword.class);
-                            startActivity(intent);
+                            if (prefs.getBoolean(key, false)) {
+                                Intent intent = new Intent(context, NewPassword.class);
+                                startActivity(intent);
+                            }
                         }
                     }
                 };

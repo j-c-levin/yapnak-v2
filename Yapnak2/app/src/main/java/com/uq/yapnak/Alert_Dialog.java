@@ -3,6 +3,8 @@ package com.uq.yapnak;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
@@ -59,7 +61,8 @@ public class Alert_Dialog {
     }
 
     public void internetConnectionError() {
-        new AlertDialog.Builder(context)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context)
                 .setTitle(R.string.internet_error_title)
                 .setMessage(R.string.internet_error)
                 .setPositiveButton(R.string.internet_error_try_again, new DialogInterface.OnClickListener() {
@@ -69,8 +72,29 @@ public class Alert_Dialog {
                             context.startActivity(intent);
                         }
                     }
-                })
-                .setNegativeButton(R.string.internet_error_cancel, new DialogInterface.OnClickListener() {
+                });
+        if (prefs.getBoolean("data", false)) {
+            alert.setNegativeButton(R.string.internet_error_cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        } else {
+            alert.setNegativeButton(R.string.internet_error_toggle, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(context, AppSettings.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
+        alert.show();
+    }
+
+    public void passwordResetSuccess() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.password_reset_success_title)
+                .setMessage(R.string.password_reset_success)
+                .setPositiveButton(R.string.password_reset_success_button, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
@@ -78,4 +102,39 @@ public class Alert_Dialog {
                 .show();
     }
 
+    public void passwordResetFail() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.password_reset_fail_title)
+                .setMessage(R.string.password_reset_fail)
+                .setPositiveButton(R.string.password_reset_fail_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void passwordMismatch() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.password_reset_mismatch_title)
+                .setMessage(R.string.password_reset_mismatch)
+                .setPositiveButton(R.string.password_reset_mismatch_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void passwordDetailsMissing() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.password_reset_missing_title)
+                .setMessage(R.string.password_reset_missing)
+                .setPositiveButton(R.string.password_reset_missing_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 }

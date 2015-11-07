@@ -1381,7 +1381,7 @@ public class UserEndpoint {
                 }
                 logger.info("Updated forgot table, sending email");
                 String subject = "Yapnak password reset";
-                String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/userPasswordReset?response=" + reset + "\n\nThis link will be active for one day.\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
+                String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/userPasswordReset?response=" + reset + "\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
                 sendEmail(email, subject, message);
                 logger.info("Email sent");
                 response.setStatus("True");
@@ -1461,6 +1461,69 @@ public class UserEndpoint {
                     response.setMessage("Deleting forgot row failed for " + hash);
                     break queryBlock;
                 }
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "inAppPasswordReset",
+            path = "inAppPasswordReset",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity inAppPasswordReset(@Named("password") String password, @Named("current") String current, @Named("userId") String userId) throws ClassNotFoundException, SQLException {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT password FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    // User does not exist
+                    response.setStatus("False");
+                    response.setMessage("User not found: " + userId);
+                    logger.warning("User not found: " + userId);
+                    break queryBlock;
+                }
+                logger.info("Found user " + userId + ", checking current password");
+                if (!rs.getString("password").equals(hashPassword(current))) {
+                    //Passwords don't match
+                    response.setStatus("False");
+                    response.setMessage("Current password does not match");
+                    logger.warning("Current password does not match");
+                    break queryBlock;
+                }
+                logger.info("Passwords match");
+                query = "UPDATE user SET password = ? WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, hashPassword(password));
+                statement.setString(2, userId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Update failed
+                    logger.warning("Updating user password failed");
+                    response.setStatus("False");
+                    response.setMessage("Updating user password failed");
+                    break queryBlock;
+                }
+                logger.info("Updated password");
                 response.setStatus("True");
             } finally {
                 connection.close();

@@ -140,7 +140,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerSettings(View item) {
-        Intent intent = new Intent(this, Settings.class);
+        Intent intent = new Intent(this, AppSettings.class);
         startActivity(intent);
     }
 

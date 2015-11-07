@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 
 import com.parse.ParseInstallation;
 
@@ -19,8 +20,9 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
         final String userId = data.getString("userID", null);
+        final boolean rememberMe = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("remember_me", false);
         new About_Async(this).execute();
-        if (userId != null) {
+        if (userId != null && rememberMe) {
             ParseInstallation.getCurrentInstallation().put("userId", userId);
             ParseInstallation.getCurrentInstallation().saveInBackground();
             new Handler().postDelayed(new Runnable() {
