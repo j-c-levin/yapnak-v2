@@ -40,7 +40,7 @@
     <string name="internet_error_cancel">I\'ll my data on</string>
     <string name="internet_error_toggle">Change app settings</string>
     <string name="connection_error_title">Connection error</string>
-    <string name="connection_error">Some sort of play services connection error.  Is it up to date?</string>
+    <string name="connection_error">Some sort of play services error, have you updated google play services?</string>
     <string name="connection_error_try_again">Hm...</string>
     <string name="gps_error_title">Location error</string>
     <string name="gps_error">We can\'t seem to find your location, have you enabled location from the device settings menu?</string>

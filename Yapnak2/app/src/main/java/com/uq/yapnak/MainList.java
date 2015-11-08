@@ -16,7 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -50,6 +52,9 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     DrawerLayout lMenu;
     ActionBarDrawerToggle lMenuToggle;
     SwipeRefreshLayout content;
+    FrameLayout lMenuLayout;
+    ListView lMenuList;
+    String[] lMenuListContent = {"Meals", "Favourites", "Loyalty", "Profile", "", "About", "Settings", "Help", "Sign Out"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         setContentView(R.layout.activity_main_list);
         lMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
         content = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        lMenuLayout = (FrameLayout) findViewById(R.id.content_frame);
+//        lMenuList = (ListView) findViewById(R.id.left_drawer);
 
         //Save userId locally
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
@@ -82,19 +89,20 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerSetup() {
+//        lMenuList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, lMenuListContent));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         lMenuToggle = new ActionBarDrawerToggle(this, lMenu, R.string.app_name, R.string.app_id) {
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                content.setClickable(true);
+//                lMenu.bringToFront();
+//                lMenuLayout.requestLayout();
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                content.setClickable(false);
             }
         };
         lMenu.setDrawerListener(lMenuToggle);

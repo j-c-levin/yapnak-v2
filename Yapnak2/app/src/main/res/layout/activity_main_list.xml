@@ -11,39 +11,47 @@
         android:layout_height="match_parent">
 
         <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.uq.yapnak.MainList"
-            android:id="@+id/content">
+            tools:context="com.uq.yapnak.MainList">
 
-            <!-- A RecyclerView with some commonly used attributes -->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_list"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:scrollbars="vertical" />
 
         </RelativeLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <!--<ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/colorPrimaryDark"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp" />-->
+
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="240dp"
-        android:layout_gravity="start"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
         android:background="@color/colorPrimaryDark"
         android:clickable="true">
 
-        <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.uq.yapnak.MainList"
-            android:paddingTop="30dp"
-            android:orientation="vertical">
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:orientation="vertical"
+            tools:context="com.uq.yapnak.MainList">
 
             <TextView
                 android:id="@+id/menu_meals"
@@ -52,25 +60,31 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerMeals"
                 android:text="Meals"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:layout_marginLeft="20dp"
                 android:textColor="#ffffff"
-                android:onClick="drawerMeals"/>
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_favourites"
-                android:text="Favourites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_meals"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerFavourites"
+                android:text="Favourites"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerFavourites" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_loyalty"
@@ -78,35 +92,42 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_favourites"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerLoyalty"
                 android:text="Loyalty"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerLoyalty" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_below="@+id/menu_loyalty"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:onClick="drawerProfile"
                 android:text="Profile"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerProfile" />
+                android:textSize="20sp" />
 
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="100dp"
                 android:layout_height="20dp"
-                android:id="@+id/imageView"
-                android:background="@drawable/underline"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_profile"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:background="@drawable/underline" />
 
             <TextView
                 android:id="@+id/menu_about"
@@ -114,13 +135,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/imageView"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerAbout"
                 android:text="About"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerAbout" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_settings"
@@ -128,13 +152,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_about"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerSettings"
                 android:text="Settings"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerSettings" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_help"
@@ -142,13 +169,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_settings"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerHelp"
                 android:text="Help"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerHelp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/menu_sign_out"
@@ -156,14 +186,17 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
+                android:layout_below="@+id/menu_help"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:onClick="drawerSignOut"
                 android:text="Sign Out"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ffffff"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:onClick="drawerSignOut" />
+                android:textSize="20sp" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="220dp"
         android:layout_gravity="center_horizontal"
         android:elevation="100dp"
         android:textAlignment="center">
@@ -58,10 +58,11 @@
             android:text="@string/default_offer"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#ffffff"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:alpha="100"
-            android:layout_alignParentStart="false" />
+            android:layout_alignParentStart="false"
+            android:textIsSelectable="false" />
 
         <TextView
             android:id="@+id/client_name"
@@ -75,7 +76,7 @@
             android:text="@string/default_client_name"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#dd3a3a"
-            android:textSize="12sp"
+            android:textSize="15sp"
             android:textStyle="italic"
             android:alpha="100" />
 
@@ -93,9 +94,10 @@
             android:text="@string/default_offer_distance"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#ffffff"
-            android:textSize="12sp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:alpha="100" />
+            android:alpha="100"
+            android:textIsSelectable="false" />
 
         <Button
             android:layout_width="wrap_content"
@@ -103,29 +105,30 @@
             android:text="@string/get"
             android:id="@+id/get"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:textColor="#ffffff"
             android:textStyle="bold"
             android:background="#00ffffff"
-            android:textSize="30sp"
-            android:layout_marginTop="35dp"
+            android:textSize="45sp"
+            android:layout_marginTop="60dp"
             android:onClick="onGetClick"
             android:alpha="0"
             android:nestedScrollingEnabled="false"
             android:clickable="false"
-            android:enabled="false" />
+            android:enabled="false"
+            android:layout_centerHorizontal="true" />
 
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/favourite"
             android:src="@drawable/heart"
             android:scaleType="fitXY"
             android:background="#00050505"
             android:tint="#ff0000"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="55dp"
             android:onClick="onFavouriteClick"
             android:layout_alignTop="@+id/rate"
+            android:layout_toLeftOf="@+id/get"
             android:layout_toStartOf="@+id/get"
             android:alpha="0"
             android:nestedScrollingEnabled="false"
@@ -134,26 +137,25 @@
             android:contentDescription="@string/favourite_button" />
 
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/rate"
             android:src="@drawable/favourite"
             android:background="#00050505"
             android:tint="#ff0000"
             android:scaleType="fitXY"
             android:onClick="onRateClick"
-            android:layout_alignBottom="@+id/offer_text"
-            android:layout_alignLeft="@+id/get"
-            android:layout_alignStart="@+id/get"
             android:alpha="0"
             android:nestedScrollingEnabled="false"
             android:clickable="false"
             android:contentDescription="@string/rate_button"
-            android:layout_marginLeft="5dp" />
+            android:layout_alignBottom="@+id/offer_text"
+            android:layout_alignLeft="@+id/get"
+            android:layout_marginLeft="-15dp" />
 
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/location"
             android:src="@drawable/location"
             android:background="#00050505"
@@ -165,12 +167,13 @@
             android:nestedScrollingEnabled="false"
             android:clickable="false"
             android:contentDescription="@string/location_button"
+            android:layout_alignParentEnd="false"
             android:layout_alignRight="@+id/get"
-            android:layout_marginRight="5dp" />
+            android:layout_marginRight="-20dp" />
 
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/recommend"
             android:background="#00050505"
             android:tint="#d16f6f6f"
@@ -184,7 +187,7 @@
             android:layout_alignParentEnd="false"
             android:clickable="false"
             android:contentDescription="@string/recommend_button"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="55dp" />
 
         <TextView
             android:layout_width="0dp"

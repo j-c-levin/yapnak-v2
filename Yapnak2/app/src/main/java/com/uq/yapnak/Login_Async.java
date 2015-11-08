@@ -3,6 +3,7 @@ package com.uq.yapnak;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -45,6 +46,10 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
                 SharedPreferences.Editor editor = data.edit();
                 editor.putString("userID", response.getUserId());
                 // Commit the edits!
+                editor.commit();
+                data = PreferenceManager.getDefaultSharedPreferences(login.getApplicationContext());
+                editor = data.edit();
+                editor.putBoolean("remember_me", true);
                 editor.commit();
                 ParseInstallation.getCurrentInstallation().put("userId",  response.getUserId());
                 ParseInstallation.getCurrentInstallation().saveInBackground();

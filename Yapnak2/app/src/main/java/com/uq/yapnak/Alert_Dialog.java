@@ -36,7 +36,7 @@ public class Alert_Dialog {
     public void connectionError(ConnectionResult r) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.connection_error_title)
-                .setMessage(R.string.connection_error + " " + r.toString())
+                .setMessage(R.string.connection_error)
                 .setPositiveButton(R.string.connection_error_try_again, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
