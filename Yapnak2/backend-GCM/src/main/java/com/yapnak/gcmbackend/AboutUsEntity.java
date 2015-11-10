@@ -12,6 +12,7 @@ public class AboutUsEntity {
     String status;
     String message;
     String aboutUs;
+//    byte[] aboutUs;
 
     public String getStatus() {
         return status;

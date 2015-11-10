@@ -14,5 +14,6 @@
         android:text="Medium Text"
         android:id="@+id/about_text"
         android:textColor="#545454"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:nestedScrollingEnabled="true" />
 </LinearLayout>

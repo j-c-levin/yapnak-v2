@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.uq.yapnak" >
+    package="com.uq.yapnak">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -21,34 +21,37 @@
 
     <application
         android:name=".MainApplication"
-        android:screenOrientation="portrait"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".Landing"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".Landing" >
+            android:parentActivityName=".Landing">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uq.yapnak.Landing" />
         </activity>
-        <activity android:name=".MainList" >
-        </activity>
+        <activity android:name=".MainList"></activity>
         <activity
             android:name=".QRCodeActivity"
-            android:theme="@style/myDialogTheme" >
-        </activity>
+            android:theme="@style/myDialogTheme"></activity>
         <activity
             android:name=".SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,7 +63,7 @@
 
         <receiver
             android:name="com.uq.yapnak.Receiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.example.UPDATE_STATUS" />
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -70,7 +73,7 @@
         </receiver>
         <receiver
             android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -85,24 +88,28 @@
 
         <activity
             android:name=".RatingActivity"
-            android:theme="@style/myDialogTheme" >
-        </activity>
+            android:theme="@style/myDialogTheme"></activity>
         <activity
             android:name=".About"
-            android:label="@string/title_activity_about" >
+            android:label="@string/title_activity_about">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uq.yapnak.MainList" />
         </activity>
         <activity
             android:name=".AppSettings"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uq.yapnak.MainList" />
         </activity>
-        <activity android:name=".NewPassword" android:theme="@style/myDialogTheme" android:label="" >
-        </activity>
+        <activity
+            android:name=".NewPassword"
+            android:label=""
+            android:theme="@style/myDialogTheme"></activity>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
     </application>
 
 </manifest>

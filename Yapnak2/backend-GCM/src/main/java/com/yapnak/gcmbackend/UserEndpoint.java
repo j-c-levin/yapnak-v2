@@ -189,7 +189,7 @@ public class UserEndpoint {
                 PreparedStatement statement;
                 String userId;
                 if (email != null) {
-                    query = "SELECT COUNT(*) FROM user WHERE email = ?";
+                    query = "SELECT COUNT(*),userID FROM user WHERE email = ?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, email);
                     userId = email;
@@ -213,6 +213,7 @@ public class UserEndpoint {
                     //User already exists in the system
                     response.setStatus("False");
                     response.setMessage("User already registered");
+                    response.setUserId(rs.getString("userID"));
                     logger.warning("User already registered");
                     break queryBlock;
                 }
@@ -645,7 +646,7 @@ public class UserEndpoint {
                     hour = 23 + (hour + 1);
                 }
                 logger.info("Hour is: " + hour);
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -768,7 +769,7 @@ public class UserEndpoint {
                     hour = 23 + (hour + 1);
                 }
                 logger.info("Hour is: " + hour);
-                query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
+                query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 double t = longitude - distance;
@@ -1630,7 +1631,19 @@ public class UserEndpoint {
     public AboutUsEntity aboutUs() {
         AboutUsEntity response = new AboutUsEntity();
         response.setStatus("True");
-        String s = "This is the Yapnak about us page.  This text will change in due course.";
+        String s = "At Yapnak we love good food but don't always have the time to find it at lunch. As food pioneers, we want to be shown where to get the best lunch, within walking distance, quickly and easily.  As a Yapnak user, you get this experience!\n\nEvery restaurant meal comes at the set price of a fiver - one less thing to worry about at lunchtime!\n\nFind what you fancy with 0 clicks, hit 'Get' to present your QR code in store and pick up your lunch.\n\nFavourite the best meals and we'll remind you as and when they return to Yapnak.\n\nRemember to recommend meals you particularly like to other pioneers!\n\nWelcome to the Yapnak club. TEST";
+//        try {
+//            s = URLEncoder.encode(s, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        byte[] converttoBytes = new byte[0];
+//        try {
+//            converttoBytes = s.getBytes("UTF-8");
+////            s = new String(converttoBytes, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
         response.setAboutUs(s);
         return response;
     }

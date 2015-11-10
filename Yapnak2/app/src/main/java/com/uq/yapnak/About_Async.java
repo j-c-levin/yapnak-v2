@@ -10,6 +10,7 @@ import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AboutUsEntity;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Joshua on 07/11/2015.
@@ -38,7 +39,14 @@ public class About_Async extends AsyncTask<Void, Void, AboutUsEntity> {
         if (Boolean.parseBoolean(response.getStatus())) {
             SharedPreferences data = context.getSharedPreferences("Yapnak", 0);
             SharedPreferences.Editor editor = data.edit();
-            editor.putString("about", response.getAboutUs());
+            String s = "";
+            try {
+//                s = URLDecoder.decode(response.getAboutUs(), "UTF-8");
+                s = new String(response.getAboutUs().getBytes(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            editor.putString("about", s);
             editor.commit();
         }
     }

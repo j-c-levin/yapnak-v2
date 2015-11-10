@@ -25,6 +25,8 @@
     <string name="title_activity_main_list">Yapnak</string>
     <string name="get">GET</string>
     <string name="offer_image">Main Offer Image</string>
+    <string name="action_search">Search</string>
+    <string name="facebook_app_id">187212851619372</string>
 
     <!--Parse-->
     <string name="app_id">ICChql4X4IPaEOxle6RRG0t16WnMT7Ej5oyPCMYJ</string>
