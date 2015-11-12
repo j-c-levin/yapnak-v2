@@ -36,8 +36,10 @@ public class GetFavourites_Async extends AsyncTask<Double, Void, OfferListEntity
 
     protected void onPostExecute(OfferListEntity response) {
         mainList.swipeRefreshLayout.setRefreshing(false);
-        if (Boolean.parseBoolean(response.getStatus())) {
+        if (Boolean.parseBoolean(response.getStatus()) && response.getFoundOffers()) {
             mainList.loadOffers(response);
+        } else {
+            mainList.noOffers();
         }
     }
 }

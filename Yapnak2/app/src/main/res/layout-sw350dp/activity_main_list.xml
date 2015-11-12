@@ -42,20 +42,20 @@
 
                     <ImageView
                         android:id="@+id/search_arrow"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="53dp"
+                        android:layout_height="53dp"
+                        android:layout_marginTop="4dp"
                         android:clickable="true"
                         android:onClick="search"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_keyboard_arrow_right_black_48dp"
                         android:tint="#ffffff"
-                        android:layout_marginTop="6dp"
                         android:layout_gravity="right"
-                        android:layout_marginRight="18dp" />
+                        android:layout_marginRight="15dp" />
 
                     <EditText
                         android:id="@+id/search_location"
-                        android:layout_width="290dp"
+                        android:layout_width="260dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="40dp"
                         android:layout_marginTop="9dp"

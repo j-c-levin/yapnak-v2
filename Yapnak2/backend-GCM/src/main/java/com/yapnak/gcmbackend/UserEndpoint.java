@@ -1682,6 +1682,7 @@ public class UserEndpoint {
                 //What does it mean?
                 logger.info("Retrieved favourites for " + userId);
                 response.setStatus("True");
+                response.setFoundOffers(true);
                 List<OfferEntity> list = new ArrayList<>();
                 OfferEntity f;
                 int x = 0;

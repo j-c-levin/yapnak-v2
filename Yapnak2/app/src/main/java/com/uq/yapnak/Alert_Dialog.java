@@ -137,4 +137,16 @@ public class Alert_Dialog {
                 })
                 .show();
     }
+
+    public void noOffersFound() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.no_offers_title)
+                .setMessage(R.string.no_offers)
+                .setPositiveButton(R.string.no_offers_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 }

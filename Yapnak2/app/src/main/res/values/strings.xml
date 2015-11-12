@@ -23,6 +23,9 @@
     </string>
 
     <string name="title_activity_main_list">Yapnak</string>
+    <string name="main_list">£5 Meals</string>
+    <string name="menu_closed">Menu closed</string>
+    <string name="menu_open">Menu open</string>
     <string name="get">GET</string>
     <string name="offer_image">Main Offer Image</string>
     <string name="action_search">Search</string>
@@ -66,5 +69,8 @@
     <string name="password_reset_missing_title">Fields missing</string>
     <string name="password_reset_missing">You appear to have missed some fields</string>
     <string name="password_reset_missing_button">I\'ll fill them in</string>
+    <string name="no_offers_title">No meals found</string>
+    <string name="no_offers">We can\'t seem to find any meals nearby.  We feel your pain...:(</string>
+    <string name="no_offers_button">I\'ll search elsewhere</string>
 
 </resources>

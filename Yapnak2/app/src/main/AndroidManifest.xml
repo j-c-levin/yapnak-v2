@@ -45,7 +45,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uq.yapnak.Landing" />
         </activity>
-        <activity android:name=".MainList"></activity>
+        <activity android:name=".MainList"  android:label="@string/main_list"></activity>
         <activity
             android:name=".QRCodeActivity"
             android:theme="@style/myDialogTheme"></activity>
@@ -92,9 +92,6 @@
         <activity
             android:name=".About"
             android:label="@string/title_activity_about">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.uq.yapnak.MainList" />
         </activity>
         <activity
             android:name=".AppSettings"

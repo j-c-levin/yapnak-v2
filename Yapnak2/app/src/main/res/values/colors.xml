@@ -7,4 +7,5 @@
     <color name="colorActivated">#c62828</color>
     <color name="colorHighlight">#d32f2f</color>
     <color name="colorSwitchNormal">#bdbdbd</color>
+    <color name="colorTransparent">#00ffffff</color>
 </resources>

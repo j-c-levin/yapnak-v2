@@ -31,6 +31,7 @@ dependencies {
     compile 'com.parse:parse-android:1.+'
     compile 'com.google.android.gms:play-services-location:8.1.0'
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
+    compile 'commons-io:commons-io:2.4'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
     compile files('src/main/libs/ParseFacebookUtilsV4-1.10.3.jar')
 }

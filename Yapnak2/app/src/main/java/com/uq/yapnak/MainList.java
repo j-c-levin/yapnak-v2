@@ -1,13 +1,13 @@
 package com.uq.yapnak;
 
 import android.animation.ValueAnimator;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,10 +18,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,7 +49,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
     int[] clickableViewIds = {R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
     private String userId;
-    ProgressDialog spinner;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -55,8 +57,13 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     ActionBarDrawerToggle lMenuToggle;
     SwipeRefreshLayout content;
     FrameLayout lMenuLayout;
-    ListView lMenuList;
-    String[] lMenuListContent = {"Meals", "Favourites", "Loyalty", "Profile", "", "About", "Settings", "Help", "Sign Out"};
+    ViewAnimator viewAnimator;
+    TextView aboutText;
+    String about;
+    View current;
+    SharedPreferences prefs;
+    boolean searchVisible = false;
+    Menu actionBarMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +72,15 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         lMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
         content = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         lMenuLayout = (FrameLayout) findViewById(R.id.content_frame);
-//        lMenuList = (ListView) findViewById(R.id.left_drawer);
+        viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator);
+        current = findViewById(R.id.menu_meals);
 
-        //Save userId locally
+        //Share userId locally
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
         userId = data.getString("userID", null);
+
+        //Hide search bar
+        initialToggleSearch();
 
         //Setup the recycler view
         setupRecycler();
@@ -91,15 +102,12 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerSetup() {
-//        lMenuList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, lMenuListContent));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        lMenuToggle = new ActionBarDrawerToggle(this, lMenu, R.string.app_name, R.string.app_id) {
+        lMenuToggle = new ActionBarDrawerToggle(this, lMenu, R.string.menu_closed, R.string.menu_open) {
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-//                lMenu.bringToFront();
-//                lMenuLayout.requestLayout();
             }
 
             /** Called when a drawer has settled in a completely open state. */
@@ -118,15 +126,51 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        actionBarMenu = menu;
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle
-        // If it returns true, then it has handled
-        // the nav drawer indicator touch event
+
         if (lMenuToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
+        if (item.getItemId() == Integer.valueOf(R.id.action_search)) {
+            toggleSearch();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    void initialToggleSearch() {
+        FrameLayout searchBar = (FrameLayout) findViewById(R.id.search_bar);
+        Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_hide);
+        showSearch.setFillAfter(true);
+        showSearch.setDuration(0);
+        searchBar.startAnimation(showSearch);
+    }
+
+    void toggleSearch() {
+        if (searchVisible) {
+            //Hide
+            FrameLayout searchBar = (FrameLayout) findViewById(R.id.search_bar);
+            Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_hide);
+            showSearch.setFillAfter(true);
+            searchBar.startAnimation(showSearch);
+
+            //Revert to nearby clients
+            getClients();
+        } else {
+            //Show
+            FrameLayout searchBar = (FrameLayout) findViewById(R.id.search_bar);
+            Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_show);
+            showSearch.setFillAfter(true);
+            searchBar.startAnimation(showSearch);
+        }
+        searchVisible = !searchVisible;
     }
 
     @Override
@@ -135,12 +179,42 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         lMenuToggle.syncState();
     }
 
+    public void search(View view) {
+        if (new ConnectionStatus(this).isConnected()) {
+            swipeRefreshLayout.setRefreshing(true);
+            View parent = (View) view.getParent();
+            EditText location = (EditText) parent.findViewById(R.id.search_location);
+            new Search_Async(this, userId).execute(location.getText().toString());
+        }
+    }
+
+    public void noOffers() {
+        new Alert_Dialog(this).noOffersFound();
+    }
+
+    void drawerItemClicked(View item) {
+        if (current != null) {
+            current.setBackgroundResource(0);
+        }
+        current = item;
+        item.setBackgroundResource(R.drawable.underline);
+        lMenu.closeDrawers();
+    }
+
     public void drawerMeals(View item) {
+        drawerItemClicked(item);
         getClients();
+        getSupportActionBar().setTitle("£5 Meals");
+        viewAnimator.setDisplayedChild(0);
+        actionBarMenu.findItem(R.id.action_search).setVisible(true);
     }
 
     public void drawerFavourites(View item) {
+        drawerItemClicked(item);
         getFavourites();
+        viewAnimator.setDisplayedChild(0);
+        getSupportActionBar().setTitle("Favourites");
+        actionBarMenu.findItem(R.id.action_search).setVisible(false);
     }
 
     public void drawerLoyalty(View item) {
@@ -152,13 +226,37 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerAbout(View item) {
-        Intent intent = new Intent(this, About.class);
-        startActivity(intent);
+        drawerItemClicked(item);
+        getSupportActionBar().setTitle("About us");
+        aboutText = (TextView) findViewById(R.id.about_text);
+        SharedPreferences data = getSharedPreferences("Yapnak", 0);
+        about = data.getString("about", null);
+        aboutText.setText(about);
+        viewAnimator.setDisplayedChild(1);
+        actionBarMenu.findItem(R.id.action_search).setVisible(false);
     }
 
     public void drawerSettings(View item) {
-        Intent intent = new Intent(this, AppSettings.class);
-        startActivity(intent);
+        drawerItemClicked(item);
+        getSupportActionBar().setTitle("Settings");
+        viewAnimator.setDisplayedChild(2);
+        getFragmentManager().beginTransaction().replace(R.id.settings_frame, new PrefsFragment()).commit();
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.OnSharedPreferenceChangeListener listener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    final Context context = MainList.this;
+
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        if (key.equals("password")) {
+                            if (prefs.getBoolean(key, false)) {
+                                Intent intent = new Intent(context, NewPassword.class);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                };
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+        actionBarMenu.findItem(R.id.action_search).setVisible(false);
     }
 
     public void drawerHelp(View item) {
@@ -253,7 +351,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             } else {
                 buildGoogleApiClient();
             }
-            lMenu.closeDrawers();
         }
     }
 
@@ -271,7 +368,6 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             } else {
                 buildGoogleApiClient();
             }
-            lMenu.closeDrawers();
         }
     }
 
