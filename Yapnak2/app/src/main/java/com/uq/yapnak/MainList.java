@@ -1,6 +1,7 @@
 package com.uq.yapnak;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,20 +15,26 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.KeyListener;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.parse.ParsePush;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
@@ -64,6 +71,9 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     SharedPreferences prefs;
     boolean searchVisible = false;
     Menu actionBarMenu;
+    EditText searchText;
+    ImageView searchButton;
+    static final String wip = "You've caught us early, we're still working on this.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +84,12 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         lMenuLayout = (FrameLayout) findViewById(R.id.content_frame);
         viewAnimator = (ViewAnimator) findViewById(R.id.viewAnimator);
         current = findViewById(R.id.menu_meals);
+        searchText = (EditText) findViewById(R.id.search_location);
+        searchButton = (ImageView) findViewById(R.id.search_arrow);
+
+        //Enable text scrolling in the about us page
+        aboutText = (TextView) findViewById(R.id.about_text);
+        aboutText.setMovementMethod(new ScrollingMovementMethod());
 
         //Share userId locally
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
@@ -151,24 +167,45 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         showSearch.setFillAfter(true);
         showSearch.setDuration(0);
         searchBar.startAnimation(showSearch);
+        searchText.setTag(searchText.getKeyListener());
+        searchText.setKeyListener(null);
+        searchButton.setClickable(false);
     }
 
     void toggleSearch() {
+        //Hide keyboard
+        hideSoftKeyboard();
+
         if (searchVisible) {
+
             //Hide
             FrameLayout searchBar = (FrameLayout) findViewById(R.id.search_bar);
-            Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_hide);
-            showSearch.setFillAfter(true);
-            searchBar.startAnimation(showSearch);
-
+            Animation hideSearch = AnimationUtils.loadAnimation(this, R.anim.search_hide);
+            hideSearch.setFillAfter(true);
+            searchBar.startAnimation(hideSearch);
+            Animation moveContent = AnimationUtils.loadAnimation(this, R.anim.main_list_up);
+            moveContent.setFillAfter(true);
+            content.findViewById(R.id.recycler_list).startAnimation(moveContent);
+            searchText.setKeyListener(null);
+            searchText.setText("");
+            searchButton.setClickable(false);
             //Revert to nearby clients
-            getClients();
+            if (mLastLocation != null) {
+                getClients();
+            } else {
+                createLocationRequest();
+            }
         } else {
             //Show
             FrameLayout searchBar = (FrameLayout) findViewById(R.id.search_bar);
             Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_show);
             showSearch.setFillAfter(true);
             searchBar.startAnimation(showSearch);
+            Animation moveContent = AnimationUtils.loadAnimation(this, R.anim.main_list_down);
+            moveContent.setFillAfter(true);
+            content.findViewById(R.id.recycler_list).startAnimation(moveContent);
+            searchText.setKeyListener((KeyListener) searchText.getTag());
+            searchButton.setClickable(true);
         }
         searchVisible = !searchVisible;
     }
@@ -181,11 +218,17 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
 
     public void search(View view) {
         if (new ConnectionStatus(this).isConnected()) {
+            hideSoftKeyboard();
             swipeRefreshLayout.setRefreshing(true);
             View parent = (View) view.getParent();
             EditText location = (EditText) parent.findViewById(R.id.search_location);
             new Search_Async(this, userId).execute(location.getText().toString());
         }
+    }
+
+    public void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
     public void noOffers() {
@@ -218,17 +261,16 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerLoyalty(View item) {
-
+        Toast.makeText(this, wip, Toast.LENGTH_SHORT).show();
     }
 
     public void drawerProfile(View item) {
-
+        Toast.makeText(this, wip, Toast.LENGTH_SHORT).show();
     }
 
     public void drawerAbout(View item) {
         drawerItemClicked(item);
         getSupportActionBar().setTitle("About us");
-        aboutText = (TextView) findViewById(R.id.about_text);
         SharedPreferences data = getSharedPreferences("Yapnak", 0);
         about = data.getString("about", null);
         aboutText.setText(about);
@@ -260,7 +302,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void drawerHelp(View item) {
-
+        Toast.makeText(this, wip, Toast.LENGTH_SHORT).show();
     }
 
     public void drawerSignOut(View item) {
@@ -322,8 +364,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
                 if (new ConnectionStatus(context).isConnected() && new GpsStatus(context).isEnabled()) {
                     if (mGoogleApiClient != null) {
                         if (mLastLocation == null) {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                            getClients();
+                            createLocationRequest();
                         } else {
                             getClients();
                         }
@@ -341,9 +382,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
             if (mGoogleApiClient != null) {
                 if (mLastLocation == null) {
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    swipeRefreshLayout.setRefreshing(true);
-                    new GetOffers_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    createLocationRequest();
                 } else {
                     swipeRefreshLayout.setRefreshing(true);
                     new GetOffers_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -358,9 +397,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
         if (new ConnectionStatus(this).isConnected() && new GpsStatus(this).isEnabled()) {
             if (mGoogleApiClient != null) {
                 if (mLastLocation == null) {
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    swipeRefreshLayout.setRefreshing(true);
-                    new GetFavourites_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
                 } else {
                     swipeRefreshLayout.setRefreshing(true);
                     new GetFavourites_Async(this, userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -518,7 +555,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void onRecommendClick(View card) {
-
+        Toast.makeText(this, wip, Toast.LENGTH_SHORT).show();
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -534,9 +571,26 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation == null) {
+            swipeRefreshLayout.setRefreshing(true);
+            createLocationRequest();
         } else {
             getClients();
         }
+    }
+
+    protected void createLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(2000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, new com.google.android.gms.location.LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                onConnected(new Bundle());
+                LocationServices.FusedLocationApi.removeLocationUpdates(
+                        mGoogleApiClient, this);
+            }
+        });
     }
 
     @Override

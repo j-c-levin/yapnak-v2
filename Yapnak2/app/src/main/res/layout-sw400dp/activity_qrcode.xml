@@ -6,8 +6,8 @@
     android:gravity = "center">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="400dp"
+        android:layout_width="430dp"
+        android:layout_height="550dp"
         android:background="@drawable/layoutborder"
         android:padding="5dp">
 
@@ -30,7 +30,8 @@
             android:layout_centerHorizontal="true"
             android:textColor="#ffffff"
             android:layout_marginTop="10dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textSize="30sp" />
 
         <Button
             style="@style/login_button"

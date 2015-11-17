@@ -1,6 +1,7 @@
 package com.uq.yapnak;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 /**
  * Created by Joshua on 11/11/2015.
@@ -36,12 +38,13 @@ public class Search_Async extends AsyncTask<String, Void, OfferListEntity> {
         double longitude = 0.0;
         double latitude = 0.0;
         try {
-            connection = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + strings[0]).openConnection();
+            connection = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(strings[0], "UTF-8")).openConnection();
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             InputStream response = connection.getInputStream();
             JSONObject json = new JSONObject(IOUtils.toString(response));
             longitude = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
             latitude = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+            Log.d("debug", "at: " + longitude + " " + latitude);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

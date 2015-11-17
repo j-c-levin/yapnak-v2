@@ -51,11 +51,11 @@
                         android:src="@drawable/ic_keyboard_arrow_right_black_48dp"
                         android:tint="#ffffff"
                         android:layout_gravity="right"
-                        android:layout_marginRight="15dp" />
+                        android:layout_marginRight="19dp" />
 
                     <EditText
                         android:id="@+id/search_location"
-                        android:layout_width="260dp"
+                        android:layout_width="250dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="40dp"
                         android:layout_marginTop="9dp"
@@ -63,7 +63,8 @@
                         android:capitalize="characters"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textSize="23sp" />
 
                 </FrameLayout>
 
@@ -170,7 +171,7 @@
                 android:onClick="drawerLoyalty"
                 android:text="Loyalty"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <TextView
@@ -185,7 +186,7 @@
                 android:onClick="drawerProfile"
                 android:text="Profile"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <ImageView
@@ -247,7 +248,7 @@
                 android:onClick="drawerHelp"
                 android:text="Help"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <TextView

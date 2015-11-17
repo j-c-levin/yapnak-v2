@@ -44,26 +44,27 @@
                         android:id="@+id/search_arrow"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:layout_marginTop="-5dp"
                         android:clickable="true"
                         android:onClick="search"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_keyboard_arrow_right_black_48dp"
                         android:tint="#ffffff"
                         android:layout_gravity="right"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="-5dp" />
+                        android:layout_marginRight="10dp" />
 
                     <EditText
                         android:id="@+id/search_location"
-                        android:layout_width="499dp"
+                        android:layout_width="350dp"
                         android:layout_height="62dp"
                         android:layout_marginLeft="40dp"
-                        android:layout_marginTop="9dp"
+                        android:layout_marginTop="6dp"
                         android:background="#00ffffff"
                         android:capitalize="characters"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:textSize="30sp" />
 
                 </FrameLayout>
 
@@ -90,7 +91,8 @@
                 android:nestedScrollingEnabled="true"
                 android:text="Medium Text"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#545454" />
+                android:textColor="#545454"
+                android:textSize="22sp" />
         </LinearLayout>
 
         <FrameLayout
@@ -169,7 +171,7 @@
                 android:onClick="drawerLoyalty"
                 android:text="Loyalty"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <TextView
@@ -184,7 +186,7 @@
                 android:onClick="drawerProfile"
                 android:text="Profile"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <ImageView
@@ -246,7 +248,7 @@
                 android:onClick="drawerHelp"
                 android:text="Help"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffff"
+                android:textColor="@color/colorDeactivated"
                 android:textSize="20sp" />
 
             <TextView

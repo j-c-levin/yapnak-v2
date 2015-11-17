@@ -108,13 +108,13 @@
             android:textSize="35sp"
             android:layout_marginTop="50dp"
             android:onClick="onGetClick"
-            android:alpha="0"
             android:nestedScrollingEnabled="false"
             android:clickable="false"
             android:enabled="false"
             android:layout_alignParentTop="false"
             android:background="@drawable/button_background"
-            android:layout_alignParentStart="false" />
+            android:layout_alignParentStart="false"
+            android:alpha="0" />
 
         <ImageButton
             android:layout_width="30dp"

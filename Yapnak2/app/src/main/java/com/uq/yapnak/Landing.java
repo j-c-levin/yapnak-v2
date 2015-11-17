@@ -51,6 +51,16 @@ public class Landing extends AppCompatActivity {
         }
     }
 
+    public void toRegister(View view) {
+        try {
+            Intent intent = new Intent(this, Register.class);
+            startActivityForResult(intent, 0);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void facebookLogin(View view) {
 
         List<String> permissions = Arrays.asList("public_profile", "email");

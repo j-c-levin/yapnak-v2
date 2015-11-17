@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/overshoot_interpolator"
+    android:shareInterpolator="true"
+    android:fillAfter="true">
+
+    <translate
+        android:duration="@integer/register_duration"
+        android:fromYDelta="100%"
+        android:startOffset="@integer/register_delay_offset"
+        android:toYDelta="50%" />
+
+</set>

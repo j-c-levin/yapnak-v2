@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="register_delay_offset">500</integer>
+    <integer name="register_delay_offset_second">100</integer>
+    <integer name="register_duration">500</integer>
+</resources>

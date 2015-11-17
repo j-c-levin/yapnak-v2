@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true"
+    android:interpolator="@android:anim/anticipate_interpolator"
+    android:shareInterpolator="true">
+
+    <translate
+        android:duration="@integer/register_duration"
+        android:fromYDelta="0%"
+        android:startOffset="@integer/register_delay_offset"
+        android:toYDelta="100%" />
+
+</set>

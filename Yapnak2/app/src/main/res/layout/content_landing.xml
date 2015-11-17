@@ -71,7 +71,8 @@
         android:layout_alignRight="@+id/Facebook"
         android:layout_alignEnd="@+id/Facebook"
         android:textSize="20sp"
-        style="@style/login_button" />
+        style="@style/login_button"
+        android:onClick="toRegister" />
 
     <Button
         android:layout_width="wrap_content"

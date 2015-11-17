@@ -1631,19 +1631,8 @@ public class UserEndpoint {
     public AboutUsEntity aboutUs() {
         AboutUsEntity response = new AboutUsEntity();
         response.setStatus("True");
-        String s = "At Yapnak we love good food but don't always have the time to find it at lunch. As food pioneers, we want to be shown where to get the best lunch, within walking distance, quickly and easily.  As a Yapnak user, you get this experience!\n\nEvery restaurant meal comes at the set price of a fiver - one less thing to worry about at lunchtime!\n\nFind what you fancy with 0 clicks, hit 'Get' to present your QR code in store and pick up your lunch.\n\nFavourite the best meals and we'll remind you as and when they return to Yapnak.\n\nRemember to recommend meals you particularly like to other pioneers!\n\nWelcome to the Yapnak club. TEST";
-//        try {
-//            s = URLEncoder.encode(s, "UTF-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        byte[] converttoBytes = new byte[0];
-//        try {
-//            converttoBytes = s.getBytes("UTF-8");
-////            s = new String(converttoBytes, "UTF-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
+        String s = "At Yapnak we love good food but don't always have the time to find it at lunch. As food pioneers, we want to be shown where to get the best lunch, within walking distance, quickly and easily.  As a Yapnak user, you get this experience!\n\nEvery restaurant meal comes at the set price of a fiver - one less thing to worry about at lunchtime!\n\nFind what you fancy with 0 clicks, hit 'Get' to present your QR code in store and pick up your lunch.\n\nFavourite the best meals and we'll remind you as and when they return to Yapnak.\n\nRemember to recommend meals you particularly like to other pioneers!\n\nWelcome to the Yapnak club.";
+
         response.setAboutUs(s);
         return response;
     }
