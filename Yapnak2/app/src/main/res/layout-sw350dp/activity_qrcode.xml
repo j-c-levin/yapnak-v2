@@ -33,17 +33,17 @@
             android:textStyle="bold" />
 
         <Button
-            style="@style/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/close_qr"
             android:textColor="@color/colorPrimary"
-            android:background="#00ffffff"
+            android:background="@drawable/qr_close"
             android:text="Close"
             android:onClick="close"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"
+            style="@style/login_button" />
     </RelativeLayout>
 
 </FrameLayout>

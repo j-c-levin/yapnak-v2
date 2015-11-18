@@ -12,6 +12,8 @@ import com.parse.ParseInstallation;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
 
+import java.io.IOException;
+
 /**
  * Created by Joshua on 13/11/2015.
  */
@@ -27,16 +29,16 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
     protected RegisterUserEntity doInBackground(String... strings) {
         UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         RegisterUserEntity response = new RegisterUserEntity();
-        Log.d("debug", strings[0] + " " + strings[1] + " " + strings[2]);
-//        try {
-//            response = userApi.registerUser(strings[0]).setMobNo(strings[1]).setEmail(strings[2]).execute();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            response = userApi.registerUser(strings[0]).setMobNo(strings[1]).setEmail(strings[2]).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return response;
     }
 
     protected void onPostExecute(RegisterUserEntity response) {
+        register.spinner.hide();
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
             try {
@@ -59,6 +61,8 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            Log.d("debug", response.getMessage());
         }
     }
 }

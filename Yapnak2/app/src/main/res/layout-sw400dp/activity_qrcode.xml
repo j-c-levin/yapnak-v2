@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/close_qr"
             android:textColor="@color/colorPrimary"
-            android:background="#00ffffff"
+            android:background="@drawable/qr_close"
             android:text="Close"
             android:onClick="close"
             android:layout_centerHorizontal="true"

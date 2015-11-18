@@ -2,6 +2,7 @@ package com.uq.yapnak;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.method.KeyListener;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,13 +23,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Register extends AppCompatActivity {
 
@@ -49,6 +53,7 @@ public class Register extends AppCompatActivity {
     String email;
     String mobileNumber;
     String password;
+    ProgressDialog spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +75,25 @@ public class Register extends AppCompatActivity {
         registerContinue.setClickable(false);
 
         setupRecycler();
-        new GetRegistrationOffers_Async(this, "josh5721").execute(51.517273, -0.061330);
+//        new GetRegistrationOffers_Async(this, "josh5721").execute(51.517273, -0.061330);
+        OfferListEntity e = new OfferListEntity();
+        List<OfferEntity> l = new ArrayList();
+        OfferEntity o = new OfferEntity();
+        o.setDistance("1 minute");
+        o.setOfferText("Nutella Banana with hot drink or coke");
+        o.setClientName("The Crepe Shop and Art Cafe");
+        o.setFavourite(false);
+        o.setClientOfferPhoto("https://yapnak-app.appspot.com/images/4.jpg");
+        l.add(o);
+        o = new OfferEntity();
+        o.setDistance("1 minute");
+        o.setOfferText("Chicken donor wrap and soft drink");
+        o.setClientName("Efes Bricklane");
+        o.setFavourite(false);
+        o.setClientOfferPhoto("https://yapnak-app.appspot.com/images/3.jpg");
+        l.add(o);
+        e.setOfferList(l);
+        loadOffers(e);
     }
 
     public void loadOffers(OfferListEntity response) {
@@ -139,7 +162,8 @@ public class Register extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
-                registerInstruction.setText("2: Tap \"GET\" for QR code");
+                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+                registerInstruction.setText("2: Tap \"GET\" for QR code that can be scanned in store.");
                 registerDataName.setText("Enter Mobile Number");
                 registerFrame.startAnimation(anim2);
             }
@@ -181,8 +205,10 @@ public class Register extends AppCompatActivity {
                 mobileNumber = e.toString();
                 registerField.setText(null);
                 registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
+                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 registerDataName.setText("Enter Password");
-                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final_first);
+                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final_first);
                 anim2.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -192,7 +218,8 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
 
-                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final);
+                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+//                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final);
                         anim3.setAnimationListener(new Animation.AnimationListener() {
                             @Override
                             public void onAnimationStart(Animation animation) {
@@ -231,14 +258,13 @@ public class Register extends AppCompatActivity {
     }
 
     void caseSix() {
-        Log.d("debug", "six");
         Editable e = registerField.getText();
         password = e.toString();
+        spinner();
         new Registration_Async(this).execute(password, mobileNumber, email);
     }
 
     public void registerEmail(View view) {
-        Log.d("debug", String.valueOf(stage));
         hideSoftKeyboard();
         registrationProgress();
     }
@@ -392,6 +418,16 @@ public class Register extends AppCompatActivity {
     public void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    void spinner() {
+        spinner = new ProgressDialog(this);
+        spinner.setIndeterminate(true);
+        spinner.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        spinner.setTitle("Signing up");
+        spinner.setMessage("Fetching my pen and paper, just a mo'");
+        spinner.setCancelable(false);
+        spinner.show();
     }
 
 }

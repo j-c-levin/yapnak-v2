@@ -217,11 +217,51 @@ public class UserEndpoint {
                     logger.warning("User already registered");
                     break queryBlock;
                 }
+                logger.info("no user found, registering");
                 //User needs to be registered
                 query = "INSERT INTO user (userID, firstName, lastName, mobNo, email, password) VALUES (?,?,?,?,?,?)";
                 statement = connection.prepareStatement(query);
-                String userIdCode = userId.substring(0, 4) + randInt();
-                statement.setString(1, userIdCode);
+                String realUserId = "";
+                if (!Character.isLetter(userId.charAt(0))) {
+                    int start = randInt() / 1000;
+                    String[] chars = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+                    userId = chars[(start % 9)] + userId.substring(1);
+                    logger.info("Replacing first: " + userId);
+                }
+                try {
+                    userId = userId.split("@")[0];
+                    logger.info(userId);
+                    if (userId.length() > 3) {
+                        for (int i = 0; i < 3; i++) {
+                            if (!Character.isLetterOrDigit((int) userId.charAt(i))) {
+                                realUserId += String.valueOf(randInt()).substring(0, 1);
+                            } else {
+                                realUserId += userId.charAt(i);
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < userId.length(); i++) {
+                            logger.info("Here be: " + userId.charAt(i));
+                            if (!Character.isLetterOrDigit((int) userId.charAt(i))) {
+                                realUserId += String.valueOf(randInt()).substring(0, 1);
+                            } else {
+                                realUserId += userId.charAt(i);
+                            }
+                        }
+                        logger.info("realUserId not long enough, expanding");
+                        while (realUserId.length() < 4) {
+                            realUserId += String.valueOf(randInt()).substring(0, 1);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.warning("EXCEPTION realUserId not long enough, expanding");
+                    while (realUserId.length() < 4) {
+                        realUserId += String.valueOf(randInt()).substring(0, 1);
+                    }
+                }
+                realUserId += randInt();
+                logger.info("Final: " + realUserId);
+                statement.setString(1, realUserId);
                 statement.setString(2, (firstName == null) ? "" : firstName);
                 statement.setString(3, (lastName == null) ? "" : lastName);
                 statement.setString(4, (mobNo == null) ? "" : mobNo);
@@ -235,7 +275,7 @@ public class UserEndpoint {
                     response.setMessage("Registration insert failed");
                     break queryBlock;
                 }
-                response.setUserId(userIdCode);
+                response.setUserId(realUserId);
                 if (promoCode == null) {
                     logger.info("Registration insert success");
                     response.setStatus("True");
@@ -258,7 +298,7 @@ public class UserEndpoint {
                 query = "INSERT INTO promoRedeemed (promoId,userId) VALUES (?,?)";
                 statement = connection.prepareStatement(query);
                 statement.setInt(1, rs.getInt("promoId"));
-                statement.setString(2, userIdCode);
+                statement.setString(2, realUserId);
                 success = statement.executeUpdate();
                 if (success == -1) {
                     logger.warning("Insert to promoRedeemed failed");
@@ -270,7 +310,7 @@ public class UserEndpoint {
                 //Update user points
                 query = "UPDATE user SET loyaltyPoints = 10 where userID = ?";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, userIdCode);
+                statement.setString(1, realUserId);
                 success = statement.executeUpdate();
                 if (success == -1) {
                     logger.warning("Insert to update user loyalty points");
@@ -293,7 +333,8 @@ public class UserEndpoint {
             name = "authenticateUser",
             path = "authenticateUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public AuthenticateEntity authenticateUser(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password) {
+    public AuthenticateEntity authenticateUser(@Named("email") @Nullable String
+                                                       email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password) {
         AuthenticateEntity response = new AuthenticateEntity();
         Connection connection;
         try {
@@ -384,7 +425,8 @@ public class UserEndpoint {
             name = "getUserDetails",
             path = "getUserDetails",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public UserDetailsEntity getUserDetails(@Named("userId") @Nullable String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo) {
+    public UserDetailsEntity getUserDetails(@Named("userId") @Nullable String
+                                                    userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo) {
         UserDetailsEntity response = new UserDetailsEntity();
         Connection connection;
         try {
@@ -453,7 +495,12 @@ public class UserEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Nullable UserImageEntity userImage) {
+    public SetUserDetailsEntity setUserDetails(@Named("userId") String
+                                                       userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String
+                                                       mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String
+                                                       dateOfBirth, @Named("firstName") @Nullable String
+                                                       firstName, @Named("lastName") @Nullable String lastName, @Nullable UserImageEntity
+                                                       userImage) {
         SetUserDetailsEntity response = new SetUserDetailsEntity();
         Connection connection;
         try {
@@ -617,7 +664,8 @@ public class UserEndpoint {
             name = "getClients",
             path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public OfferListEntity getClients(@Named("longitude") double longitude, @Named("latitude") double latitude) {
+    public OfferListEntity getClients(@Named("longitude") double longitude,
+                                      @Named("latitude") double latitude) {
         OfferListEntity response = new OfferListEntity();
         OfferEntity offer;
         List<OfferEntity> list = new ArrayList<>();
@@ -725,7 +773,8 @@ public class UserEndpoint {
             name = "getOffers",
             path = "getOffers",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public OfferListEntity getOffers(@Named("longitude") double longitude, @Named("latitude") double latitude, @Named("userId") String userId) {
+    public OfferListEntity getOffers(@Named("longitude") double longitude,
+                                     @Named("latitude") double latitude, @Named("userId") String userId) {
         OfferListEntity response = new OfferListEntity();
         OfferEntity offer;
         List<OfferEntity> list = new ArrayList<>();
@@ -1575,6 +1624,110 @@ public class UserEndpoint {
                 logger.warning("Login analytics insert failed, user " + userId + " doesn't exist.");
                 response.setStatus("False");
                 response.setMessage("Login analytics insert failed, user " + userId + " doesn't exist.");
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "offerRefreshAnalytics",
+            path = "offerRefreshAnalytics",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity offerRefreshAnalytics(@Named("userId") String userId, @Named("longitude") double longitude, @Named("latitude") double latitude) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "INSERT INTO offerRefresh (userId, longitude, latitude) VALUES (?,?,?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setDouble(2, longitude);
+                statement.setDouble(3, latitude);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Login analytics insert failed, user doesn't exist.
+                    logger.warning("Refresh analytics insert failed for user " + userId);
+                    response.setStatus("False");
+                    response.setMessage("Refresh analytics insert failed for user " + userId);
+                    break queryBlock;
+                }
+                //Login analytics insert success
+                logger.info("Refresh analytics insert success for " + userId + " at " + longitude + " : " + latitude);
+                response.setStatus("True");
+            } catch (SQLException e) {
+                logger.warning("Refresh analytics insert failed, user " + userId + " doesn't exist.");
+                response.setStatus("False");
+                response.setMessage("Refresh analytics insert failed, user " + userId + " doesn't exist.");
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "cardClickedAnalytics",
+            path = "cardClickedAnalytics",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity cardClickedAnalytics(@Named("userId") String userId, @Named("position") int position, @Named("offerId") int offerId) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "INSERT INTO cardClicked (userId, offerId, position) VALUES (?,?,?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, offerId);
+                statement.setInt(3, position);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Login analytics insert failed, user doesn't exist.
+                    logger.warning("card clicked analytics insert failed for user " + userId);
+                    response.setStatus("False");
+                    response.setMessage("card clicked analytics insert failed for user " + userId);
+                    break queryBlock;
+                }
+                //Login analytics insert success
+                logger.info("card clicked analytics insert success for " + userId + " for " + offerId + " at position " + position);
+                response.setStatus("True");
+            } catch (SQLException e) {
+                logger.warning("card clicked analytics insert failed, user " + userId + " or offer " + offerId + " doesn't exist.");
+                response.setStatus("False");
+                response.setMessage("card clicked analytics insert failed, user " + userId + " or offer " + offerId + " doesn't exist.");
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();

@@ -91,8 +91,17 @@ public class Landing extends AppCompatActivity {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.d("debug", object.toString());
+                String email = "";
+                String name = "";
                 try {
-                    new FacebookSignup_Async(landing).execute(String.valueOf(object.getInt("id")), object.getString("email"), object.getString("name"));
+                    name = object.getString("name");
+                    email  = object.getString("email");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    email = name;
+                }
+                try {
+                    new FacebookSignup_Async(landing).execute(String.valueOf(object.getInt("id")), email, name);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
