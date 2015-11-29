@@ -129,16 +129,15 @@
             android:scaleType="fitXY"
             android:background="#00050505"
             android:tint="#ff0000"
-            android:layout_marginRight="50dp"
             android:onClick="onFavouriteClick"
             android:layout_alignTop="@+id/rate"
             android:layout_toLeftOf="@+id/get"
-            android:layout_toStartOf="@+id/get"
             android:alpha="0"
             android:nestedScrollingEnabled="false"
             android:clickable="false"
             android:enabled="false"
-            android:contentDescription="@string/favourite_button" />
+            android:contentDescription="@string/favourite_button"
+            android:layout_marginRight="50dp" />
 
         <ImageButton
             android:layout_width="40dp"

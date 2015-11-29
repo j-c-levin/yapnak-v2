@@ -186,7 +186,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
     {active:false,humanDay:"Saturday"},
     {active:false,humanDay:"Sunday"}
   ];
-
+  $scope.allData = {};
   $scope.changeOffers = function() {
 
     for (var i = 0; i < $scope.offers.length; i++) {
@@ -195,18 +195,21 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
         $scope.offer1StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer1EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
+        $scope.currentOffer1Image = $scope.offers[i].offerPhotoUrl;
 
       } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
 
         $scope.offer2StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer2EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
+        $scope.currentOffer2Image = $scope.offers[i].offerPhotoUrl;
 
       } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
 
         $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        $scope.currentOffer3Image = $scope.offers[i].offerPhotoUrl;
       }
     }
     console.log("sorted offer start times");
@@ -231,6 +234,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
     }
     webfactory.getInfo(email).then(function(details){
       if (details.status == "True") {
+        $scope.allData = details;
         $scope.name = details.name;
 
         $scope.clientId = details.id;
@@ -289,6 +293,10 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
         $scope.newOffer1text = "";
         $scope.newOffer2text = "";
         $scope.newOffer3text = "";
+        $scope.offer1Image = '';
+        $scope.offer2Image = '';
+        $scope.offer3Image = '';
+        $scope.progress = '';
       } else {
         console.log("false");
         $modal.open({
@@ -646,6 +654,45 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
 
   angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
 
+  var handleOffer1Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer1Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer1Input')).on('change',handleOffer1Select);
+
+  var handleOffer2Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer2Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer2Input')).on('change',handleOffer2Select);
+
+  var handleOffer3Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer3Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer3Input')).on('change',handleOffer3Select);
+
   $scope.uploadFile = function() {
     var file = dataURItoBlob($scope.myCroppedImage);
     console.log(file);
@@ -656,6 +703,26 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
         details(1);
       }, function(error) {
         //TODO: some sort of warning?
+        details(0);
+      });
+    })
+  }
+
+  $scope.uploadOfferImage = function(offerId, image) {
+    $scope.progress = 'began';
+    var file = dataURItoBlob(image);
+    console.log($scope.progress);
+    console.log(file);
+    webfactory.getImageUploadUrl(offerId).then(function(response){
+      console.log(response);
+      $scope.progress = 'ready';
+      var uploadUrl = response.uploadUrl;
+      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
+        $scope.progress = 'success';
+        details(1);
+      }, function(error) {
+        //TODO: some sort of warning?
+        $scope.progress = 'fail';
         details(0);
       });
     })
@@ -680,4 +747,5 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
 
     return new Blob([ia], {type:mimeString});
   }
+
 })

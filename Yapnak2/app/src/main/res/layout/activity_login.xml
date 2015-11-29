@@ -49,9 +49,9 @@
         android:inputType="textPassword"
         android:password="false"
         android:layout_below="@+id/Email"
-        android:layout_alignStart="@+id/Email"
         android:layout_marginTop="20dp"
-        android:typeface="normal" />
+        android:typeface="normal"
+        android:layout_alignLeft="@+id/Email" />
 
     <Button
         android:layout_width="wrap_content"

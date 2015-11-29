@@ -5,6 +5,10 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 
 import java.math.BigInteger;
@@ -470,59 +474,54 @@ public class AdminEndpoint {
         }
     }
 
-//    @ApiMethod(
-//            name = "updateClientHours",
-//            path = "updateClientHours",
-//            httpMethod = ApiMethod.HttpMethod.POST)
-//    public void updateClientHours() {
-//        Connection connection;
-//        try {
-//            if (SystemProperty.environment.value() ==
-//                    SystemProperty.Environment.Value.Production) {
-//                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-//                Class.forName("com.mysql.jdbc.GoogleDriver");
-//                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
-//            } else {
-//                // Local MySQL instance to use during development.
-//                Class.forName("com.mysql.jdbc.Driver");
-//                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-//            }
-//            queryBlock:
-//            try {
-//                String query = "SELECT offerID, offerStart, offerEnd FROM offers";
-//                PreparedStatement statement = connection.prepareStatement(query);
-//                ResultSet rs = statement.executeQuery();
-//                while (rs.next()) {
-//                    if (rs.getInt("offerStart") <= 4) {
-//                        query = "UPDATE offers SET offerStart = 5 WHERE offerID = ?";
-//                        statement = connection.prepareStatement(query);
-//                        statement.setInt(1, rs.getInt("offerID"));
-//                        int success = statement.executeUpdate();
-//                        if (success == -1 ){
-//                            //What does it mean?
-//                            logger.warning("error details");
-//                        }
-//                    }
-//                    if (rs.getInt("offerEnd") == 23) {
-//                        query = "UPDATE offers SET offerEnd = 28 WHERE offerID = ?";
-//                        statement = connection.prepareStatement(query);
-//                        statement.setInt(1, rs.getInt("offerID"));
-//                        int success = statement.executeUpdate();
-//                        if (success == -1) {
-//                            //What does it mean?
-//                            logger.warning("error details");
-//                        }
-//                    }
-//                }
-//            } finally {
-//                connection.close();
-//            }
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//        }
-//    }
+    @ApiMethod(
+            name = "vitalReplace",
+            path = "vitalReplace",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void vitalReplace() {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT offerID, offerPhoto, offerPhotoUrl FROM offers";
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    if (!rs.getString("offerPhotoURl").equals("https://yapnak-app.appspot.com/images/yapnakDefaultOffer.png")) {
+                        ImagesService services = ImagesServiceFactory.getImagesService();
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("offerPhoto"))).secureUrl(true);
+                        query = "UPDATE offers SET offerPhotoUrl = ? WHERE offerID = ?";
+                        statement = connection.prepareStatement(query);
+                        String url = services.getServingUrl(serve);
+                        url += "=s600";
+                        statement.setString(1, url);
+                        statement.setInt(2, rs.getInt("offerID"));
+                        int success = statement.executeUpdate();
+                        if (success == -1 ){
+                            //What does it mean?
+                            logger.warning("error details");
+                        }
+                    }
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
 
 }

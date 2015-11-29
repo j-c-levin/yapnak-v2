@@ -1,5 +1,7 @@
 package com.uq.yapnak;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,9 @@ import java.util.List;
 
 public class Landing extends AppCompatActivity {
 
+    public Context context;
+    ProgressDialog spinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +36,7 @@ public class Landing extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Yapnak");
+        context = this;
     }
 
     @Override
@@ -69,10 +75,14 @@ public class Landing extends AppCompatActivity {
             public void done(ParseUser user, ParseException err) {
                 if (user == null) {
                     Log.d("debug", "Uh oh. The user cancelled the Facebook login.");
+                    new Alert_Dialog(context).faceBookFailed();
                 } else if (user.isNew()) {
                     Log.d("debug", "User signed up and logged in through Facebook!");
+                    spinner();
+                    onFacebookLogin();
                 } else {
                     Log.d("debug", "User logged in through Facebook!");
+                    spinner();
                     onFacebookLogin();
                 }
             }
@@ -111,6 +121,16 @@ public class Landing extends AppCompatActivity {
         parameters.putString("fields", "id,name,email,gender, birthday");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    void spinner() {
+        spinner = new ProgressDialog(this);
+        spinner.setIndeterminate(true);
+        spinner.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        spinner.setTitle("Facebook login success");
+        spinner.setMessage("Awesome, just finishing the process...");
+        spinner.setCancelable(false);
+        spinner.show();
     }
 
 }

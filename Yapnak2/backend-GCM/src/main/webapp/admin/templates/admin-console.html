@@ -1,4 +1,4 @@
-<div class="content container" >
+<div class="content container">
 
 
     <!--Allow removing of client photo -->
@@ -7,181 +7,242 @@
         <select class="form-control" ng-model="chosenClient" ng-options="client.clientName for client in clientList" ng-change="retrieveClient()"></select>
     </div>
 
+    <div class="form-signin center-text">
+        <label ng-switch="isActive">
+            <button ng-switch-when="0" ng-click="toggleOn()" class="btn btn-primary" type="button">
+                Toggle client on
+            </button>
+            <button ng-switch-when="1" ng-click="toggleOff()" class="btn btn-primary" type="button">
+                Toggle client off
+            </button>
+        </label>
+        <button ng-click="generateMasterkey()" class="btn" type="button" ng-show="isActive != ''">
+            Generate masterkey
+        </button>
+        <label ng-show="masterkey !== ''">Masterkey: {{masterkey}}</label>
+    </div>
 
-    <div ng-switch="gotDetails">
+    <div ng-show="isActive == 1">
 
-        <div ng-switch-when="client">
-            <div class="form-signin center-text">
-                <label ng-switch="isActive">
-                    <button ng-switch-when="false" ng-click="toggleOn()" class="btn btn-primary" type="button">
-                        Toggle client on
-                    </button>
-                    <button ng-switch-when="true" ng-click="toggleOff()" class="btn btn-primary" type="button">
-                        Toggle client off
-                    </button>
-                </label>
-                <button ng-click="generateMasterkey()" class="btn" type="button">
-                    Generate masterkey
-                </button>
-                <label ng-show="masterkey !== ''">Masterkey: {{masterkey}}</label>
+        <div class="container crop-container">
+
+            <div class="crop-area" ng-show="myImage !== ''">
+                <img-crop image="myImage" result-image="myCroppedImage" area-type="circle" result-image-size="{w: 200,h: 200}"></img-crop>
+                <img src="myCroppedImage">
             </div>
 
-            <div collapse="!isActive">
+            <img height="100" ng-src="{{image}}" ng-show="myImage == ''" class="current-image">
 
-                <div ng-controller = "myCtrl">
-                    <div class="crop-area" ng-show="myImage !== ''">
-                        <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+            <div class="crop-selector">
+                <div>
+                    Select an image file:
+                    <input type="file" id="fileInput" />
+                </div>
+            </div>
+
+            <button ng-show="myImage !== ''" class="btn btn-default image-upload" ng-click="uploadFile()">Update image</button>
+
+        </div>
+
+        <div class="form-signin">
+
+            <label
+                    for="exampleInputEmail1">Restaurant Name</label>
+            <input type="text"
+                   class="form-control" name="name" ng-model="newName" id="name" placeholder="{{name}}">
+        </div>
+
+        <div class="form-signin">
+            <label for="exampleInputPassword1">Restaurant Type</label>
+            <input type="text" class="form-control" ng-model="newFoodStyle" name="type" id="type"
+                   placeholder="{{foodStyle}}">
+        </div>
+
+        <div class="form-signin">
+            <label
+                    for="exampleInputPassword1">Address</label>
+
+            <input type="text" ng-model="newLocation" placeholder="{{location}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
+            <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+            <div ng-show="noResults">
+                <i class="glyphicon glyphicon-remove"></i> No Results Found
+            </div>
+
+        </div>
+
+        <div class="form-signin">
+
+            <label>
+                <input type="checkbox" name = "show-offer"
+                       value="show-offer" ng-model="offer1" ng-click="showOffer()"> Offer one
+            </label>
+
+            <hr>
+            <div collapse="!offer1">
+
+                <select class="form-control" ng-model="offer1text" ng-options="offer.offerText for offer in offers" ng-change="changeOffers()"></select>
+
+                <input ng-show="offer1text.offerId == 0" type="text"
+                       class="form-control" maxlength="40" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+                <label>Days active</label>
+                <ul>
+                    <li ng-repeat="day in offer1Days">
+                        <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                    </li>
+                </ul>
+
+                <label>Offer start</label>
+                <select class="form-control" ng-model="offer1StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                <label>Offer end</label>
+                <select class="form-control" ng-model="offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                <div class="">
+                    <div class="crop-area" ng-show="offer1Image !== ''">
+                        <img-crop image="offer1Image" result-image="offer1ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}" chargement="'Loading...'"></img-crop>
                     </div>
-                    <div class="current-image">
-                        <img height="100" ng-src="{{photoUrl}}" ng-show="myImage == ''" class="current-image">
+                    <img height="135" ng-src="{{currentOffer1Image}}" ng-show="offer1Image == ''" class="offer-photo">
+                    <div class="crop-selector">
+                        <div>
+                            Select an image for this offer:
+                            <input type="file" id="offer1Input" />
+                        </div>
                     </div>
-                    <div class="upload-button">
-                        Select an image file:
-                        <input class="input-file-unique" type="file" file-model="newImage" id="fileInput" onchange="angular.element(this).scope().handleFileSelect()" />
+
+                    <button ng-show="offer1Image !== ''" class="btn btn-default image-upload" ng-click=" uploadOfferImage(allData.offer1Id,offer1ImageCrop)">Update image</button>
+
+                    <div ng-show="progress == 'began'">
+                        Preparing upload
                     </div>
-                    <div class="image-upload">
-                        <button ng-show="myImage !== ''" class="btn btn-default" ng-click="uploadFile()">Update image</button>
+                    <div ng-show="progress == 'ready'">
+                        Upload in progress
                     </div>
-                </div>
-                <!-- <div class="well">
-                <div ng-controller = "myCtrl">
-                <input type="file" file-model="myFile" onchange="angular.element(this).scope().addFile()"/>
-                <button ng-controller="ConsoleController" ng-click="uploadFile()">Upload new</button>
-              </div>
-            </div> -->
-
-
-                <div class="form-signin">
-                    <label>Client Email: {{clientData.email}}</label>
-                </div>
-
-                <div class="form-signin">
-
-                    <label>Restaurant Name</label>
-                    <input type="text"
-                           class="form-control" name="name" ng-model="clientData.newName" id="name" placeholder="{{clientData.name}}">
-                </div>
-
-                <div class="form-signin">
-                    <label>Restaurant Type</label>
-                    <input type="text" class="form-control" ng-model="clientData.newFoodStyle" name="type" id="type"
-                           placeholder="{{clientData.foodStyle}}">
-                </div>
-
-                <div class="form-signin">
-                    <label>Address</label>
-
-                    <input type="text" ng-model="clientData.newLocation" placeholder="{{clientData.locationText}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
-
-                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-                    <div ng-show="noResults">
-                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                    <div ng-show="progress == 'success'">
+                        Upload success.
+                    </div>
+                    <div ng-show="progress == 'fail'">
+                        Upload failed.
                     </div>
 
                 </div>
 
-                <div class="form-signin">
+            </div>
+        </div>
 
-                    <label>
-                        <input type="checkbox" name = "show-offer"
-                               value="show-offer" ng-model="clientData.offer1Shown" ng-click="showOffer()"> Offer one
-                    </label>
+        <div class="form-signin">
 
-                    <hr>
-                    <div collapse="!clientData.offer1Shown">
+            <label>
+                <input type="checkbox" name = "show-offer"
+                       value="show-offer" ng-model="offer2" ng-click="showOffer()"> Offer two
+            </label>
 
-                        <select class="form-control" ng-model="clientData.offer1text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
+            <hr>
+            <div collapse="!offer2">
 
-                        <input ng-show="clientData.offer1text.offerId == 0" type="text"
-                               class="form-control" maxlength="40" ng-model="clientData.newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+                <select class="form-control" ng-model="offer2text" ng-options="offer.offerText for offer in offers" ng-change="changeOffers()"></select>
 
-                        <label>Days active</label>
-                        <ul>
-                            <li ng-repeat="day in offer1Days">
-                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
-                            </li>
-                        </ul>
+                <input ng-show="offer2text.offerId == 0" type="text"
+                       class="form-control" maxlength="40" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
 
-                        <label>Offer start</label>
-                        <select class="form-control" ng-model="clientData.offer1StartTime" ng-options="time.humanHour for time in offerTimes" ng-change="changed()"></select>
+                <label>Days active</label>
+                <ul>
+                    <li ng-repeat="day in offer2Days">
+                        <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                    </li>
+                </ul>
 
-                        <label>Offer end</label>
-                        <select class="form-control" ng-model="clientData.offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+                <label>Offer start</label>
+                <select class="form-control" ng-model="offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>
 
+                <label>Offer end</label>
+                <select class="form-control" ng-model="offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                <div class="">
+                    <div class="crop-area" ng-show="offer2Image !== ''">
+                        <img-crop image="offer2Image" result-image="offer2ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}" chargement="'Loading...'"></img-crop>
                     </div>
-                </div>
-
-                <div class="form-signin">
-
-                    <label>
-                        <input type="checkbox" name = "show-offer"
-                               value="show-offer" ng-model="clientData.offer2Shown" ng-click="showOffer()"> Offer two
-                    </label>
-
-                    <hr>
-                    <div collapse="!clientData.offer2Shown">
-
-                        <select class="form-control" ng-model="clientData.offer2text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
-
-                        <input ng-show="clientData.offer2text.offerId == 0" type="text"
-                               class="form-control" maxlength="40" ng-model="clientData.newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
-
-                        <label>Days active</label>
-                        <ul>
-                            <li ng-repeat="day in offer2Days">
-                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
-                            </li>
-                        </ul>
-
-                        <label>Offer start</label>
-                        <select class="form-control" ng-model="clientData.offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>
-
-                        <label>Offer end</label>
-                        <select class="form-control" ng-model="clientData.offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+                    <img height="135" ng-src="{{currentOffer2Image}}" ng-show="offer2Image == ''" class="offer-photo">
+                    <div class="crop-selector">
+                        <div>
+                            Select an image for this offer:
+                            <input type="file" id="offer2Input" />
+                        </div>
                     </div>
-                </div>
+                    <button ng-show="offer2Image !== ''" class="btn btn-default image-upload" ng-click="uploadOfferImage(allData.offer2Id, offer2ImageCrop)">Update image</button>
 
-                <div class="form-signin">
-
-                    <label>
-                        <input type="checkbox" name = "show-offer"
-                               value="show-offer" ng-model="clientData.offer3Shown" ng-click="showOffer()" DISABLED> Offer three
-                    </label>
-
-                    <hr>
-                    <div collapse="!clientData.offer3Shown">
-
-                        <select class="form-control" ng-model="clientData.offer3text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
-
-                        <input ng-show="clientData.offer3text.offerId == 0" type="text"
-                               class="form-control" maxlength="40" ng-model="clientData.newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
-
-                        <label>Days active</label>
-                        <ul>
-                            <li ng-repeat="day in offer3Days">
-                                <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
-                            </li>
-                        </ul>
-
-                        <label>Offer start</label>
-                        <select class="form-control" ng-model="offer3StartTime" ng-options="time.humanHour for time in offerTimes"></select>
-
-                        <label>Offer end</label>
-                        <select class="form-control" ng-model="offer3EndTime" ng-options="time.humanHour for time in offerTimes"></select>
-
+                    <div ng-show="progress == 'began'">
+                        Preparing upload
                     </div>
+                    <div ng-show="progress == 'ready'">
+                        Upload in progress
+                    </div>
+                    <div ng-show="progress == 'success'">
+                        Upload success.
+                    </div>
+                    <div ng-show="progress == 'fail'">
+                        Upload failed.
+                    </div>
+
                 </div>
 
-                <div class="form-signin">
-                    <button class="btn btn-default btn-block" ng-click="updateInfo()">Update
-                        information
-                    </button>
+            </div>
+        </div>
+
+        <div class="form-signin">
+
+            <label>
+                <input type="checkbox" name = "show-offer"
+                       value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
+            </label>
+
+            <hr>
+            <div collapse="!offer3">
+
+                <select class="form-control" ng-model="offer3text" ng-options="offer.offerText for offer in offers" ng-change="changeOffers()"></select>
+
+                <input ng-show="offer3text.offerId == 0" type="text"
+                       class="form-control" maxlength="40" ng-model="newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+                <label>Days active</label>
+                <ul>
+                    <li ng-repeat="day in offer3Days">
+                        <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+                    </li>
+                </ul>
+
+                <label>Offer start</label>
+                <select class="form-control" ng-model="offer3StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                <label>Offer end</label>
+                <select class="form-control" ng-model="offer3EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+                <div class="">
+                    <div class="crop-area" ng-show="offer3Image !== ''">
+                        <img-crop image="offer3Image" result-image="offer3ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}"></img-crop>
+                    </div>
+                    <img height="135" ng-src="{{currentOffer3Image}}" ng-show="offer3Image == ''" class="offer-photo">
+                    <div class="crop-selector">
+                        <div>
+                            Select an image for this offer:
+                            <input type="file" id="offer3Input" />
+                        </div>
+                    </div>
+                    <button ng-show="offer3Image !== ''" class="btn btn-default image-upload" ng-click="uploadOfferImage(allData.offer3Id,offer3ImageCrop)">Update image</button>
                 </div>
 
-            </div><!--isActive-->
+            </div>
+        </div>
 
-        </div> <!--switch-when-client-->
 
-    </div><!--gotDetails-->
+        <div class="form-signin">
+            <button class="btn btn-default btn-block" ng-click="updateInfo()">Update
+                information
+            </button>
+        </div>
 
-</div><!--container-->
+    </div><!--ng-show-->
+
+</div> <!--container-->
+
+

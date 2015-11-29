@@ -72,5 +72,12 @@
     <string name="no_offers_title">No meals found</string>
     <string name="no_offers">We can\'t seem to find any meals nearby.  We feel your pain...:(</string>
     <string name="no_offers_button">I\'ll search elsewhere</string>
+    <string name="no_favourites_title">No favourites found</string>
+    <string name="no_favourites">It doesn\'t seem like you\'ve saved any favourites yet (tap the heart icon)</string>
+    <string name="no_favourites_button">I\'ll go add some</string>
+
+    <string name="facebook_failed_title">Facebook login failed</string>
+    <string name="facebook_failed">Something didn\'t quite work, the sign up failed.</string>
+    <string name="facebook_failed_button">Okay</string>
 
 </resources>

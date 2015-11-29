@@ -375,6 +375,30 @@ angular.module('app.factories', [])
 
   }
 
+  result.getImageUploadUrl = function(offerId) {
+    var req = {
+      method: 'GET',
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Retrieved upload url success");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED Retrieved upload url");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED Retrieved upload url");
+      console.log(error);
+      return -1
+    });
+
+  }
+
   result.uploadFileToUrl = function(file, uploadUrl){
     var fd = new FormData();
     fd.append('image', file);

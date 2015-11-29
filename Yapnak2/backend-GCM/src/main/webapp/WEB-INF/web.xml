@@ -68,6 +68,24 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>offerPhotoUpload</servlet-name>
+        <servlet-class>com.yapnak.website.offerPhotoUpload</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>offerPhotoUpload</servlet-name>
+        <url-pattern>/offerPhotoUpload</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>userPhotoUpload</servlet-name>
+        <servlet-class>com.yapnak.website.userPhotoUpload</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>userPhotoUpload</servlet-name>
+        <url-pattern>/userPhotoUpload</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>update</servlet-name>
         <servlet-class>com.yapnak.website.update</servlet-class>
     </servlet>

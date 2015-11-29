@@ -4,16 +4,28 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ImagesServiceFailureException;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsInputChannel;
+import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.Channels;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -440,9 +452,10 @@ public class UserEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
+            ObjectInputStream oin = null;
             queryBlock:
             try {
-                String query = "SELECT userID, email, mobNo, dateOfBirth, firstName, lastName, loyaltyPoints, userImage FROM user WHERE userID = ? OR email = ? OR mobNo = ?";
+                String query = "SELECT userID, email, mobNo, dateOfBirth, firstName, lastName, loyaltyPoints FROM user WHERE userID = ? OR email = ? OR mobNo = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 String details;
                 if (userId != null) {
@@ -472,9 +485,13 @@ public class UserEndpoint {
                     response.setLastName(rs.getString("lastName"));
                     response.setLoyaltyPoints(rs.getInt("loyaltyPoints"));
                     response.setUserId(rs.getString("userID"));
-                    response.setUserImage(rs.getString("userImage"));
                     response.setMobNo(rs.getString("mobNo"));
                     response.setStatus("True");
+                    GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
+                    GcsFilename fileName = new GcsFilename("yapnak_main", (userId + "UserImage"));
+                    GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0, 1024 * 1024);
+                    oin = new ObjectInputStream(Channels.newInputStream(readChannel));
+                    response.setUserImage((String) oin.readObject());
                 } else {
                     //No user found
                     response.setStatus("False");
@@ -483,6 +500,7 @@ public class UserEndpoint {
                     break queryBlock;
                 }
             } finally {
+                oin.close();
                 connection.close();
                 return response;
             }
@@ -639,15 +657,19 @@ public class UserEndpoint {
                     logger.info("updated last name");
                 }
                 if (userImage.getImageString() != null || userImage.getImageUrl() != null) {
-                    //Update user image
-                    //TODO: implement cloud storage saving and recording the blobstore URL to the database
-                    if (true) {
-                        response.setStatus("Failed");
-                        response.setMessage("Functionality to upload pictures is not implemented");
-                        logger.warning("Failed to update user image");
-                        break queryBlock;
+                    try {
+                        GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
+                        GcsFilename fileName = new GcsFilename("yapnak_main", (userId + "UserImage"));
+                        GcsOutputChannel outputChannel = gcsService.createOrReplace(fileName, GcsFileOptions.getDefaultInstance());
+                        @SuppressWarnings("resource")
+                        ObjectOutputStream oout =
+                                new ObjectOutputStream(Channels.newOutputStream(outputChannel));
+                        oout.writeObject(userImage.getImageString());
+                        oout.close();
+                        logger.info("updated user image");
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    logger.info("updated user image");
                 }
                 logger.info("Updates successful");
                 response.setStatus("True");
@@ -694,7 +716,7 @@ public class UserEndpoint {
                     hour = 23 + (hour + 1);
                 }
                 logger.info("Hour is: " + hour);
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, offerPhotoUrl FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -721,7 +743,7 @@ public class UserEndpoint {
                 logger.info("day is " + dayOfWeek);
                 JSONParser parse = new JSONParser();
                 JSONArray days;
-                String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
+//                String[] images = {"https://yapnak-app.appspot.com/images/coffee_room_blt.jpg", "https://yapnak-app.appspot.com/images/2.jpg", "https://yapnak-app.appspot.com/images/3.jpg", "https://yapnak-app.appspot.com/images/4.jpg", "https://yapnak-app.appspot.com/images/5.jpg"};
                 if (rs.next()) {
                     rs.beforeFirst();
                     int x = 0;
@@ -736,9 +758,10 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
-                        x += 1;
-                        x %= 4;
-                        offer.setClientOfferPhoto(images[x]);
+//                        x += 1;
+//                        x %= 4;
+//                        offer.setClientOfferPhoto(images[x]);
+                        offer.setClientOfferPhoto(rs.getString("offerPhotoUrl"));
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         offer.setClientRating(4.0);
                         //Check if the offer is active on that day;
@@ -818,7 +841,7 @@ public class UserEndpoint {
                     hour = 23 + (hour + 1);
                 }
                 logger.info("Hour is: " + hour);
-                query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
+                query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID, offerPhotoUrl FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 double t = longitude - distance;
@@ -861,9 +884,10 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
-                        x += 1;
-                        x %= 4;
-                        offer.setClientOfferPhoto(images[x]);
+//                        x += 1;
+//                        x %= 4;
+//                        offer.setClientOfferPhoto(images[x]);
+                        offer.setClientOfferPhoto(rs.getString("offerPhotoUrl"));
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         offer.setClientRating(4.0);
                         offer.setFavourite(rs.getInt("favouriteID") != 0);
@@ -1810,7 +1834,7 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT f.offerID, o.offerText, o.isActive, o.showOffer, c.clientName, c.clientX, c.clientY, c.clientID FROM favourites f, offers o, client c WHERE f.offerID = o.offerID AND o.clientID = c.clientID AND f.userID = ?";
+                String query = "SELECT f.offerID, o.offerText, o.isActive, o.showOffer, c.clientName, c.clientX, c.clientY, c.clientID, o.offerPhotoUrl FROM favourites f, offers o, client c WHERE f.offerID = o.offerID AND o.clientID = c.clientID AND f.userID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 ResultSet rs = statement.executeQuery();
@@ -1836,7 +1860,7 @@ public class UserEndpoint {
                     f.setClientName(rs.getString("clientName"));
                     x += 1;
                     x %= 4;
-                    f.setClientOfferPhoto(images[x]);
+                    f.setClientOfferPhoto(rs.getString("offerPhotoUrl"));
                     f.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                     f.setLatitude(rs.getDouble("clientY"));
                     f.setLongitude(rs.getDouble("clientX"));
@@ -1854,5 +1878,19 @@ public class UserEndpoint {
         } finally {
             return response;
         }
+    }
+
+    @ApiMethod(
+            name = "photoUpload",
+            path = "photoUpload",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public PhotoEntity photoUpload(@Named("userId") String userId) {
+        PhotoEntity response = new PhotoEntity();
+        logger.info("Creating photo upload for " + userId);
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        response.setUploadUrl(blobstoreService.createUploadUrl("/userPhotoUpload?userId=" + userId));
+        response.setStatus("True");
+        logger.info("Got user upload url: " + response.getUploadUrl());
+        return response;
     }
 }

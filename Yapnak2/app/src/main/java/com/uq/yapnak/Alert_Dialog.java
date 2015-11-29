@@ -149,4 +149,28 @@ public class Alert_Dialog {
                 })
                 .show();
     }
+
+    public void noFavouritesFound() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.no_favourites_title)
+                .setMessage(R.string.no_favourites)
+                .setPositiveButton(R.string.no_favourites_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void faceBookFailed() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.facebook_failed_title)
+                .setMessage(R.string.facebook_failed)
+                .setPositiveButton(R.string.facebook_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 }

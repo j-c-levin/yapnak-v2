@@ -118,6 +118,10 @@ ul {
   margin-top: 20px
 }
 
+.offer-photo {
+  margin-top: 20px;
+}
+
 .crop-container {
   text-align: center;
 }
@@ -132,4 +136,31 @@ ul {
 
 .image-upload {
   margin-top: 20px;
+}
+
+.feedback-btn, .feedback-strip {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.feedback-strip, .feedback-success-alert, .feedback-fail-alert {
+  width:100px;
+  margin-left: auto;
+}
+
+.feedback-success-alert {
+  background-color: #4caf50;
+}
+
+.feedback-fail-alert {
+  background-color: #ff8f00;
+}
+
+.feedback-fail-alert, .feedback-success-alert {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.feedback-fail-alert img, .feedback-success-alert img {
+  width: 50px;
 }

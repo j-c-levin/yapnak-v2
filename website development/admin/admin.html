@@ -13,8 +13,12 @@
   <link rel="stylesheet" href="admin/admin-index.css">
 
   <!-- ngImgCrop -->
-  <script src="../lib/ngImgCrop/0.3.2/ng-img-crop.js"></script>
-  <link rel="stylesheet" type="text/css" href="../lib/ngImgCrop/0.3.2/ng-img-crop.css">
+  <!-- <script src="../lib/ngImgCrop/0.3.2/ng-img-crop.js"></script>
+  <link rel="stylesheet" type="text/css" href="../lib/ngImgCrop/0.3.2/ng-img-crop.css"> -->
+
+  <!-- ngImgCropExtended -->
+  <script src="../lib/ngImgCropExt/b4f70e5/ng-img-crop.js"></script>
+  <link rel="stylesheet" type="text/css" href="../lib/ngImgCropExt/b4f70e5/ng-img-crop.css">
 
 </head>
 <body>

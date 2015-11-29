@@ -38,6 +38,7 @@ public class FacebookSignup_Async extends AsyncTask<String,Void,RegisterUserEnti
     }
 
     protected void onPostExecute(RegisterUserEntity result) {
+        landing.spinner.hide();
         boolean isGood = false;
         if (Boolean.parseBoolean(result.getStatus())) {
             Log.d("debug", "successfully registered: " + result.getUserId());

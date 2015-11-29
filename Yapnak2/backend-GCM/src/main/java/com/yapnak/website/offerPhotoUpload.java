@@ -27,10 +27,105 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by Joshua on 19/09/2015.
  */
-public class photoUpload extends HttpServlet {
+public class offerPhotoUpload extends HttpServlet {
 
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    private static final Logger logger = Logger.getLogger(photoUpload.class.getName());
+    private static final Logger logger = Logger.getLogger(offerPhotoUpload.class.getName());
+
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+        resp.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST");
+        logger.info("offer image get");
+        String url = null;
+        Connection connection = null;
+        PrintWriter out = resp.getWriter();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+            try {
+                String offerId = req.getParameter("offerId");
+                logger.info("found offer: " + offerId);
+                if (offerId != null) {
+                    String sql = "SELECT offerPhoto FROM offers WHERE offerID = ?";
+                    PreparedStatement stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, offerId);
+                    ResultSet rs = stmt.executeQuery();
+                    String imageBlob;
+                    rs.next();
+                    logger.info(rs.getString("offerPhoto"));
+                    if (!rs.getString("offerPhoto").isEmpty()) {
+                        imageBlob = rs.getString("offerPhoto");
+                    } else {
+                        imageBlob = "";
+                    }
+                    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+                    List<BlobKey> blobKeys = blobs.get("image");
+                    if (blobKeys == null || blobKeys.isEmpty()) {
+                        //do nothing
+                        logger.info("blob empty");
+                    } else {
+                        if (!imageBlob.equals("")) {
+                            BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+                            blobstoreService.delete(new BlobKey(imageBlob));
+                            logger.info("deleted old blob");
+                        }
+                        imageBlob = blobKeys.get(0).getKeyString();
+                    }
+                    ImagesService services = ImagesServiceFactory.getImagesService();
+                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(imageBlob));
+                    try {
+                        url = services.getServingUrl(serve);
+                        url = url + "=s600";
+                        logger.info("new url:" + url);
+                    } catch (IllegalArgumentException e) {
+                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
+                        e.printStackTrace();
+                    } catch (ImagesServiceFailureException e1) {
+                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
+                        e1.printStackTrace();
+                    }
+                    sql = "UPDATE offers SET offerPhoto = ?, offerPhotoUrl = ? WHERE offerID = ?";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, imageBlob);
+                    stmt.setString(2, url);
+                    stmt.setString(3, offerId);
+                    int success = 2;
+                    success = stmt.executeUpdate();
+                    if (success != -1) {
+                        //success
+                        logger.info("offer image update success");
+                        resp.setStatus(HttpServletResponse.SC_OK);
+                        resp.setContentType("text/plain");
+                    } else {
+                        logger.warning("offer image update FAIL, fail = " + success);
+                        resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                        resp.setContentType("text/plain");
+                    }
+                } else {
+                    logger.warning("Something went wrong: offerId = " + offerId);
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -39,6 +134,7 @@ public class photoUpload extends HttpServlet {
         String url = null;
         Connection connection = null;
         PrintWriter out = resp.getWriter();
+        logger.info("offer image post");
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -57,19 +153,20 @@ public class photoUpload extends HttpServlet {
 
         try {
             try {
-                String clientId = req.getParameter("clientId");
-                logger.info("found client: " + clientId);
-                if (clientId != null) {
-                    String sql = "SELECT clientPhoto FROM client WHERE clientID = ?";
+                String offerId = req.getParameter("offerId");
+                logger.info("found offer: " + offerId);
+                if (offerId != null) {
+                    String sql = "SELECT offerPhoto FROM offers WHERE offerID = ?";
                     PreparedStatement stmt = connection.prepareStatement(sql);
-                    stmt.setString(1, clientId);
+                    stmt.setString(1, offerId);
                     ResultSet rs = stmt.executeQuery();
-                    String logo;
-                    if (rs.next()) {
-                        logo = rs.getString("clientPhoto");
+                    String imageBlob;
+                    rs.next();
+                    logger.info(rs.getString("offerPhoto"));
+                    if (!rs.getString("offerPhoto").isEmpty()) {
+                        imageBlob = rs.getString("offerPhoto");
                     } else {
-                        logo = "";
-                        out.print("failed to update ");
+                        imageBlob = "";
                     }
                     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
                     List<BlobKey> blobKeys = blobs.get("image");
@@ -77,18 +174,18 @@ public class photoUpload extends HttpServlet {
                         //do nothing
                         logger.info("blob empty");
                     } else {
-                        if (!logo.equals("")) {
+                        if (!imageBlob.equals("")) {
                             BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-                            blobstoreService.delete(new BlobKey(logo));
+                            blobstoreService.delete(new BlobKey(imageBlob));
                             logger.info("deleted old blob");
                         }
-                        logo = blobKeys.get(0).getKeyString();
+                        imageBlob = blobKeys.get(0).getKeyString();
                     }
                     ImagesService services = ImagesServiceFactory.getImagesService();
-                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(logo));
+                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(imageBlob)).secureUrl(true);
                     try {
                         url = services.getServingUrl(serve);
-                        url = url + "=s100";
+                        url = url + "=s600";
                         logger.info("new url:" + url);
                     } catch (IllegalArgumentException e) {
                         url = "http://yapnak.com/images/yapnakmonsterthumb.png";
@@ -97,120 +194,34 @@ public class photoUpload extends HttpServlet {
                         url = "http://yapnak.com/images/yapnakmonsterthumb.png";
                         e1.printStackTrace();
                     }
-                    sql = "UPDATE client SET clientPhoto = ?, clientPhotoUrl = ? WHERE clientID = ?";
+                    sql = "UPDATE offers SET offerPhoto = ?, offerPhotoUrl = ? WHERE offerID = ?";
                     stmt = connection.prepareStatement(sql);
-                    stmt.setString(1, logo);
+                    stmt.setString(1, imageBlob);
                     stmt.setString(2, url);
-                    stmt.setString(3, clientId);
+                    stmt.setString(3, offerId);
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success != -1) {
                         //success
-                        logger.info("success");
+                        logger.info("offer image update success");
                         resp.setStatus(HttpServletResponse.SC_OK);
                         resp.setContentType("text/plain");
                     } else {
-                        logger.info("FAIL, success = " + success);
+                        logger.warning("offer image update FAIL, fail = " + success);
                         resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                         resp.setContentType("text/plain");
                     }
                 } else {
-                    logger.info("Something went wrong: clientID = " + clientId);
+                    logger.warning("Something went wrong: offerId = " + offerId);
                 }
-            } finally {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally {
                 connection.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        logger.info("doGet called");
-        String url = null;
-        Connection connection = null;
-        PrintWriter out = resp.getWriter();
-        try {
-            if (SystemProperty.environment.value() ==
-                    SystemProperty.Environment.Value.Production) {
-                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-                Class.forName("com.mysql.jdbc.GoogleDriver");
-                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
-            } else {
-                // Local MySQL instance to use during development.
-                Class.forName("com.mysql.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            try {
-                String clientId = req.getParameter("clientId");
-                logger.info("found client: " + clientId);
-                if (clientId != null) {
-                    String sql = "SELECT clientPhoto FROM client WHERE clientID = ?";
-                    PreparedStatement stmt = connection.prepareStatement(sql);
-                    stmt.setString(1, clientId);
-                    ResultSet rs = stmt.executeQuery();
-                    String logo;
-                    if (rs.next()) {
-                        logo = rs.getString("clientPhoto");
-                    } else {
-                        logo = "";
-                        out.print("Nothing to update ");
-                    }
-                    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
-                    List<BlobKey> blobKeys = blobs.get("image");
-                    if (blobKeys == null || blobKeys.isEmpty()) {
-                        //do nothing
-                        logger.info("blog empty");
-                    } else {
-                        if (!logo.equals("")) {
-                            BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-                            blobstoreService.delete(new BlobKey(logo));
-                            logger.info("deleted old blob");
-                        }
-                        logo = blobKeys.get(0).getKeyString();
-                    }
-                    ImagesService services = ImagesServiceFactory.getImagesService();
-                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(logo));
-                    try {
-                        url = services.getServingUrl(serve);
-                        url = url + "=s100";
-                        logger.info("new url:" + url);
-                    } catch (IllegalArgumentException e) {
-                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
-                        e.printStackTrace();
-                    } catch (ImagesServiceFailureException e1) {
-                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
-                        e1.printStackTrace();
-                    }
-                    sql = "UPDATE client SET clientPhoto = ?, clientPhotoUrl = ? WHERE clientID = ?";
-                    stmt = connection.prepareStatement(sql);
-                    stmt.setString(1, logo);
-                    stmt.setString(2, url);
-                    stmt.setString(3, clientId);
-                    int success = 2;
-                    success = stmt.executeUpdate();
-                    if (success != -1) {
-                        //success
-                        logger.info("success");
-                    } else {
-                        logger.info("FAIL, success = " + success);
-                    }
-                } else {
-                    logger.info("Something went wrong: clientID = " + clientId);
-                }
-            } finally {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

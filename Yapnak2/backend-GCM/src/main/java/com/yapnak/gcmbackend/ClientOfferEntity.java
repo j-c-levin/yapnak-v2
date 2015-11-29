@@ -18,6 +18,15 @@ public class ClientOfferEntity {
     JSONArray offerDays;
     String status;
     String message;
+    String offerPhotoUrl;
+
+    public String getOfferPhotoUrl() {
+        return offerPhotoUrl;
+    }
+
+    public void setOfferPhotoUrl(String offerPhotoUrl) {
+        this.offerPhotoUrl = offerPhotoUrl;
+    }
 
     public JSONArray getOfferDays() {
         return offerDays;

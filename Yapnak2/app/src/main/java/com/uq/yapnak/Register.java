@@ -163,7 +163,7 @@ public class Register extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
                 registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-                registerInstruction.setText("2: Tap \"GET\" for QR code that can be scanned in store.");
+                registerInstruction.setText("2: Tap \"GET\" for a QR code that can be scanned in store.");
                 registerDataName.setText("Enter Mobile Number");
                 registerFrame.startAnimation(anim2);
             }

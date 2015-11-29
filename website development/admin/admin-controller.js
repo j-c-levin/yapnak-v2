@@ -53,6 +53,7 @@ angular.module('app.controller', ['ngImgCrop'])
 
 .controller('ConsoleController', function($scope, webfactory, $modal, detailsfactory, $state, $timeout, fileUpload) {
 
+
   if (detailsfactory.getSession() === "") {
     $state.go('login');
   } else {
@@ -63,11 +64,47 @@ angular.module('app.controller', ['ngImgCrop'])
     });
   }
 
-  $scope.gotDetails = "";
+  $scope.generateMasterkey = function() {
+    webfactory.generateMasterkey($scope.allData.id).then(function(response) {
+      $scope.masterkey = response.masterkey;
+    });
+  }
 
-  $scope.clientList = [];
+  $scope.toggleOn = function() {
+    console.log("toggling on");
+    $scope.isActive = !$scope.isActive;
+    webfactory.toggleClient($scope.allData.id, 1).then(function() {
+      //Modal success?
+      $scope.retrieveClient();
+    });
+  };
 
-  $scope.clientData = {};
+  $scope.toggleOff = function() {
+    console.log("toggling off");
+    $scope.isActive = !$scope.isActive;
+    webfactory.toggleClient($scope.allData.id, 0).then(function() {
+      //Modal success?
+      $scope.retrieveClient();
+    });
+  };
+
+  $scope.retrieveClient = function() {
+    //Retrieve client details
+    details(0);
+  }
+
+  var offer1Changed;
+  var offer2Changed;
+  var offer3Changed;
+  var offer1Active;
+  var offer2Active;
+  var offer3Active;
+  $scope.myImage = '';
+  $scope.myCroppedImage = '';
+  $scope.isActive = '';
+  $scope.email = '';
+
+  $scope.offers = [];
   $scope.offerTimes = [
     {time:5,humanHour:"5am"},
     {time:6,humanHour:"6am"},
@@ -121,51 +158,36 @@ angular.module('app.controller', ['ngImgCrop'])
     {active:false,humanDay:"Saturday"},
     {active:false,humanDay:"Sunday"}
   ];
-
-
-  $scope.modal = "";
-
-  $scope.photoUrl = "";
-
-  var offer1Changed;
-  var offer2Changed;
-  var offer3Changed;
-  var offer1Active;
-  var offer2Active;
-  var offer3Active;
-  var email;
-  $scope.clientData.myImage = "";
-  $scope.clientData.myCroppedImage = "";
-
-  $scope.masterkey = "";
-  $scope.generateMasterkey = function() {
-    webfactory.generateMasterkey($scope.clientData.id).then(function(response) {
-      $scope.masterkey = response.masterkey;
-    });
-  }
+  $scope.allData = {};
 
   $scope.changeOffers = function() {
+    $scope.currentOffer1Image = "";
+    $scope.currentOffer2Image = "";
+    
+    for (var i = 0; i < $scope.offers.length; i++) {
+      if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
 
-    for (var i = 0; i < $scope.clientData.offers.length; i++) {
-      if ($scope.clientData.offer1text.offerId == $scope.clientData.offers[i].offerId) {
+        $scope.offer1StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer1EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
+        $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
+        $scope.currentOffer1Image = $scope.offers[i].offerPhotoUrl;
 
-        $scope.clientData.offer1StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
-        $scope.clientData.offer1EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
-        $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
+      } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
 
-      } else if ($scope.clientData.offer2text.offerId == $scope.clientData.offers[i].offerId) {
+        $scope.offer2StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer2EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
+        $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
+        $scope.currentOffer2Image = $scope.offers[i].offerPhotoUrl;
 
-        $scope.clientData.offer2StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
-        $scope.clientData.offer2EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
-        $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
+      } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
 
-      } else if ($scope.clientData.offer3text.offerId == $scope.clientData.offers[i].offerId) {
-
-        $scope.clientData.offer3StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
-        $scope.clientData.offer3EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
+        $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        $scope.currentOffer3Image = $scope.offers[i].offerPhotoUrl;
       }
     }
+    console.log("sorted offer start times");
   }
 
   $scope.parseOfferDays = function(offer,data) {
@@ -174,263 +196,135 @@ angular.module('app.controller', ['ngImgCrop'])
     }
   }
 
-  $scope.uploadFile = function(){
-    var clientId = detailsfactory.getclientId();
-    var file = detailsfactory.getFile();
-    console.log('file is ' );
-    console.dir(file);
-    webfactory.getUploadUrl(clientId).then(function(response){
-      console.log(response);
-      var uploadUrl = response.uploadUrl;
-      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
-        $scope.retrieveClient();
-      }, function(error) {
-        $scope.retrieveClient();
+  var details = function(val) {
+    if (val == 1) {
+      var modal = $modal.open({
+        animation: true,
+        controller: 'modal-controller',
+        templateUrl: 'modules/templates/updated-modal.html'
       });
-    })
-  }
+      $timeout(function() {
+        modal.close();
+      }, 2000);
+    }
+    webfactory.retrieveClient($scope.chosenClient.clientId).then(function(details){
+      if (details.status == "True") {
+        $scope.isActive = details.isActive;
+        $scope.allData = details;
+        $scope.name = details.name;
+        $scope.email = details.email;
 
-  $scope.closeModal= function() {
-    $scope.modal.close();
-  };
+        $scope.clientId = details.id;
 
-  $scope.retrieveClient = function() {
-    //Retrieve client details
-    webfactory.retrieveClient($scope.chosenClient.clientId).then(function(response) {
-      if (response !== -1) {
-        $scope.clientData = response;
-        $scope.photoUrl = $scope.clientData.photo;
-        detailsfactory.setClientId($scope.clientData.id);
-        //Retrieve all client offers
-        webfactory.getOffers($scope.chosenClient.clientId).then(function(response) {
-          $scope.clientData.offers = response;
-          $scope.clientData.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
-          for (var i = 0; i < $scope.clientData.offers.length; i++) {
-            if ($scope.clientData.offer1Id == $scope.clientData.offers[i].offerId) {
-              $scope.clientData.offer1text = $scope.clientData.offers[i];
-              offer1Changed = $scope.clientData.offers[i];
-              $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
-            } else if ($scope.clientData.offer2Id == $scope.clientData.offers[i].offerId) {
-              $scope.clientData.offer2text = $scope.clientData.offers[i];
-              offer2Changed = $scope.clientData.offers[i];
-              $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
-            } else if ($scope.clientData.offer3Id == $scope.clientData.offers[i].offerId) {
-              $scope.clientData.offer3text = $scope.clientData.offers[i];
-              offer3Changed = $scope.clientData.offers[i];
-              //$scope.parseOfferDays($scope.offer3Days,$scope.clientData.offers[i].offerDays);
+        // $scope.offer1text = details.offer1;
+
+        if (details.showOffer1 == 1) {
+          $scope.offer1 = true;
+        }
+
+        // $scope.offer2text = details.offer2;
+
+        if (details.showOffer2 == 1) {
+          $scope.offer2 = true;
+        }
+
+        // $scope.offer3text = details.offer3;
+
+        if (details.showOffer3 == 1) {
+          $scope.offer3 = true;
+        }
+
+        webfactory.getOffers($scope.clientId).then(function(response) {
+          $scope.offers = response;
+          $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
+          for (var i = 0; i < $scope.offers.length; i++) {
+            if (details.offer1Id == $scope.offers[i].offerId) {
+              $scope.offer1text = $scope.offers[i];
+              offer1Changed = $scope.offers[i];
+              $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
+            } else if (details.offer2Id == $scope.offers[i].offerId) {
+              $scope.offer2text = $scope.offers[i];
+              offer2Changed = $scope.offers[i];
+              $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
+            } else if (details.offer3Id == $scope.offers[i].offerId) {
+              $scope.offer3text = $scope.offers[i];
+              offer3Changed = $scope.offers[i];
+              //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
             }
           }
-          $scope.clientData.offers.splice(1,3);
+          $scope.offers.splice(1,3);
           $scope.changeOffers();
         });
 
-        $scope.gotDetails = "client";
-        $scope.clientData.locationText = $scope.clientData.x + " " + $scope.clientData.y;
-        $scope.clientData.myImage = "";
-        $scope.isActive = $scope.clientData.isActive == 1 ? true : false;
-        $scope.clientData.offer1Shown = $scope.clientData.showOffer1 == 1 ? true : false;
-        $scope.clientData.offer2Shown = $scope.clientData.showOffer2 == 1 ? true : false;
-        $scope.clientData.offer3Shown = $scope.clientData.showOffer3 == 1 ? true : false;
-        offer1Active = $scope.clientData.offer1Shown;
-        offer2Active = $scope.clientData.offer2Shown;
-        offer3Active = $scope.clientData.offer3Shown;
-        $scope.clientData.newLocation = "";
-        $scope.clientData.newName = "";
-        $scope.clientData.newFoodStyle = "";
-        $scope.clientData.newOffer1text = "";
-        $scope.clientData.newOffer2text = "";
-        $scope.clientData.newOffer3text = "";
-        email = $scope.clientData.email;
+        $scope.foodStyle = details.foodStyle;
+        $scope.photo = details.photo;
+        $scope.location = details.y + " " + details.x;
+        $scope.myImage = "";
+        $scope.image = details.photo;
+        offer1Active = $scope.offer1;
+        offer2Active = $scope.offer2;
+        offer3Active = $scope.offer3;
+        $scope.newLocation = "";
+        $scope.newName = "";
+        $scope.newFoodStyle = "";
+        $scope.newOffer1text = "";
+        $scope.newOffer2text = "";
+        $scope.newOffer3text = "";
+        $scope.offer1Image = '';
+        $scope.offer2Image = '';
+        $scope.offer3Image = '';
+        $scope.progress = '';
+      } else {
+        console.log("false");
+        $modal.open({
+          animation: true,
+          templateUrl: 'modules/templates/account-not-found-modal.html'
+        });
       }
-    });
-  };
-
-  var details = function() {
-    var modal = $modal.open({
-      animation: true,
-      controller: 'modal-controller',
-      templateUrl: 'admin/templates/updated-modal.html'
-    });
-    $timeout(function() {
-      console.log("closed");
-      modal.close();
-    }, 2000);
-    $scope.retrieveClient();
-  };
-
-  $scope.toggleOn = function() {
-    console.log("toggling on");
-    $scope.isActive = !$scope.isActive;
-    webfactory.toggleClient($scope.clientData.id, 1).then(function() {
-      //Modal success?
-      $scope.retrieveClient();
-    });
-  };
-
-  $scope.getEditList = function() {
-    return ($scope.editList === "") ? "No Details Changed" : $scope.editList;
-  };
-
-  $scope.toggleOff = function() {
-    console.log("toggling off");
-    $scope.isActive = !$scope.isActive;
-    webfactory.toggleClient($scope.clientData.id, 0).then(function() {
-      //Modal success?
-      $scope.retrieveClient();
-    });
-  };
+    })
+  }
 
   $scope.updateInfo = function() {
-    $scope.editList = "";
-
-    if ($scope.clientData.newLocation !== "") {
-      $scope.editList += "Client Address to " + $scope.clientData.newLocation + " | ";
-    }
-
-    if ($scope.clientData.newFoodStyle !== "") {
-      $scope.editList += "Food Style to " + $scope.clientData.newFoodStyle + " | ";
-    }
-
-    if ($scope.clientData.newName !== "") {
-      $scope.editList += "Client Name to " + $scope.clientData.newName + " | ";
-    }
-
-    //Check if offer 1 active state has changed
-    if ($scope.clientData.offer1Shown !== offer1Active) {
-      if ($scope.clientData.offer1Shown === false) {
-        //Toggle off
-        $scope.editList += "Offer 1 OFF | ";
-      } else {
-        //Toggle on
-        $scope.editList += "Offer 1 ON | ";
-      }
-    }
-
-    //Check if offer 1 offer has changed
-    if ($scope.clientData.offer1text.offerId !== offer1Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.clientData.offer1text.offerId === 0) {
-        if ($scope.clientData.newOffer1text !== "") {
-          $scope.editList += "A new offer 1:" + $scope.newOffer1text + " | ";
-        } else {
-          $scope.editList += "A BLANK offer 1 (This will not be updated, please add text or revert back to original offer) | ";
-        }
-      }
-      //Replace the current offer with the old offer
-      else {
-        $scope.editList += "Replacing offer 1 with: " + $scope.clientData.newOffer1text + " | ";
-      }
-    }
-
-    //Check if offer 2 active state has changed
-    if ($scope.clientData.offer2Shown !== offer2Active) {
-      if ($scope.clientData.offer2Shown === false) {
-        //Toggle off
-        $scope.editList += "Offer 2 OFF | ";
-      } else {
-        //Toggle on
-        $scope.editList += "Offer 2 ON | ";
-      }
-    }
-
-    //Check if offer 2 offer has changed
-    if ($scope.clientData.offer2text.offerId !== offer2Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.clientData.offer2text.offerId === 0) {
-        if ($scope.clientData.newOffer2text !== "") {
-          $scope.editList += "A new offer 2:" + $scope.newOffer2text + " | ";
-        } else {
-          $scope.editList += "A BLANK offer 2 (This may not be updated, please add text or revert back to original offer) | ";
-        }
-      }
-      //Replace the current offer with the old offer
-      else {
-        $scope.editList += "Replacing offer 2 with: " + $scope.clientData.newOffer2text + " | ";
-      }
-    }
-
-    //Check if offer 3 active state has changed
-    if ($scope.clientData.offer3Shown !== offer3Active) {
-      if ($scope.clientData.offer3Shown === false) {
-        //Toggle off
-        $scope.editList += "Offer 3 OFF | ";
-      } else {
-        //Toggle on
-        $scope.editList += "Offer 3 ON | ";
-      }
-    }
-
-    //Check if offer 3 offer has changed
-    if ($scope.clientData.offer3text.offerId !== offer3Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.clientData.offer3text.offerId === 0) {
-        if ($scope.clientData.newOffer3text !== "") {
-          $scope.editList += "A new offer 3:" + $scope.newOffer3text + " | ";
-        } else {
-          $scope.editList += "A BLANK offer 3 (This may not be updated, please add text or revert back to original offer) | ";
-        }
-      }
-      //Replace the current offer with the old offer
-      else {
-        $scope.editList += "Replacing offer 3 with: " + $scope.clientData.newOffer3text + " | ";
-      }
-    }
-    ////Check for changed details
-    $scope.modal = $modal.open({
-      animation: true,
-      templateUrl: 'admin/templates/confirm-edit-modal.html',
-      scope: $scope
-    });
-  };
-
-  $scope.getLocation = function(val) {
-    return webfactory.getLocations(val).then(function(response) {
-      return response.data.results.map(function(item){
-        console.log(item.formatted_address);
-        return item.formatted_address;
-      });
-    });
-  };
-
-  $scope.confirmUpdate = function() {
-    $scope.modal.close();
-    if((($scope.clientData.offer3text.offerId == $scope.clientData.offer2text.offerId) && $scope.clientData.offer3text.offerId !== 0) || (($scope.clientData.offer3text.offerId == $scope.clientData.offer1text.offerId) && $scope.clientData.offer3text.offerId !== 0) || (($scope.clientData.offer1text.offerId == $scope.clientData.offer2text.offerId) && $scope.clientData.offer2text.offerId !== 0)){
+    if(
+      (($scope.offer3text.offerId == $scope.offer2text.offerId) && $scope.offer3text.offerId !== 0)
+      || (($scope.offer3text.offerId == $scope.offer1text.offerId) && $scope.offer3text.offerId !== 0)
+      || (($scope.offer1text.offerId == $scope.offer2text.offerId) && $scope.offer2text.offerId !== 0)
+    ) {
       $modal.open({
         animation: true,
         controller: 'modal-controller',
-        templateUrl: 'admin/templates/same-offer-chosen-modal.html'
+        templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
+      var email = $scope.email;
       var counter = 13;
-      $scope.editList = "";
-
-      if ($scope.clientData.newLocation !== "") {
-        webfactory.updateLocation($scope.clientData.newLocation,email).then(function(response) {
+      if ($scope.newLocation !== "") {
+        webfactory.updateLocation($scope.newLocation,email).then(function(response) {
           counter -= 1;
-          if (counter === 0) {
-            details();
+          if (counter == 0) {
+            details(1);
           }
         });
       } else {
         counter -= 1;
       }
 
-      if ($scope.clientData.newFoodStyle !== "") {
-        webfactory.updateType($scope.clientData.newFoodStyle,email).then(function(response) {
+      if ($scope.newFoodStyle !== "") {
+        webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
           counter -= 1;
-          if (counter === 0) {
-            details();
+          if (counter == 0) {
+            details(1);
           }
         });
       } else {
         counter -= 1;
       }
 
-      if ($scope.clientData.newName !== "")  {
-        webfactory.updateName($scope.clientData.newName,email).then(function(response) {
+      if ($scope.newName !== "") {
+        webfactory.updateName($scope.newName,email).then(function(response) {
           counter -= 1;
-          if (counter === 0) {
-            details();
+          if (counter == 0) {
+            details(1);
           }
         });
       } else {
@@ -438,20 +332,54 @@ angular.module('app.controller', ['ngImgCrop'])
       }
 
       //Check if offer 1 active state has changed
-      if ($scope.clientData.offer1Shown !== offer1Active) {
-        if ($scope.clientData.offer1Shown === false) {
+      if ($scope.offer1 !== offer1Active) {
+        if ($scope.offer1 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 1, 0).then(function(){
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 1, 1).then(function(){
             counter -= 1;
-            if (counter === 0) {
+            if (counter == 0) {
+              details(1);
+            }
+          });;
+        }
+      } else {
+        counter -= 1;
+      }
+
+      //Check if offer 1 offer has changed
+      if ($scope.offer1text.offerId !== offer1Changed.offerId) {
+        //Check if a new offer is being submitted
+        if ($scope.offer1text.offerId == 0) {
+          if ($scope.newOffer1text !== "") {
+            webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response) {
+              webfactory.toggleOffer(email, 1, 1).then(function() {
+                counter -= 1;
+                if (counter == 0) {
+                  details(1);
+                }
+              });
+            });
+          } else {
+            $modal.open({
+              animation: true,
+              controller: 'modal-controller',
+              templateUrl: 'modules/templates/blank-offer-modal.html'
+            });
+          }
+        }
+        //Replace the current offer with the old offer
+        else {
+          webfactory.replaceOffer(email,offer1Changed.offerId,$scope.offer1text.offerId,1).then(function() {
+            counter -= 1;
+            if (counter == 0) {
               details(1);
             }
           });
@@ -460,73 +388,39 @@ angular.module('app.controller', ['ngImgCrop'])
         counter -= 1;
       }
 
-      //Check if offer 1 offer has changed
-      if ($scope.clientData.offer1text.offerId !== offer1Changed.offerId) {
-        //Check if a new offer is being submitted
-        if ($scope.clientData.offer1text.offerId === 0) {
-          if ($scope.clientData.newOffer1text !== "") {
-            webfactory.insertOffer(email,1,$scope.clientData.newOffer1text).then(function(response) {
-              webfactory.toggleOffer(email, 1, 1).then(function() {
-                counter -= 1;
-                if (counter === 0) {
-                  details();
-                }
-              });
-            });
-          } else {
-            $modal.open({
-              animation: true,
-              controller: 'modal-controller',
-              templateUrl: 'admin/templates/blank-offer-modal.html'
-            });
-          }
-        }
-        //Replace the current offer with the old offer
-        else {
-          webfactory.replaceOffer(email,offer1Changed.offerId,$scope.clientData.offer1text.offerId,1).then(function() {
-            counter -= 1;
-            if (counter === 0) {
-              details();
-            }
-          });
-        }
-      } else {
-        counter -= 1;
-      }
-
       //Check if offer 2 active state has changed
-      if ($scope.clientData.offer2Shown !== offer2Active)  {
-        if ($scope.clientData.offer2Shown === false) {
+      if ($scope.offer2 !== offer2Active) {
+        if ($scope.offer2 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 2, 0).then(function(){
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 2, 1).then(function(){
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
-          });
+          });;
         }
       } else {
         counter -= 1;
       }
 
       //Check if offer 2 offer has changed
-      if ($scope.clientData.offer2text.offerId !== offer2Changed.offerId) {
+      if ($scope.offer2text.offerId !== offer2Changed.offerId) {
         //Check if a new offer is being submitted
-        if ($scope.clientData.offer2text.offerId === 0) {
-          if ($scope.clientData.newOffer2text !== "") {
-            webfactory.insertOffer(email,2,$scope.clientData.newOffer2text).then(function(response) {
+        if ($scope.offer2text.offerId == 0) {
+          if ($scope.newOffer2text !== "") {
+            webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
               webfactory.toggleOffer(email, 2, 1).then(function() {
                 counter -= 1;
-                if (counter === 0) {
-                  details();
+                if (counter == 0) {
+                  details(1);
                 }
               });
             });
@@ -534,16 +428,16 @@ angular.module('app.controller', ['ngImgCrop'])
             $modal.open({
               animation: true,
               controller: 'modal-controller',
-              templateUrl: 'admin/templates/blank-offer-modal.html'
+              templateUrl: 'modules/templates/blank-offer-modal.html'
             });
           }
         }
         //Replace the current offer with the old offer
         else {
-          webfactory.replaceOffer(email,offer2Changed.offerId,$scope.clientData.offer2text.offerId,2).then(function() {
+          webfactory.replaceOffer(email,offer2Changed.offerId,$scope.offer2text.offerId,2).then(function() {
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
           });
         }
@@ -552,38 +446,38 @@ angular.module('app.controller', ['ngImgCrop'])
       }
 
       //Check if offer 3 active state has changed
-      if ($scope.clientData.offer3Shown !== offer3Active) {
-        if ($scope.clientData.offer3Shown === false) {
+      if ($scope.offer3 !== offer3Active) {
+        if ($scope.offer3 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 3, 0).then(function(){
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 3, 1).then(function(){
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
-          });
+          });;
         }
       } else {
         counter -= 1;
       }
 
       //Check if offer 3 offer has changed
-      if ($scope.clientData.offer3text.offerId !== offer3Changed.offerId) {
+      if ($scope.offer3text.offerId !== offer3Changed.offerId) {
         //Check if a new offer is being submitted
-        if ($scope.clientData.offer3text.offerId === 0) {
-          if ($scope.clientData.newOffer3text !== "") {
+        if ($scope.offer3text.offerId == 0) {
+          if ($scope.newOffer3text !== "") {
             webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
               webfactory.toggleOffer(email, 3, 1).then(function() {
                 counter -= 1;
-                if (counter === 0) {
-                  details();
+                if (counter == 0) {
+                  details(1);
                 }
               });
             });
@@ -591,16 +485,16 @@ angular.module('app.controller', ['ngImgCrop'])
             $modal.open({
               animation: true,
               controller: 'modal-controller',
-              templateUrl: 'admin/templates/blank-offer-modal.html'
+              templateUrl: 'modules/templates/blank-offer-modal.html'
             });
           }
         }
         //Replace the current offer with the old offer
         else {
-          webfactory.replaceOffer(email,offer3Changed.offerId,$scope.clientData.offer3text.offerId,3).then(function() {
+          webfactory.replaceOffer(email,offer3Changed.offerId,$scope.offer3text.offerId,3).then(function() {
             counter -= 1;
-            if (counter === 0) {
-              details();
+            if (counter == 0) {
+              details(1);
             }
           });
         }
@@ -609,15 +503,15 @@ angular.module('app.controller', ['ngImgCrop'])
       }
 
       //Change offer 1 hours
-      if (($scope.clientData.offer1EndTime.time - $scope.clientData.offer1StartTime.time) <= 0) {
+      if (($scope.offer1EndTime.time - $scope.offer1StartTime.time) <= 0) {
         counter -= 1;
         $modal.open({
           animation: true,
           controller: 'modal-controller',
-          templateUrl: 'admin/templates/offer1-times-invalid-modal.html'
+          templateUrl: 'modules/templates/offer1-times-invalid-modal.html'
         });
       } else {
-        webfactory.updateOfferHours(email, $scope.clientData.offer1text.offerId, $scope.clientData.offer1StartTime.time, $scope.clientData.offer1EndTime.time).then(function(response) {
+        webfactory.updateOfferHours(email, $scope.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
           counter -= 1;
           if (counter == 0) {
             details(1);
@@ -628,7 +522,7 @@ angular.module('app.controller', ['ngImgCrop'])
       }
 
       //Change offer 2 hours
-      if (($scope.clientData.offer2EndTime.time - $scope.clientData.offer2StartTime.time) <= 0) {
+      if (($scope.offer2EndTime.time - $scope.offer2StartTime.time) <= 0) {
         counter -= 1;
         $modal.open({
           animation: true,
@@ -636,7 +530,7 @@ angular.module('app.controller', ['ngImgCrop'])
           templateUrl: 'modules/templates/offer2-times-invalid-modal.html'
         });
       } else {
-        webfactory.updateOfferHours(email, $scope.clientData.offer2text.offerId, $scope.clientData.offer2StartTime.time, $scope.clientData.offer2EndTime.time).then(function(response) {
+        webfactory.updateOfferHours(email, $scope.offer2text.offerId, $scope.offer2StartTime.time, $scope.offer2EndTime.time).then(function(response) {
           counter -= 1;
           if (counter == 0) {
             details(1);
@@ -648,7 +542,7 @@ angular.module('app.controller', ['ngImgCrop'])
 
       //Uncomment this when we actually use offer 3
       // //Change offer 3 hours
-      // if (($scope.clientData.offer3EndTime.time - $scope.clientData.offer3StartTime.time) <= 0) {
+      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
       //   counter -= 1;
       //   $modal.open({
       //     animation: true,
@@ -656,7 +550,7 @@ angular.module('app.controller', ['ngImgCrop'])
       //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
       //   });
       // } else {
-      //   webfactory.updateOfferHours(email, $scope.clientData.offer3text.offerId, $scope.clientData.offer3StartTime.time, $scope.clientData.offer3EndTime.time).then(function(response) {
+      //   webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
       //     counter -= 1;
       //     if (counter == 0) {
       //       details(1);
@@ -671,7 +565,7 @@ angular.module('app.controller', ['ngImgCrop'])
       for (var i = 0; i < $scope.offer1Days.length; i++) {
         offer1DayString[i] = $scope.offer1Days[i].active;
       }
-      webfactory.updateOfferDays(email,$scope.clientData.offer1text.offerId,"[" + offer1DayString + "]").then(function() {
+      webfactory.updateOfferDays(email,$scope.offer1text.offerId,"[" + offer1DayString + "]").then(function() {
         counter -= 1;
         if (counter == 0) {
           details(1);
@@ -683,7 +577,7 @@ angular.module('app.controller', ['ngImgCrop'])
       for (var i = 0; i < $scope.offer2Days.length; i++) {
         offer2DayString[i] = $scope.offer2Days[i].active;
       }
-      webfactory.updateOfferDays(email,$scope.clientData.offer2text.offerId,"[" + offer2DayString + "]").then(function() {
+      webfactory.updateOfferDays(email,$scope.offer2text.offerId,"[" + offer2DayString + "]").then(function() {
         counter -= 1;
         if (counter == 0) {
           details(1);
@@ -696,15 +590,131 @@ angular.module('app.controller', ['ngImgCrop'])
       // for (var i = 0; i < $scope.offer3Days.length; i++) {
       //   offer3DayString[i] = $scope.offer3Days[i].active;
       // }
-      // webfactory.updateOfferDays(email,$scope.clientData.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
+      // webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
       //   counter -= 1;
       //   if (counter == 0) {
       //     details(1);
       //   }
       // });
 
-    } //if/else
-  }; //confirm update
+    }
+  }
+
+  $scope.getLocation = function(val) {
+    return webfactory.getLocations(val).then(function(response) {
+      return response.data.results.map(function(item){
+        console.log(item.formatted_address);
+        return item.formatted_address;
+      });
+    })
+  };
+
+  var handleFileSelect = function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.myImage=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
+
+  var handleOffer1Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer1Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer1Input')).on('change',handleOffer1Select);
+
+  var handleOffer2Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer2Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer2Input')).on('change',handleOffer2Select);
+
+  var handleOffer3Select=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.offer3Image=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#offer3Input')).on('change',handleOffer3Select);
+
+  $scope.uploadFile = function() {
+    var file = dataURItoBlob($scope.myCroppedImage);
+    console.log(file);
+    webfactory.getUploadUrl($scope.clientId).then(function(response){
+      console.log(response);
+      var uploadUrl = response.uploadUrl;
+      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
+        details(1);
+      }, function(error) {
+        //TODO: some sort of warning?
+        details(0);
+      });
+    })
+  }
+
+  $scope.uploadOfferImage = function(offerId, image) {
+    $scope.progress = 'began';
+    var file = dataURItoBlob(image);
+    console.log($scope.progress);
+    console.log(file);
+    webfactory.getImageUploadUrl(offerId).then(function(response){
+      console.log(response);
+      $scope.progress = 'ready';
+      var uploadUrl = response.uploadUrl;
+      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
+        $scope.progress = 'success';
+        details(1);
+      }, function(error) {
+        //TODO: some sort of warning?
+        $scope.progress = 'fail';
+        details(0);
+      });
+    })
+  }
+
+  function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+    else
+    byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+  }
 
 }) //console controller
 
@@ -787,7 +797,6 @@ angular.module('app.controller', ['ngImgCrop'])
       reader.readAsDataURL(file);
     }, 200);
   };
-
 
 })
 

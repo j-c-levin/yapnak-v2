@@ -39,7 +39,7 @@ public class GetFavourites_Async extends AsyncTask<Double, Void, OfferListEntity
         if (Boolean.parseBoolean(response.getStatus()) && response.getFoundOffers()) {
             mainList.loadOffers(response);
         } else {
-            mainList.noOffers();
+            mainList.noFavourites();
         }
     }
 }

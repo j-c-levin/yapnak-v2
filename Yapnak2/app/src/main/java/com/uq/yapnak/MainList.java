@@ -233,6 +233,12 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
 
     public void noOffers() {
         new Alert_Dialog(this).noOffersFound();
+        mRecyclerView.setVisibility(View.GONE);
+    }
+
+    public void noFavourites() {
+        new Alert_Dialog(this).noFavouritesFound();
+        mRecyclerView.setVisibility(View.GONE);
     }
 
     void drawerItemClicked(View item) {
@@ -328,6 +334,15 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             ParsePush.unsubscribeInBackground("new");
             ParsePush.unsubscribeInBackground("once");
         }
+        if (userDetails.getUserImage() != null) {
+            //Do something with the user image
+//            Log.d("debug", userDetails.getUserImage().substring(0, 20));
+//            String imageDataBytes = userDetails.getUserImage().substring(userDetails.getUserImage().indexOf(",")+1);
+//            InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+//            Bitmap bitmap = BitmapFactory.decodeStream(stream);
+//            ImageView i = (ImageView) findViewById(R.id.user_image);
+//            i.setImageBitmap(bitmap);
+        }
     }
 
     public void refreshOnlyAtTop() {
@@ -409,6 +424,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void loadOffers(OfferListEntity response) {
+        mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new ClientListAdapter(response);
         mRecyclerView.setAdapter(mAdapter);
     }
