@@ -18,7 +18,7 @@
         <option name="HTTP_PORT" value="8080" />
         <option name="WAR_DIR" value="C:\Users\Joshua\Documents\GitHub\yapnak-v2\Yapnak2\backend-GCM\build\exploded-app" />
         <option name="WEB_APP_DIR" value="C:\Users\Joshua\Documents\GitHub\yapnak-v2\Yapnak2\backend-GCM\src\main\webapp" />
-        <option name="APPENGINE_SDKROOT" value="C:\Users\Joshua\.gradle\appengine-sdk\appengine-java-sdk-1.9.28" />
+        <option name="APPENGINE_SDKROOT" value="C:\Users\Joshua\.gradle\appengine-sdk\appengine-java-sdk-1.9.30" />
       </configuration>
     </facet>
   </component>
@@ -40,8 +40,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="appengine-endpoints-1.9.28" level="project" />
-    <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.28" level="project" />
+    <orderEntry type="library" exported="" name="appengine-endpoints-1.9.30" level="project" />
+    <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.30" level="project" />
     <orderEntry type="library" exported="" name="javax.servlet-api-3.1.0" level="project" />
     <orderEntry type="library" exported="" name="objectify-5.1.5" level="project" />
     <orderEntry type="library" exported="" name="gcm-server-1.0.2" level="project" />
@@ -49,7 +49,7 @@
     <orderEntry type="library" exported="" name="httpclient-4.5.1" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.5.1" level="project" />
     <orderEntry type="library" exported="" name="appengine-gcs-client-0.5" level="project" />
-    <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.28" level="project" />
+    <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.30" level="project" />
     <orderEntry type="library" exported="" name="json-simple-1.1" level="project" />
     <orderEntry type="library" exported="" name="httpcore-4.4.3" level="project" />
     <orderEntry type="library" exported="" name="commons-logging-1.2" level="project" />
@@ -68,7 +68,7 @@
     <orderEntry type="library" exported="" name="jdo2-api-2.3-eb" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-jdo-1.21.0" level="project" />
     <orderEntry type="library" exported="" name="transaction-api-1.1" level="project" />
-    <orderEntry type="library" exported="" name="guava-19.0-rc2" level="project" />
+    <orderEntry type="library" exported="" name="guava-19.0-rc3" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.21.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-appengine-1.21.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-1.21.0" level="project" />

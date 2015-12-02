@@ -59,7 +59,11 @@
         style="@style/login_button"
         android:onClick="toLogin"
         android:layout_below="@+id/Usp"
-        android:layout_alignLeft="@+id/Facebook" />
+        android:layout_alignLeft="@+id/Facebook"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
 
     <Button
         android:layout_width="150dp"
@@ -72,7 +76,11 @@
         android:layout_alignEnd="@+id/Facebook"
         android:textSize="30sp"
         style="@style/login_button"
-        android:onClick="toRegister" />
+        android:onClick="toRegister"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
 
     <Button
         android:layout_width="410dp"
@@ -82,12 +90,13 @@
         android:textSize="30sp"
         android:textStyle="bold"
         style="@style/login_button"
-        android:paddingRight="50dp"
-        android:paddingLeft="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="false"
+        android:paddingRight="45dp"
+        android:paddingLeft="45dp"
         android:onClick="facebookLogin"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/Login"
-        android:layout_marginTop="30dp" />
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

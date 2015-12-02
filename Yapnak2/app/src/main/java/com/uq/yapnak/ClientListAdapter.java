@@ -69,6 +69,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Vi
         holder.offerId.setText(String.valueOf(offer.getOfferId()));
         holder.gps.setText(String.valueOf(offer.getLatitude() + "," + offer.getLongitude()));
         new DownloadImageTask(holder.offerImage).execute(offer.getClientOfferPhoto());
+        holder.offerId.setTag(position);
         if (offer.getFavourite()) {
             holder.favourite.setImageResource(R.drawable.heart_filled);
             holder.favourite.setTag(1);

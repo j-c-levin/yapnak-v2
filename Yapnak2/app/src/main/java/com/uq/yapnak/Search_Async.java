@@ -1,5 +1,6 @@
 package com.uq.yapnak;
 
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -45,6 +46,10 @@ public class Search_Async extends AsyncTask<String, Void, OfferListEntity> {
             longitude = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
             latitude = json.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
             Log.d("debug", "at: " + longitude + " " + latitude);
+            Location location = new Location("search_async");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            mainList.offerRefreshAnalytics(location);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

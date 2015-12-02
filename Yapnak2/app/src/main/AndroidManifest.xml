@@ -90,7 +90,8 @@
 
         <activity
             android:name=".RatingActivity"
-            android:theme="@style/myDialogTheme" />
+            android:theme="@style/myDialogTheme"
+            android:label=""/>
         <activity
             android:name=".About"
             android:label="@string/title_activity_about" >

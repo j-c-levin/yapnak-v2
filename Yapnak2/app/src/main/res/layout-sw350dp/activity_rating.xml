@@ -8,7 +8,7 @@
     android:gravity = "center">
 
     <RelativeLayout
-        android:layout_width="280dp"
+        android:layout_width="320dp"
         android:layout_height="400dp"
         android:background="@drawable/layoutborder"
         android:elevation="2dp"
@@ -64,7 +64,6 @@
             android:textColor="@color/colorPrimary"
             android:checked="true"
             android:layout_below="@+id/rate_title"
-            android:layout_alignEnd="@+id/rating"
             android:button="@color/colorPrimary"
             android:layout_centerHorizontal="true" />
 
@@ -76,6 +75,7 @@
             android:layout_marginTop="25dp"
             android:textColor="@color/colorPrimary"
             android:layout_below="@+id/isAccepted"
+            android:layout_alignStart="@+id/rating"
             android:layout_centerHorizontal="true" />
 
         <TextView
@@ -95,11 +95,11 @@
             android:layout_below="@+id/comment_text"
             android:layout_alignStart="@+id/comment_text"
             android:layout_marginTop="10dp"
+            android:layout_alignEnd="@+id/comment_text"
             android:editable="true"
             android:lines="1"
             android:maxLength="140"
-            android:layout_centerHorizontal="true"
-            android:layout_alignEnd="@+id/comment_text" />
+            android:layout_centerHorizontal="true" />
 
         <ImageButton
             android:layout_width="30dp"

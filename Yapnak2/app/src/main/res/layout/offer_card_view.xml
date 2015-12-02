@@ -24,7 +24,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="false"
             android:cropToPadding="false"
-            android:src="@drawable/wok"
+            android:src="@drawable/yapnak_default_offer"
             android:contentDescription="@string/offer_image"
             android:scaleType="centerCrop" />
 

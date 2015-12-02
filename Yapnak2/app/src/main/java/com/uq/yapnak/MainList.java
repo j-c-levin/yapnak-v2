@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,10 +18,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.KeyListener;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -74,6 +78,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     EditText searchText;
     ImageView searchButton;
     static final String wip = "You've caught us early, we're still working on this.";
+    boolean boot = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,9 +188,15 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             Animation hideSearch = AnimationUtils.loadAnimation(this, R.anim.search_hide);
             hideSearch.setFillAfter(true);
             searchBar.startAnimation(hideSearch);
-            Animation moveContent = AnimationUtils.loadAnimation(this, R.anim.main_list_up);
-            moveContent.setFillAfter(true);
-            content.findViewById(R.id.recycler_list).startAnimation(moveContent);
+
+            RecyclerView recycler = (RecyclerView) content.findViewById(R.id.recycler_list);
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int height = size.y;
+            ViewGroup.LayoutParams params = recycler.getLayoutParams();
+            params.height = height;
+            recycler.setLayoutParams(params);
             searchText.setKeyListener(null);
             searchText.setText("");
             searchButton.setClickable(false);
@@ -193,6 +204,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             if (mLastLocation != null) {
                 getClients();
             } else {
+                swipeRefreshLayout.setRefreshing(true);
                 createLocationRequest();
             }
         } else {
@@ -201,9 +213,18 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             Animation showSearch = AnimationUtils.loadAnimation(this, R.anim.search_show);
             showSearch.setFillAfter(true);
             searchBar.startAnimation(showSearch);
-            Animation moveContent = AnimationUtils.loadAnimation(this, R.anim.main_list_down);
-            moveContent.setFillAfter(true);
-            content.findViewById(R.id.recycler_list).startAnimation(moveContent);
+            RecyclerView recycler = (RecyclerView) content.findViewById(R.id.recycler_list);
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int height = size.y;
+            height = (int) (height * Double.parseDouble((String) recycler.getTag()));
+            ViewGroup.LayoutParams params = recycler.getLayoutParams();
+            params.height = height;
+            recycler.setLayoutParams(params);
+//            Animation moveContent = AnimationUtils.loadAnimation(this, R.anim.main_list_down);
+//            moveContent.setFillAfter(true);
+//            content.findViewById(R.id.recycler_list).startAnimation(moveContent);
             searchText.setKeyListener((KeyListener) searchText.getTag());
             searchButton.setClickable(true);
         }
@@ -295,6 +316,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
                     final Context context = MainList.this;
 
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        Log.d("debug", "changing " + key);
                         if (key.equals("password")) {
                             if (prefs.getBoolean(key, false)) {
                                 Intent intent = new Intent(context, NewPassword.class);
@@ -382,6 +404,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
                             createLocationRequest();
                         } else {
                             getClients();
+                            offerRefreshAnalytics(mLastLocation);
                         }
                     } else {
                         buildGoogleApiClient();
@@ -430,6 +453,8 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     }
 
     public void onCardClick(View card) {
+        TextView t = (TextView) card.findViewById(R.id.offerId);
+        cardClickedAnalytics(Integer.parseInt(String.valueOf(t.getText())), (int) card.findViewById(R.id.offerId).getTag());
         if (card != currentCard && currentCard != null) {
             //Another card is already selected, deselect
             currentCard.setTag(0);
@@ -587,14 +612,21 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation == null) {
+            Log.d("debug", "mLastLocation unknown");
             swipeRefreshLayout.setRefreshing(true);
             createLocationRequest();
         } else {
-            getClients();
+            if (boot) {
+                swipeRefreshLayout.setRefreshing(true);
+                createLocationRequest();
+            } else {
+                getClients();
+            }
         }
     }
 
     protected void createLocationRequest() {
+        Log.d("debug", "createLocationRequest");
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(2000);
@@ -603,10 +635,28 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             @Override
             public void onLocationChanged(Location location) {
                 onConnected(new Bundle());
+                Log.d("debug", "found: " + location.getLatitude() + " " + location.getLongitude());
+                if (boot) {
+                    boot = false;
+                    userLoginAnalytics();
+                }
                 LocationServices.FusedLocationApi.removeLocationUpdates(
                         mGoogleApiClient, this);
             }
         });
+    }
+
+    void userLoginAnalytics() {
+        new userLoginAnalytics_Async(userId).execute(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+    }
+
+    void offerRefreshAnalytics(Location location) {
+        new offerRefreshAnalytics_Async(userId).execute(location.getLatitude(), location.getLongitude());
+    }
+
+    void cardClickedAnalytics(int offerId, int position) {
+        //offerID, pos, userID
+        new cardClickedAnalytics_Async(userId).execute(offerId, position);
     }
 
     @Override

@@ -59,8 +59,7 @@
         style="@style/login_button"
         android:onClick="toLogin"
         android:layout_below="@+id/Usp"
-        android:layout_alignLeft="@+id/Usp"
-        android:layout_marginLeft="-70dp" />
+        android:layout_alignLeft="@+id/Facebook" />
 
     <Button
         android:layout_width="130dp"

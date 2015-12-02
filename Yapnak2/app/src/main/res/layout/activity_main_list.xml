@@ -25,9 +25,11 @@
                     android:id="@+id/recycler_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
+                    android:layout_alignParentTop="false"
                     android:layout_centerHorizontal="true"
-                    android:scrollbars="vertical" />
+                    android:scrollbars="vertical"
+                    android:layout_alignParentBottom="true"
+                    android:tag="0.74"/>
 
                 <FrameLayout
                     android:id="@+id/search_bar"
@@ -101,9 +103,10 @@
 
             <ListView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@android:id/list"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"></ListView>
+                android:orientation="vertical"
+                android:textAlignment="center" />
         </FrameLayout>
     </ViewAnimator>
 
