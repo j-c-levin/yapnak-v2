@@ -20,6 +20,7 @@
             Generate masterkey
         </button>
         <label ng-show="masterkey !== ''">Masterkey: {{masterkey}}</label>
+        <label ng-show="email !== ''">Email: {{email}}</label>
     </div>
 
     <div ng-show="isActive == 1">
@@ -193,7 +194,7 @@
 
             <label>
                 <input type="checkbox" name = "show-offer"
-                       value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
+                       value="show-offer" ng-model="offer3" ng-click="showOffer()" ng-disabled="!offer3Enabled"> Offer three
             </label>
 
             <hr>
@@ -244,5 +245,3 @@
     </div><!--ng-show-->
 
 </div> <!--container-->
-
-

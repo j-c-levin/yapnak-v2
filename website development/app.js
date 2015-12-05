@@ -187,8 +187,8 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
     {active:false,humanDay:"Sunday"}
   ];
   $scope.allData = {};
-  $scope.changeOffers = function() {
 
+  $scope.changeOffers = function() {
     for (var i = 0; i < $scope.offers.length; i++) {
       if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
 
@@ -208,7 +208,9 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
 
         $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
-        //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        if ($scope.offer3Enabled) {
+          $scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        }
         $scope.currentOffer3Image = $scope.offers[i].offerPhotoUrl;
       }
     }
@@ -236,6 +238,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
       if (details.status == "True") {
         $scope.allData = details;
         $scope.name = details.name;
+        $scope.offer3Enabled = (details.offer3active == 1) ? true : false;
 
         $scope.clientId = details.id;
 

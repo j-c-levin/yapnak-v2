@@ -22,6 +22,7 @@ public class ClientEntity {
     int showOffer1;
     int showOffer2;
     int showOffer3;
+    int offer3active;
     String status;
     String message;
     int offer1Id;
@@ -29,6 +30,14 @@ public class ClientEntity {
     int offer3Id;
     long isActive;
     String email;
+
+    public int getOffer3active() {
+        return offer3active;
+    }
+
+    public void setOffer3active(int offer3active) {
+        this.offer3active = offer3active;
+    }
 
     public String getEmail() {
         return email;

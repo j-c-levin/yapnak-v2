@@ -105,7 +105,7 @@
       <label>Offer end</label>
       <select class="form-control" ng-model="offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
 
-      <div class="container crop-container">
+      <div class="">
         <div class="crop-area" ng-show="offer1Image !== ''">
           <img-crop image="offer1Image" result-image="offer1ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}" chargement="'Loading...'"></img-crop>
         </div>
@@ -165,7 +165,7 @@
       <label>Offer end</label>
       <select class="form-control" ng-model="offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
 
-      <div class="container crop-container">
+      <div class="">
         <div class="crop-area" ng-show="offer2Image !== ''">
           <img-crop image="offer2Image" result-image="offer2ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}" chargement="'Loading...'"></img-crop>
         </div>
@@ -200,7 +200,7 @@
 
     <label>
       <input type="checkbox" name = "show-offer"
-      value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
+      value="show-offer" ng-model="offer3" ng-click="showOffer()" ng-disabled="!offer3Enabled"> Offer three
     </label>
 
     <hr>
@@ -224,7 +224,7 @@
       <label>Offer end</label>
       <select class="form-control" ng-model="offer3EndTime" ng-options="time.humanHour for time in offerTimes"></select>
 
-      <div class="container crop-container">
+      <div class="">
         <div class="crop-area" ng-show="offer3Image !== ''">
           <img-crop image="offer3Image" result-image="offer3ImageCrop" area-type="rectangle" aspect-ratio="2" result-image-size="{w: 600,h: 300}"></img-crop>
         </div>
@@ -236,6 +236,18 @@
           </div>
         </div>
         <button ng-show="offer3Image !== ''" class="btn btn-default image-upload" ng-click="uploadOfferImage(allData.offer3Id,offer3ImageCrop)">Update image</button>
+        <div ng-show="progress == 'began'">
+          Preparing upload
+        </div>
+        <div ng-show="progress == 'ready'">
+          Upload in progress
+        </div>
+        <div ng-show="progress == 'success'">
+          Upload success.
+        </div>
+        <div ng-show="progress == 'fail'">
+          Upload failed.
+        </div>
       </div>
 
     </div>

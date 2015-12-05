@@ -103,6 +103,7 @@ angular.module('app.controller', ['ngImgCrop'])
   $scope.myCroppedImage = '';
   $scope.isActive = '';
   $scope.email = '';
+  $scope.masterkey = '';
 
   $scope.offers = [];
   $scope.offerTimes = [
@@ -163,7 +164,7 @@ angular.module('app.controller', ['ngImgCrop'])
   $scope.changeOffers = function() {
     $scope.currentOffer1Image = "";
     $scope.currentOffer2Image = "";
-    
+
     for (var i = 0; i < $scope.offers.length; i++) {
       if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
 
@@ -183,7 +184,9 @@ angular.module('app.controller', ['ngImgCrop'])
 
         $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
-        //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        if ($scope.offer3Enabled) {
+          $scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+        }
         $scope.currentOffer3Image = $scope.offers[i].offerPhotoUrl;
       }
     }
@@ -213,6 +216,7 @@ angular.module('app.controller', ['ngImgCrop'])
         $scope.allData = details;
         $scope.name = details.name;
         $scope.email = details.email;
+        $scope.offer3Enabled = (details.offer3active == 1) ? true : false;
 
         $scope.clientId = details.id;
 

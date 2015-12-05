@@ -200,7 +200,7 @@
 
     <label>
       <input type="checkbox" name = "show-offer"
-      value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
+      value="show-offer" ng-model="offer3" ng-click="showOffer()" ng-disabled="!offer3Enabled"> Offer three
     </label>
 
     <hr>
@@ -236,6 +236,18 @@
           </div>
         </div>
         <button ng-show="offer3Image !== ''" class="btn btn-default image-upload" ng-click="uploadOfferImage(allData.offer3Id,offer3ImageCrop)">Update image</button>
+        <div ng-show="progress == 'began'">
+          Preparing upload
+        </div>
+        <div ng-show="progress == 'ready'">
+          Upload in progress
+        </div>
+        <div ng-show="progress == 'success'">
+          Upload success.
+        </div>
+        <div ng-show="progress == 'fail'">
+          Upload failed.
+        </div>
       </div>
 
     </div>

@@ -295,7 +295,7 @@ public class ClientEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND offers.isActive = 1";
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, client.offer3active, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND offers.isActive = 1";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
@@ -310,28 +310,23 @@ public class ClientEndpoint {
                     client.setFoodStyle(rs.getString("clientFoodStyle"));
                     client.setPhoto(rs.getString("clientPhotoUrl"));
                     client.setIsActive(rs.getInt("isActive"));
+                    client.setOffer3active(rs.getInt("offer3active"));
                     do {
                         if (rs.getInt("offerID") == rs.getInt("offer1")) {
                             logger.info("found offer 1: " + rs.getString("offer"));
                             client.setShowOffer1(rs.getInt("showOffer"));
                             client.setOffer1(rs.getString("offer"));
                             client.setOffer1Id(rs.getInt("offerID"));
-                            //                            client.setOffer1Start(rs.getInt("offerStart"));
-                            //                            client.setOffer1End(rs.getInt("offerEnd"));
                         } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
                             logger.info("found offer 2: " + rs.getString("offer"));
                             client.setShowOffer2(rs.getInt("showOffer"));
                             client.setOffer2(rs.getString("offer"));
                             client.setOffer2Id(rs.getInt("offerID"));
-                            //                            client.setOffer2Start(rs.getInt("offerStart"));
-                            //                            client.setOffer2End(rs.getInt("offerEnd"));
                         } else {
                             logger.info("found offer 3: " + rs.getString("offer"));
                             client.setShowOffer3(rs.getInt("showOffer"));
                             client.setOffer3(rs.getString("offer"));
                             client.setOffer3Id(rs.getInt("offerID"));
-                            //                            client.setOffer3Start(rs.getInt("offerStart"));
-                            //                            client.setOffer3End(rs.getInt("offerEnd"));
                         }
                     } while (rs.next());
 
