@@ -18,6 +18,14 @@
 
   <link href="css/index.css" rel="stylesheet">
 
+  <!-- ngImgCrop -->
+  <!-- <script src="lib/ngImgCrop/0.3.2/ng-img-crop.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/ngImgCrop/0.3.2/ng-img-crop.css"> -->
+
+  <!-- ngImgCropExtended -->
+  <script src="lib/ngImgCropExt/b4f70e5/ng-img-crop.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/ngImgCropExt/b4f70e5/ng-img-crop.css">
+
 </head>
 <body class="content container">
 
@@ -28,7 +36,7 @@
     </div>
 
     <div class="input input-group-lg">
-      <input type="password" ng-model="cPass" class="form-control input-box" placeholder="Confirm password">
+      <input type="password" ng-model="cPass" class="form-control input-box" placeholder="Confirm pasword">
     </div>
 
     <div class="submit-button-container">
