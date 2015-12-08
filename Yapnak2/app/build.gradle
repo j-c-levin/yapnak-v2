@@ -8,8 +8,8 @@ android {
         applicationId "com.uq.yapnak"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 24
-        versionName "2.0"
+        versionCode 25
+        versionName "2.0.1"
     }
     buildTypes {
         release {

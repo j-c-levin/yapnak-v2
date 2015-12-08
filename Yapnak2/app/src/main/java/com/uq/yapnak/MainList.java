@@ -542,8 +542,9 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             json.put("client", clientId.getText());
             TextView offerId = (TextView) parent.findViewById(R.id.offerId);
             json.put("offer", offerId.getText());
-            SimpleDateFormat s = new SimpleDateFormat("yyyyMMddhhmmss");
+            SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmmss");
             String rightNow = s.format(new Date());
+            Log.d("debug", "Right now: " + rightNow);
             json.put("datetime", rightNow);
         } catch (JSONException e) {
             e.printStackTrace();
