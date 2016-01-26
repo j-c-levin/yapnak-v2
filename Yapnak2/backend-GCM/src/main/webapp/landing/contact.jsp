@@ -45,6 +45,9 @@
         <li class="current">
           <a>Contact</a>
         </li>
+              <li>
+                <a href="https://yapnak.wordpress.com/">Blog</a>
+              </li>
       </ul>
     </div>
     <div class="container" id="restaurant-jumbotron">

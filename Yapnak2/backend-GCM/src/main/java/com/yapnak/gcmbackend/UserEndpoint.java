@@ -766,7 +766,7 @@ public class UserEndpoint {
                         offer.setClientRating(4.0);
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
-                        if (days.get(dayOfWeek) == true) {
+                        if ( (boolean) days.get(dayOfWeek) == true) {
                             list.add(offer);
                         }
                     }
@@ -836,9 +836,9 @@ public class UserEndpoint {
                 calendar.setTime(date);   // assigns calendar to given date
                 calendar.setFirstDayOfWeek(Calendar.MONDAY);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
-                hour = (hour + 1) % 24;
+                hour = hour % 24;
                 if (hour >= 0 && hour <= 4) {
-                    hour = 23 + (hour + 1);
+                    hour = 23 + hour;
                 }
                 logger.info("Hour is: " + hour);
                 query = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays, favourites.favouriteID, offerPhotoUrl FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 LEFT JOIN favourites ON favourites.offerID = offers.offerID AND favourites.userID = ? WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
@@ -893,7 +893,7 @@ public class UserEndpoint {
                         offer.setFavourite(rs.getInt("favouriteID") != 0);
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
-                        if (days.get(dayOfWeek) == true) {
+                        if ((boolean) days.get(dayOfWeek) == true) {
                             list.add(offer);
                         }
                     }

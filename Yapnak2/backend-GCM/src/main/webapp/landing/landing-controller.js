@@ -52,6 +52,8 @@ function initMap() {
     {name: "The Coffee Room", lat: 51.525613, lng: -0.034799},
     {name: "Shalamar", lat: 51.517202, lng: -0.062685},
     {name: "Pride of Asia", lat: 51.522133, lng: -0.045683},
+    {name: "Tayyabs", lat: 51.517171, lng: -0.063597},
+    {name: "Dirty Burger", lat: 51.520342, lng: -0.055106},
   ];
 
   // Create a map object and specify the DOM element for display.

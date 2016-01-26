@@ -98,7 +98,7 @@ angular.module('app.factories', [])
   result.getInfo = function(email) {
     var req = {
       method: 'GET',
-      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getClientInfo?email='.concat(email)
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getClientInfo?email='.concat(encodeURIComponent(email))
       // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getClientInfo?email='.concat(email)
     }
     return $http(req).then(function (response) {
@@ -144,7 +144,7 @@ angular.module('app.factories', [])
   result.updateName = function(name,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(encodeURIComponent(email)).concat("&name=").concat(encodeURIComponent(name))
       //          url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
     }
     return $http(req).then(function (response) {
@@ -163,7 +163,7 @@ angular.module('app.factories', [])
   result.updateType = function(type,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(encodeURIComponent(email)).concat("&type=").concat(encodeURIComponent(type))
       //      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
     }
     return $http(req).then(function (response) {
@@ -182,7 +182,7 @@ angular.module('app.factories', [])
   result.updateMainText = function(name,type,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientInfo?email='.concat(email).concat("&name=").concat(name).concat("&type=").concat(type)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientInfo?email='.concat(email).concat("&name=").concat(encodeURIComponent(name)).concat("&type=").concat(encodeURIComponent(type))
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {
@@ -238,7 +238,7 @@ angular.module('app.factories', [])
   result.updateOffer = function(email,offer,text) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(encodeURIComponent(text))
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
@@ -379,7 +379,7 @@ angular.module('app.factories', [])
     var req = {
       method: 'GET',
       url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
-//       url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
     }
     return $http(req).then(function(response) {
       if (response.data.status == "True") {

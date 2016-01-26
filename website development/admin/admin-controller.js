@@ -53,7 +53,6 @@ angular.module('app.controller', ['ngImgCrop'])
 
 .controller('ConsoleController', function($scope, webfactory, $modal, detailsfactory, $state, $timeout, fileUpload) {
 
-
   if (detailsfactory.getSession() === "") {
     $state.go('login');
   } else {
@@ -253,10 +252,10 @@ angular.module('app.controller', ['ngImgCrop'])
             } else if (details.offer3Id == $scope.offers[i].offerId) {
               $scope.offer3text = $scope.offers[i];
               offer3Changed = $scope.offers[i];
-              //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+              $scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
             }
           }
-          $scope.offers.splice(1,3);
+          // $scope.offers.splice(1,3);
           $scope.changeOffers();
         });
 
@@ -545,24 +544,24 @@ angular.module('app.controller', ['ngImgCrop'])
       }
 
       //Uncomment this when we actually use offer 3
-      // //Change offer 3 hours
-      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
-      //   counter -= 1;
-      //   $modal.open({
-      //     animation: true,
-      //     controller: 'modal-controller',
-      //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
-      //   });
-      // } else {
-      //   webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
-      //     counter -= 1;
-      //     if (counter == 0) {
-      //       details(1);
-      //     }
-      //   }, function(error) {
-      //     counter -= 1;
-      //   });
-      // }
+      //Change offer 3 hours
+      if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
 
       //Change offer 1 days
       var offer1DayString = [];
@@ -588,18 +587,18 @@ angular.module('app.controller', ['ngImgCrop'])
         }
       });
 
-      //Uncomment when we're using offer 3
-      // //Change offer 3 days
-      // var offer3DayString = [];
-      // for (var i = 0; i < $scope.offer3Days.length; i++) {
-      //   offer3DayString[i] = $scope.offer3Days[i].active;
-      // }
-      // webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
-      //   counter -= 1;
-      //   if (counter == 0) {
-      //     details(1);
-      //   }
-      // });
+      // Uncomment when we're using offer 3
+      //Change offer 3 days
+      var offer3DayString = [];
+      for (var i = 0; i < $scope.offer3Days.length; i++) {
+        offer3DayString[i] = $scope.offer3Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
 
     }
   }

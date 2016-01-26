@@ -110,6 +110,7 @@ public class ClientEndpoint {
                     offer.setOfferDays(array);
                     offer.setOfferPhotoUrl(rs.getString("offerPhotoUrl"));
                     list.add(offer);
+                    logger.info("list size" + list.size());
                 }
                 response.setOfferList(list);
                 response.setStatus("True");

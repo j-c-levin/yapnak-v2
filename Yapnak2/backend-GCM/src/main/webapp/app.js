@@ -191,21 +191,24 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
   $scope.changeOffers = function() {
     for (var i = 0; i < $scope.offers.length; i++) {
       if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
-
+        console.log("offer 1")
+        console.log($scope.offers[i]);
         $scope.offer1StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer1EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
         $scope.currentOffer1Image = $scope.offers[i].offerPhotoUrl;
 
       } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
-
+        console.log("offer 2")
+        console.log($scope.offers[i]);
         $scope.offer2StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer2EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
         $scope.currentOffer2Image = $scope.offers[i].offerPhotoUrl;
 
       } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
-
+        console.log("offer 3")
+        console.log($scope.offers[i]);
         $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
         $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         if ($scope.offer3Enabled) {
@@ -239,7 +242,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
         $scope.allData = details;
         $scope.name = details.name;
         $scope.offer3Enabled = (details.offer3active == 1) ? true : false;
-        console.log($scope.offer3Enabled);
 
         $scope.clientId = details.id;
 
@@ -266,20 +268,26 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
           $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
           for (var i = 0; i < $scope.offers.length; i++) {
             if (details.offer1Id == $scope.offers[i].offerId) {
+              console.log("1");
+              console.log($scope.offers[i]);
               $scope.offer1text = $scope.offers[i];
               offer1Changed = $scope.offers[i];
               $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
             } else if (details.offer2Id == $scope.offers[i].offerId) {
+              console.log("2");
+              console.log($scope.offers[i]);
               $scope.offer2text = $scope.offers[i];
               offer2Changed = $scope.offers[i];
               $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
             } else if (details.offer3Id == $scope.offers[i].offerId) {
+              console.log("3");
+              console.log($scope.offers[i]);
               $scope.offer3text = $scope.offers[i];
               offer3Changed = $scope.offers[i];
-              //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+              $scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
             }
           }
-          $scope.offers.splice(1,3);
+          // $scope.offers.splice(1,3);
           $scope.changeOffers();
         });
 
@@ -621,17 +629,36 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 
       });
 
       //Uncomment when we're using offer 3
-      // //Change offer 3 days
-      // var offer3DayString = [];
-      // for (var i = 0; i < $scope.offer3Days.length; i++) {
-      //   offer3DayString[i] = $scope.offer3Days[i].active;
-      // }
-      // webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
-      //   counter -= 1;
-      //   if (counter == 0) {
-      //     details(1);
-      //   }
-      // });
+      //Change offer 3 days
+      var offer3DayString = [];
+      for (var i = 0; i < $scope.offer3Days.length; i++) {
+        offer3DayString[i] = $scope.offer3Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
+
+      //Change offer 3 hours
+      if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
 
     }
   }

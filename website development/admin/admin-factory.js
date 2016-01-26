@@ -135,26 +135,7 @@ angular.module('app.factories', [])
   result.updateLocation = function(address,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(address)
-    }
-    return $http(req).then(function(response){
-      if (response.data.status == "True") {
-        console.log("successfully updated location");
-        console.log(response);
-      } else {
-        console.log("location update failed");
-        console.log(response);
-      }
-    }, function(error) {
-      console.log("Location update went wrong somewhere");
-      console.log(error);
-    })
-  };
-
-  result.updateLocation = function(address,email) {
-    var req = {
-      method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(address)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(encodeURIComponent(address))
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
@@ -173,7 +154,7 @@ angular.module('app.factories', [])
   result.updateName = function(name,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(encodeURIComponent(name))
       //          url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
     }
     return $http(req).then(function (response) {
@@ -192,7 +173,7 @@ angular.module('app.factories', [])
   result.updateType = function(type,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(encodeURIComponent(type))
       //      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
     }
     return $http(req).then(function (response) {
@@ -231,25 +212,6 @@ angular.module('app.factories', [])
     });
 
   }
-
-  result.updateLocation = function(address,email) {
-    var req = {
-      method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(encodeURIComponent(address))
-    }
-    return $http(req).then(function(response){
-      if (response.data.status == "True") {
-        console.log("successfully updated location");
-        console.log(response);
-      } else {
-        console.log("location update failed");
-        console.log(response);
-      }
-    }, function(error) {
-      console.log("Location update went wrong somewhere");
-      console.log(error);
-    })
-  };
 
   result.updateOfferHours = function(email, offerId, offerStart, offerEnd) {
     var req = {
@@ -391,8 +353,7 @@ angular.module('app.factories', [])
 
   }
 
-
-    result.getImageUploadUrl = function(offerId) {
+  result.getImageUploadUrl = function(offerId) {
       var req = {
         method: 'GET',
         url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/offerPhotoUpload?offerId='.concat(offerId)
