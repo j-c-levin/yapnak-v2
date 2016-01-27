@@ -39,7 +39,7 @@ public class Register extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    int stage = 1;
+    int stage = 2;
     FrameLayout registerFrame;
     TextView registerInstruction;
     TextView registerDataName;
@@ -161,7 +161,10 @@ public class Register extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+                //Show scan image here
+
                 registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 registerInstruction.setText("2: Tap \"GET\" for a QR code that can be scanned in store.");
                 registerDataName.setText("Enter Mobile Number");
@@ -207,45 +210,46 @@ public class Register extends AppCompatActivity {
                 registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
                 registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 registerDataName.setText("Enter Password");
-                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
 //                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final_first);
-                anim2.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-
-                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
-//                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final);
-                        anim3.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                registerField.setKeyListener((KeyListener) registerField.getTag());
-                                registerContinue.setClickable(true);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        anim3.setStartOffset(800);
-                        registerFrame.startAnimation(anim3);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
+//                anim2.setAnimationListener(new Animation.AnimationListener() {
+//                    @Override
+//                    public void onAnimationStart(Animation animation) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animation animation) {
+//
+//                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+////                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final);
+//                        anim3.setAnimationListener(new Animation.AnimationListener() {
+//                            @Override
+//                            public void onAnimationStart(Animation animation) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onAnimationEnd(Animation animation) {
+//                                registerField.setKeyListener((KeyListener) registerField.getTag());
+//                                registerContinue.setClickable(true);
+//                            }
+//
+//                            @Override
+//                            public void onAnimationRepeat(Animation animation) {
+//
+//                            }
+//                        });
+//                        anim3.setStartOffset(800);
+//                        registerFrame.startAnimation(anim3);
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animation animation) {
+//
+//                    }
+//                });
                 registerFrame.startAnimation(anim2);
             }
 
@@ -270,52 +274,52 @@ public class Register extends AppCompatActivity {
     }
 
     public void onCardClick(View card) {
-        if (stage == 2) {
-            if (card != currentCard && currentCard != null) {
-                //Another card is already selected, deselect
-                currentCard.setTag(0);
-                for (int i : initialViewIds) {
-                    unFade(currentCard, i);
-                }
-                for (int i : fadedViewIds) {
-                    doFade(currentCard, i);
-                }
-                for (int i : clickableViewIds) {
-                    currentCard.findViewById(i).setEnabled(false);
-                    currentCard.findViewById(i).setClickable(false);
-                }
-            }
-            if (card.getTag() != 1) {
-                //Fade selected card
-                card.setTag(1);
-                for (int i : initialViewIds) {
-                    doFade(card, i);
-                }
-                for (int i : fadedViewIds) {
-                    unFade(card, i);
-                }
-                for (int i : clickableViewIds) {
-                    card.findViewById(i).setEnabled(true);
-                    card.findViewById(i).setClickable(true);
-                }
-                currentCard = card;
-            } else {
-                //Unfade selected card
-                card.setTag(0);
-                for (int i : initialViewIds) {
-                    unFade(card, i);
-                }
-                for (int i : fadedViewIds) {
-                    doFade(card, i);
-                }
-                for (int i : clickableViewIds) {
-                    card.findViewById(i).setEnabled(false);
-                    card.findViewById(i).setClickable(false);
-                }
-                currentCard = null;
-            }
-            registrationProgress();
-        }
+//        if (stage == 2) {
+//            if (card != currentCard && currentCard != null) {
+//                //Another card is already selected, deselect
+//                currentCard.setTag(0);
+//                for (int i : initialViewIds) {
+//                    unFade(currentCard, i);
+//                }
+//                for (int i : fadedViewIds) {
+//                    doFade(currentCard, i);
+//                }
+//                for (int i : clickableViewIds) {
+//                    currentCard.findViewById(i).setEnabled(false);
+//                    currentCard.findViewById(i).setClickable(false);
+//                }
+//            }
+//            if (card.getTag() != 1) {
+//                //Fade selected card
+//                card.setTag(1);
+//                for (int i : initialViewIds) {
+//                    doFade(card, i);
+//                }
+//                for (int i : fadedViewIds) {
+//                    unFade(card, i);
+//                }
+//                for (int i : clickableViewIds) {
+//                    card.findViewById(i).setEnabled(true);
+//                    card.findViewById(i).setClickable(true);
+//                }
+//                currentCard = card;
+//            } else {
+//                //Unfade selected card
+//                card.setTag(0);
+//                for (int i : initialViewIds) {
+//                    unFade(card, i);
+//                }
+//                for (int i : fadedViewIds) {
+//                    doFade(card, i);
+//                }
+//                for (int i : clickableViewIds) {
+//                    card.findViewById(i).setEnabled(false);
+//                    card.findViewById(i).setClickable(false);
+//                }
+//                currentCard = null;
+//            }
+//            registrationProgress();
+//        }
     }
 
     void doFade(View v, int vId) {

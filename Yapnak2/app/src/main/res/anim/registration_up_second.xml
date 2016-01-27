@@ -4,9 +4,15 @@
     android:interpolator="@android:anim/overshoot_interpolator"
     android:shareInterpolator="true">
 
+    <!--<translate-->
+        <!--android:duration="@integer/register_duration"-->
+        <!--android:fromYDelta="60%"-->
+        <!--android:startOffset="@integer/register_delay_offset_second"-->
+        <!--android:toYDelta="0%" />-->
+
     <translate
         android:duration="@integer/register_duration"
-        android:fromYDelta="60%"
+        android:fromYDelta="100%"
         android:startOffset="@integer/register_delay_offset_second"
         android:toYDelta="0%" />
 

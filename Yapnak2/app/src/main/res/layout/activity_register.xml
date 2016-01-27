@@ -14,6 +14,11 @@
         android:layout_centerHorizontal="true"
         android:scrollbars="vertical" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/QRCodeImage" />
+
     <FrameLayout
         android:id="@+id/register_frame"
         android:layout_width="wrap_content"
