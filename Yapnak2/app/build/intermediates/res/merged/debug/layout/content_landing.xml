@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    tools:showIn="@layout/activity_landing"
+    android:paddingTop="55dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/Background"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:backgroundTint="#454545"
+        android:backgroundTintMode="multiply"
+        android:layout_alignParentBottom="true"
+        android:adjustViewBounds="false"
+        android:baselineAlignBottom="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/wok_dark"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/Logo"
+        android:src="@drawable/yapnakmonster"
+        android:layout_marginTop="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/login_usp"
+        android:id="@+id/Usp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:autoText="false"
+        android:clickable="false"
+        android:singleLine="false"
+        android:textAlignment="center"
+        android:layout_below="@+id/Logo"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="@string/login_logintext"
+        android:id="@+id/Login"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        style="@style/login_button"
+        android:onClick="toLogin"
+        android:layout_alignLeft="@+id/Facebook"
+        android:layout_above="@+id/Facebook" />
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="@string/login_signuptext"
+        android:id="@+id/Signup"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/Login"
+        android:layout_alignRight="@+id/Facebook"
+        android:layout_alignEnd="@+id/Facebook"
+        android:textSize="20sp"
+        style="@style/login_button"
+        android:onClick="toRegister" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_facebooktext"
+        android:id="@+id/Facebook"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        style="@style/login_button"
+        android:paddingRight="50dp"
+        android:paddingLeft="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:onClick="facebookLogin" />
+
+</RelativeLayout>
+<!-- From: file:/C:/Users/Joshua/Documents/GitHub/yapnak-v2/Yapnak2/app/src/main/res/layout/content_landing.xml -->

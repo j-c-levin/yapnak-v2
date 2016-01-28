@@ -65,7 +65,8 @@
             android:checked="true"
             android:layout_below="@+id/rate_title"
             android:button="@color/colorPrimary"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,7 +76,6 @@
             android:layout_marginTop="25dp"
             android:textColor="@color/colorPrimary"
             android:layout_below="@+id/isAccepted"
-            android:layout_alignStart="@+id/rating"
             android:layout_centerHorizontal="true" />
 
         <TextView

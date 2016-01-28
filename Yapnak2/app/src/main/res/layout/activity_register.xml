@@ -15,9 +15,12 @@
         android:scrollbars="vertical" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/QRCodeImage" />
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/QRCodeImage"
+        android:src="@drawable/qrcodeimg"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true" />
 
     <FrameLayout
         android:id="@+id/register_frame"

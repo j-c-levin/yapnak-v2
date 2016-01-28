@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:text="Test"
+    android:textColor="#ffffff"
+    android:paddingStart="40dp"
+    android:paddingTop="20dp" /><!-- From: file:/C:/Users/Joshua/Documents/GitHub/yapnak-v2/Yapnak2/app/src/main/res/layout/drawer_list_item.xml -->

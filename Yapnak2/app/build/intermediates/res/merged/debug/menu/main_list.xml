@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainList">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white_48dp"
+        android:title="@string/action_search"
+        app:showAsAction="always"/>
+</menu>
+<!-- From: file:/C:/Users/Joshua/Documents/GitHub/yapnak-v2/Yapnak2/app/src/main/res/menu/main_list.xml -->

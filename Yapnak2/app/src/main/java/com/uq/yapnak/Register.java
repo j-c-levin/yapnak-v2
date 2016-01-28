@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +47,7 @@ public class Register extends AppCompatActivity {
     EditText registerField;
     TextView registerContinue;
     ImageView registerBackground;
+    ImageView qrImage;
     private View currentCard;
     int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
     int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
@@ -65,6 +67,7 @@ public class Register extends AppCompatActivity {
         registerInstruction = (TextView) findViewById(R.id.register_instruction);
         registerDataName = (TextView) findViewById(R.id.register_data_name);
         registerBackground = (ImageView) findViewById(R.id.register_background);
+        qrImage = (ImageView) findViewById(R.id.QRCodeImage);
         registerField.setTag(registerField.getKeyListener());
         registerField.setKeyListener(null);
 
@@ -110,6 +113,7 @@ public class Register extends AppCompatActivity {
     }
 
     void registrationProgress() {
+        Log.d("debug", "at " + stage);
         switch (stage) {
             case 1:
                 //Ask to tap a card
@@ -162,13 +166,14 @@ public class Register extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
 //                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
-                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
                 //Show scan image here
 
                 registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 registerInstruction.setText("2: Tap \"GET\" for a QR code that can be scanned in store.");
                 registerDataName.setText("Enter Mobile Number");
-                registerFrame.startAnimation(anim2);
+//                registerFrame.startAnimation(anim2);
+                registrationProgress();
             }
 
             @Override
@@ -188,6 +193,7 @@ public class Register extends AppCompatActivity {
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_up_second);
         registerFrame.startAnimation(anim);
         registerField.setKeyListener((KeyListener) registerField.getTag());
+        qrImage.setVisibility(View.VISIBLE);
         registerContinue.setClickable(true);
     }
 
@@ -212,6 +218,8 @@ public class Register extends AppCompatActivity {
                 registerDataName.setText("Enter Password");
 //                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+                registerField.setKeyListener((KeyListener) registerField.getTag());
+                registerContinue.setClickable(true);
 //                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final_first);
 //                anim2.setAnimationListener(new Animation.AnimationListener() {
 //                    @Override
