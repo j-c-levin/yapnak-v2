@@ -448,7 +448,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
 
     public void loadOffers(OfferListEntity response) {
         mRecyclerView.setVisibility(View.VISIBLE);
-        mAdapter = new ClientListAdapter(response);
+        mAdapter = new ClientListAdapter(response, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 

@@ -100,7 +100,7 @@ public class Register extends AppCompatActivity {
     }
 
     public void loadOffers(OfferListEntity response) {
-        mAdapter = new RegisterListAdapter(response);
+        mAdapter = new RegisterListAdapter(response, this);
         mRecyclerView.setAdapter(mAdapter);
         registrationProgress();
     }
