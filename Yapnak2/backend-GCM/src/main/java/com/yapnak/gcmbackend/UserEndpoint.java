@@ -1,11 +1,5 @@
 package com.yapnak.gcmbackend;
 
-import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Environment;
-import com.braintreegateway.Result;
-import com.braintreegateway.SandboxValues;
-import com.braintreegateway.Transaction;
-import com.braintreegateway.TransactionRequest;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -31,7 +25,6 @@ import org.json.simple.parser.JSONParser;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.nio.channels.Channels;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -1903,50 +1896,50 @@ public class UserEndpoint {
 
     /*Braintree*/
 
-    private static BraintreeGateway gateway = new BraintreeGateway(
-            Environment.SANDBOX,
-            "cjg29hjqkkqj9gjm",
-            "f6yjq3c73bthgmtk",
-            "f2a40b8b4eb955a8ff1aa41f81499161"
-    );
-
-    @ApiMethod(
-            name = "client_token",
-            path = "client_token",
-            httpMethod = ApiMethod.HttpMethod.GET)
-    public ClientTokenEntity clientToken() {
-        ClientTokenEntity response = new ClientTokenEntity();
-
-        String token = gateway.clientToken().generate();
-        if (token.equals("")) {
-            response.setStatus("False");
-            response.setMessage("Token generation failed");
-            return response;
-        }
-        response.setClientToken(gateway.clientToken().generate());
-        response.setStatus("True");
-        return response;
-    }
-
-    @ApiMethod(
-            name = "checkout",
-            path = "checkout",
-            httpMethod = ApiMethod.HttpMethod.POST)
-    public CheckoutEntity checkout(@Named("payment_method_nonce") String nonce) {
-        CheckoutEntity response = new CheckoutEntity();
-
-        nonce = SandboxValues.PaymentMethodNonce.APPLE_PAY_VISA.nonce;
-
-        TransactionRequest request = new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce(nonce)
-                .options()
-                .submitForSettlement(true)
-                .done();
-
-        Result<Transaction> result = gateway.transaction().sale(request);
-        logger.info((result.toString()));
-        response.setStatus("True");
-        return response;
-    }
+//    private static BraintreeGateway gateway = new BraintreeGateway(
+//            Environment.SANDBOX,
+//            "cjg29hjqkkqj9gjm",
+//            "f6yjq3c73bthgmtk",
+//            "f2a40b8b4eb955a8ff1aa41f81499161", logger
+//    );
+//
+//    @ApiMethod(
+//            name = "client_token",
+//            path = "client_token",
+//            httpMethod = ApiMethod.HttpMethod.GET)
+//    public ClientTokenEntity clientToken() {
+//        ClientTokenEntity response = new ClientTokenEntity();
+//
+//        String token = gateway.clientToken().generate();
+//        if (token.equals("")) {
+//            response.setStatus("False");
+//            response.setMessage("Token generation failed");
+//            return response;
+//        }
+//        response.setClientToken(gateway.clientToken().generate());
+//        response.setStatus("True");
+//        return response;
+//    }
+//
+//    @ApiMethod(
+//            name = "checkout",
+//            path = "checkout",
+//            httpMethod = ApiMethod.HttpMethod.POST)
+//    public CheckoutEntity checkout(@Named("payment_method_nonce") String nonce) {
+//        CheckoutEntity response = new CheckoutEntity();
+//
+//        nonce = SandboxValues.PaymentMethodNonce.APPLE_PAY_VISA.nonce;
+//
+//        TransactionRequest request = new TransactionRequest()
+//                .amount(new BigDecimal("100.00"))
+//                .paymentMethodNonce(nonce)
+//                .options()
+//                .submitForSettlement(true)
+//                .done();
+//
+//        Result<Transaction> result = gateway.transaction().sale(request);
+//        logger.info((result.toString()));
+//        response.setStatus("True");
+//        return response;
+//    }
 }
