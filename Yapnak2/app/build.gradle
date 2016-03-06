@@ -32,6 +32,9 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:8.1.0'
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
     compile 'commons-io:commons-io:2.4'
+    compile 'com.braintreepayments.api:braintree:2.+'
+    compile 'com.braintreepayments.api:drop-in:2.+'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
     compile files('src/main/libs/ParseFacebookUtilsV4-1.10.3.jar')
+    compile 'com.braintreepayments.gateway:braintree-java:2.57.0'
 }
