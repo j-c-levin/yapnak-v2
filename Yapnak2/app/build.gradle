@@ -34,4 +34,5 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
     compile files('src/main/libs/ParseFacebookUtilsV4-1.10.3.jar')
+    compile 'com.stripe:stripe-android:+'
 }

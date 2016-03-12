@@ -18,6 +18,9 @@ import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.stripe.Stripe;
+import com.stripe.model.Charge;
+import com.stripe.model.Customer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -39,7 +42,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.TimeZone;
@@ -766,7 +771,7 @@ public class UserEndpoint {
                         offer.setClientRating(4.0);
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
-                        if ( (boolean) days.get(dayOfWeek) == true) {
+                        if ((boolean) days.get(dayOfWeek) == true) {
                             list.add(offer);
                         }
                     }
@@ -1891,6 +1896,54 @@ public class UserEndpoint {
         response.setUploadUrl(blobstoreService.createUploadUrl("/userPhotoUpload?userId=" + userId));
         response.setStatus("True");
         logger.info("Got user upload url: " + response.getUploadUrl());
+        return response;
+    }
+
+    @ApiMethod(
+            name = "stripe_charge",
+            path = "stripe_charge",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity stripeCharge(@Named("token") String token) {
+        VoidEntity response = new VoidEntity();
+
+        // Set your secret key: remember to change this to your live secret key in production
+        // See your keys here https://dashboard.stripe.com/account/apikeys
+        Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
+
+        // Create a Customer
+        Map<String, Object> customerParams = new HashMap<String, Object>();
+        customerParams.put("source", token);
+        customerParams.put("description", "Example customer");
+
+        Customer customer = null;
+        try {
+            customer = Customer.create(customerParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus("False");
+            response.setMessage(e.toString());
+            return response;
+        }
+
+        // Create the charge on Stripe's servers - this will charge the user's card
+        try {
+            // Charge the Customer instead of the card
+            Map<String, Object> chargeParams = new HashMap<String, Object>();
+            chargeParams.put("amount", 1000); // amount in cents, again
+            chargeParams.put("currency", "gbp");
+            chargeParams.put("customer", customer.getId());
+
+            Charge charge = Charge.create(chargeParams);
+            response.setStatus("True");
+            response.setMessage(charge.toString());
+        } catch (Exception e) {
+            // The card has been declined
+            e.printStackTrace();
+            response.setStatus("False");
+            response.setMessage(e.toString());
+            return response;
+        }
+
         return response;
     }
 }

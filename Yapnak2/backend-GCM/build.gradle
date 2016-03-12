@@ -32,6 +32,7 @@ dependencies {
     compile 'org.apache.httpcomponents:httpclient:4.5.+'
     compile 'org.apache.httpcomponents:httpmime:4.5.1'
     compile 'com.google.appengine.tools:appengine-gcs-client:0.5'
+    compile 'com.stripe:stripe-java:1.45.0'
 }
 
 appengine {

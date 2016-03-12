@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -17,6 +18,11 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.stripe.android.Stripe;
+import com.stripe.android.TokenCallback;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+import com.stripe.exception.AuthenticationException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +43,39 @@ public class Landing extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("Yapnak");
         context = this;
+        testStripe();
+    }
+
+    void testStripe() {
+        Card card = new Card("4242-4242-4242-4242", 12, 2017, "123");
+        Log.d("debug", "card is: " + card.validateCard());
+        if ( !card.validateCard()) {
+            // Show errors
+            return;
+        }
+
+        Stripe stripe = null;
+        try {
+            stripe = new Stripe("pk_test_l54Tnxt1Zue4lJJPHZ4Vpu93");
+            stripe.createToken(
+                    card,
+                    new TokenCallback() {
+                        public void onSuccess(Token token) {
+                            // Send token to your server
+                            Log.d("debug", token.toString());
+                            new StripeCharge_Async().execute(token.getId());
+                        }
+
+                        public void onError(Exception error) {
+                            // Show localized error message
+                            Toast.makeText(context,
+                                    error.getLocalizedMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

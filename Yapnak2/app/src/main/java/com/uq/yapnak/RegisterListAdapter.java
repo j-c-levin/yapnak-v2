@@ -1,5 +1,6 @@
 package com.uq.yapnak;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 public class RegisterListAdapter extends RecyclerView.Adapter<RegisterListAdapter.ViewHolder> {
 
     private OfferListEntity offerList;
+    Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -43,7 +45,8 @@ public class RegisterListAdapter extends RecyclerView.Adapter<RegisterListAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RegisterListAdapter(OfferListEntity offerList) {
+    public RegisterListAdapter(OfferListEntity offerList, Context context) {
+        this.context = context;
         this.offerList = offerList;
     }
 
@@ -68,7 +71,7 @@ public class RegisterListAdapter extends RecyclerView.Adapter<RegisterListAdapte
         holder.clientId.setText(String.valueOf(offer.getClientId()));
         holder.offerId.setText(String.valueOf(offer.getOfferId()));
         holder.gps.setText(String.valueOf(offer.getLatitude() + "," + offer.getLongitude()));
-        new DownloadImageTask(holder.offerImage).execute(offer.getClientOfferPhoto());
+        new DownloadImageTask(holder.offerImage, context).execute(offer.getClientOfferPhoto());
         if (offer.getFavourite()) {
             holder.favourite.setImageResource(R.drawable.heart_filled);
             holder.favourite.setTag(1);
