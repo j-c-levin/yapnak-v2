@@ -1900,10 +1900,10 @@ public class UserEndpoint {
     }
 
     @ApiMethod(
-            name = "stripe_charge",
-            path = "stripe_charge",
+            name = "stripe_register_card",
+            path = "stripe_register_card",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity stripeCharge(@Named("token") String token) {
+    public VoidEntity stripeRegisterCard(@Named("token") String token) {
         VoidEntity response = new VoidEntity();
 
         // Set your secret key: remember to change this to your live secret key in production
@@ -1925,17 +1925,36 @@ public class UserEndpoint {
             return response;
         }
 
+        //Save customerID in database
+
+        response.setStatus("True");
+
+        return response;
+    }
+
+    @ApiMethod(
+            name = "stripe_charge",
+            path = "stripe_charge",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity stripeCharge(@Named("userID") String userID) {
+        VoidEntity response = new VoidEntity();
+
+        // Set your secret key: remember to change this to your live secret key in production
+        // See your keys here https://dashboard.stripe.com/account/apikeys
+        Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
+
+       //Retrieve customerID from database
+        String customerID = "";
+
         // Create the charge on Stripe's servers - this will charge the user's card
         try {
             // Charge the Customer instead of the card
             Map<String, Object> chargeParams = new HashMap<String, Object>();
-            chargeParams.put("amount", 1000); // amount in cents, again
+            chargeParams.put("amount", 500); // amount in cents, again
             chargeParams.put("currency", "gbp");
-            chargeParams.put("customer", customer.getId());
+            chargeParams.put("customer", customerID);
 
             Charge charge = Charge.create(chargeParams);
-            response.setStatus("True");
-            response.setMessage(charge.toString());
         } catch (Exception e) {
             // The card has been declined
             e.printStackTrace();
@@ -1944,6 +1963,11 @@ public class UserEndpoint {
             return response;
         }
 
+        response.setStatus("True");
+
+        //Do something with the charge result
+
         return response;
     }
+
 }

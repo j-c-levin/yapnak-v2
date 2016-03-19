@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
@@ -48,6 +49,9 @@ public class Register extends AppCompatActivity {
     TextView registerContinue;
     ImageView registerBackground;
     ImageView qrImage;
+
+    RelativeLayout cardFrame;
+
     private View currentCard;
     int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
     int[] fadedViewIds = {R.id.offer_dark, R.id.get, R.id.favourite, R.id.rate, R.id.location, R.id.recommend};
@@ -71,6 +75,9 @@ public class Register extends AppCompatActivity {
         registerField.setTag(registerField.getKeyListener());
         registerField.setKeyListener(null);
 
+        cardFrame = (RelativeLayout) findViewById(R.id.card_form);
+        cardFrame.setVisibility(View.INVISIBLE);
+
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_hide);
         registerFrame.startAnimation(anim);
 
@@ -83,6 +90,7 @@ public class Register extends AppCompatActivity {
         List<OfferEntity> l = new ArrayList();
         OfferEntity o = new OfferEntity();
         o.setDistance("1 minute");
+        o.setOfferId((long)1);
         o.setOfferText("Nutella Banana with hot drink or coke");
         o.setClientName("The Crepe Shop and Art Cafe");
         o.setFavourite(false);
@@ -90,6 +98,7 @@ public class Register extends AppCompatActivity {
         l.add(o);
         o = new OfferEntity();
         o.setDistance("1 minute");
+        o.setOfferId((long)2);
         o.setOfferText("Chicken donor wrap and soft drink");
         o.setClientName("Efes Bricklane");
         o.setFavourite(false);
@@ -143,7 +152,7 @@ public class Register extends AppCompatActivity {
     }
 
     void caseOne() {
-        Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_up_first);
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_up_second);
         registerFrame.startAnimation(anim);
     }
 
@@ -212,53 +221,16 @@ public class Register extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 Editable e = registerField.getText();
                 mobileNumber = e.toString();
-                registerField.setText(null);
-                registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
-                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-                registerDataName.setText("Enter Password");
-//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_first);
+//                registerField.setText(null);
+//                registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
+//                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+//                registerDataName.setText("Enter Password");
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
-                registerField.setKeyListener((KeyListener) registerField.getTag());
-                registerContinue.setClickable(true);
-//                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final_first);
-//                anim2.setAnimationListener(new Animation.AnimationListener() {
-//                    @Override
-//                    public void onAnimationStart(Animation animation) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onAnimationEnd(Animation animation) {
-//
-//                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
-////                        Animation anim3 = AnimationUtils.loadAnimation(context, R.anim.registration_up_final);
-//                        anim3.setAnimationListener(new Animation.AnimationListener() {
-//                            @Override
-//                            public void onAnimationStart(Animation animation) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onAnimationEnd(Animation animation) {
-//                                registerField.setKeyListener((KeyListener) registerField.getTag());
-//                                registerContinue.setClickable(true);
-//                            }
-//
-//                            @Override
-//                            public void onAnimationRepeat(Animation animation) {
-//
-//                            }
-//                        });
-//                        anim3.setStartOffset(800);
-//                        registerFrame.startAnimation(anim3);
-//                    }
-//
-//                    @Override
-//                    public void onAnimationRepeat(Animation animation) {
-//
-//                    }
-//                });
-                registerFrame.startAnimation(anim2);
+//                registerField.setKeyListener((KeyListener) registerField.getTag());
+//                registerContinue.setClickable(true);
+//                registerFrame.startAnimation(anim2);
+                cardFrame.setVisibility(View.VISIBLE);
+                cardFrame.startAnimation(anim2);
             }
 
             @Override

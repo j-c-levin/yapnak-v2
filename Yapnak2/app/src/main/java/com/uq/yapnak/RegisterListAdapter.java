@@ -71,7 +71,7 @@ public class RegisterListAdapter extends RecyclerView.Adapter<RegisterListAdapte
         holder.clientId.setText(String.valueOf(offer.getClientId()));
         holder.offerId.setText(String.valueOf(offer.getOfferId()));
         holder.gps.setText(String.valueOf(offer.getLatitude() + "," + offer.getLongitude()));
-        new DownloadImageTask(holder.offerImage, context).execute(offer.getClientOfferPhoto());
+        new DownloadImageTask(holder.offerImage, context).execute(offer.getClientOfferPhoto(), offer.getOfferId().toString());
         if (offer.getFavourite()) {
             holder.favourite.setImageResource(R.drawable.heart_filled);
             holder.favourite.setTag(1);

@@ -43,7 +43,7 @@ public class Landing extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("Yapnak");
         context = this;
-        testStripe();
+//        testStripe();
     }
 
     void testStripe() {
@@ -85,7 +85,6 @@ public class Landing extends AppCompatActivity {
         return true;
     }
 
-    /**Navigate to login screen*/
     public void toLogin(View view) {
         try {
             Intent intent = new Intent(this, LoginActivity.class);
