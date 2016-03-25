@@ -123,7 +123,7 @@
             android:layout_gravity="right"
             android:layout_marginTop="18dp"
             android:background="#00ffffff"
-            android:onClick="registerEmail"
+            android:onClick="registerCard"
             android:text="Finish"
             android:textColor="#ffffff"
             android:textSize="20sp"

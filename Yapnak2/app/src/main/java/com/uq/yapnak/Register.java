@@ -22,9 +22,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.stripe.android.Stripe;
+import com.stripe.android.TokenCallback;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+import com.stripe.exception.AuthenticationException;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
@@ -50,7 +55,12 @@ public class Register extends AppCompatActivity {
     ImageView registerBackground;
     ImageView qrImage;
 
-    RelativeLayout cardFrame;
+    FrameLayout cardForm;
+    EditText cardNumber;
+    EditText cvc;
+    EditText endMonth;
+    EditText endYear;
+
 
     private View currentCard;
     int[] initialViewIds = {R.id.offer_text, R.id.offer_distance, R.id.client_name};
@@ -60,6 +70,8 @@ public class Register extends AppCompatActivity {
     String mobileNumber;
     String password;
     ProgressDialog spinner;
+
+    Token token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +87,14 @@ public class Register extends AppCompatActivity {
         registerField.setTag(registerField.getKeyListener());
         registerField.setKeyListener(null);
 
-        cardFrame = (RelativeLayout) findViewById(R.id.card_form);
-        cardFrame.setVisibility(View.INVISIBLE);
+        cardForm = (FrameLayout) findViewById(R.id.card_form);
+        cardNumber = (EditText) findViewById(R.id.CardNumber);
+        cvc = (EditText) findViewById(R.id.CVC);
+        endMonth = (EditText) findViewById(R.id.EndMonth);
+        endYear = (EditText) findViewById(R.id.EndYear);
+
+        cardForm.setVisibility(View.INVISIBLE);
+        cardNumber.setTag(cardNumber.getKeyListener());
 
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_hide);
         registerFrame.startAnimation(anim);
@@ -90,7 +108,7 @@ public class Register extends AppCompatActivity {
         List<OfferEntity> l = new ArrayList();
         OfferEntity o = new OfferEntity();
         o.setDistance("1 minute");
-        o.setOfferId((long)1);
+        o.setOfferId((long) 1);
         o.setOfferText("Nutella Banana with hot drink or coke");
         o.setClientName("The Crepe Shop and Art Cafe");
         o.setFavourite(false);
@@ -98,7 +116,7 @@ public class Register extends AppCompatActivity {
         l.add(o);
         o = new OfferEntity();
         o.setDistance("1 minute");
-        o.setOfferId((long)2);
+        o.setOfferId((long) 2);
         o.setOfferText("Chicken donor wrap and soft drink");
         o.setClientName("Efes Bricklane");
         o.setFavourite(false);
@@ -221,16 +239,14 @@ public class Register extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 Editable e = registerField.getText();
                 mobileNumber = e.toString();
-//                registerField.setText(null);
-//                registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
-//                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-//                registerDataName.setText("Enter Password");
+                registerField.setText(null);
+                registerInstruction.setText("3: Pay £5 in-store and enjoy your meal!");
+                registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+                registerDataName.setText("Enter Password");
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
-//                registerField.setKeyListener((KeyListener) registerField.getTag());
-//                registerContinue.setClickable(true);
-//                registerFrame.startAnimation(anim2);
-                cardFrame.setVisibility(View.VISIBLE);
-                cardFrame.startAnimation(anim2);
+                registerField.setKeyListener((KeyListener) registerField.getTag());
+                registerContinue.setClickable(true);
+                registerFrame.startAnimation(anim2);
             }
 
             @Override
@@ -242,10 +258,84 @@ public class Register extends AppCompatActivity {
     }
 
     void caseSix() {
-        Editable e = registerField.getText();
-        password = e.toString();
-        spinner();
-        new Registration_Async(this).execute(password, mobileNumber, email);
+        registerField.setKeyListener(null);
+        registerContinue.setClickable(false);
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.registration_down);
+        final Context context = this;
+
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Editable e = registerField.getText();
+                password = e.toString();
+
+                Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
+                cardForm.setVisibility(View.VISIBLE);
+                cardNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("Debug", "called");
+                    }
+                });
+                cardForm.startAnimation(anim2);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        registerFrame.startAnimation(anim);
+    }
+
+    public void Test(View view) {
+        Log.d("Debug", "Called");
+    }
+
+    public void registerCard(View view) {
+        Card card = null;
+        try {
+            card = new Card(cardNumber.getText().toString(), Integer.parseInt(endMonth.getText().toString()), Integer.parseInt(endYear.getText().toString()), cvc.getText().toString());
+            if (!card.validateCard()) {
+                new Alert_Dialog(this).cardValidationFailed();
+                return;
+            }
+        } catch (Exception e) {
+            new Alert_Dialog(this).cardValidationFailed();
+            return;
+        }
+
+        Stripe stripe = null;
+        try {
+            stripe = new Stripe("pk_test_6pRNASCoBOKtIshFeQd4XMUh");
+            final Context context = this;
+            final Register register = this;
+            stripe.createToken(
+                    card,
+                    new TokenCallback() {
+                        public void onSuccess(Token token) {
+                            // Send token to your server
+                            register.token = token;
+                            spinner();
+                            new Registration_Async(register).execute(password, mobileNumber, email);
+                        }
+                        public void onError(Exception error) {
+                            // Show localized error message
+                            Toast.makeText(context,
+                                    error.getLocalizedMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    }
+            );
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
     }
 
     public void registerEmail(View view) {

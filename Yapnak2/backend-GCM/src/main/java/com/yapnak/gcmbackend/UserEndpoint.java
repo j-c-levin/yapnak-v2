@@ -1900,10 +1900,10 @@ public class UserEndpoint {
     }
 
     @ApiMethod(
-            name = "stripe_register_card",
-            path = "stripe_register_card",
+            name = "stripeRegisterCard",
+            path = "stripeRegisterCard",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity stripeRegisterCard(@Named("token") String token) {
+    public VoidEntity stripeRegisterCard(@Named("token") String token, @Named("userID") String userID) {
         VoidEntity response = new VoidEntity();
 
         // Set your secret key: remember to change this to your live secret key in production
@@ -1928,13 +1928,13 @@ public class UserEndpoint {
         //Save customerID in database
 
         response.setStatus("True");
-
+        response.setMessage(customer.toString());
         return response;
     }
 
     @ApiMethod(
-            name = "stripe_charge",
-            path = "stripe_charge",
+            name = "stripeCharge",
+            path = "stripeCharge",
             httpMethod = ApiMethod.HttpMethod.POST)
     public VoidEntity stripeCharge(@Named("userID") String userID) {
         VoidEntity response = new VoidEntity();

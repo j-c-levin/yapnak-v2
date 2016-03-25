@@ -41,6 +41,7 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
         register.spinner.hide();
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
+            new StripeRegister_Async(register).execute(register.token.toString(), response.getUserId());
             try {
                 SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
                 SharedPreferences.Editor editor = data.edit();

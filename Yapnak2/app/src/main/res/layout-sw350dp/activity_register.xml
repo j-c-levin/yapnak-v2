@@ -106,115 +106,123 @@
         </RelativeLayout>
     </FrameLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/card_form"
-        android:layout_marginBottom="-60dp"
-        android:layout_alignParentBottom="true" >
+        android:layout_marginBottom="-100dp"
+        android:layout_alignParentBottom="true">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#424242" />
-
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"
-            android:background="#ffffff"
-            android:editable="true"
-            android:inputType="number"
-            android:layout_below="@+id/imageView2"
-            android:enabled="false"
-            android:hint="Card Number" />
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:background="#ffffff"
-            android:editable="true"
-            android:inputType="number"
-            android:enabled="false"
-            android:layout_alignTop="@+id/editText"
-            android:layout_alignLeft="@+id/editText"
-            android:layout_alignStart="@+id/editText"
-            android:hint="CVC"
-            android:layout_marginTop="60dp" />
-
-        <EditText
-            android:id="@+id/EndMonth"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:background="#ffffff"
-            android:editable="true"
-            android:inputType="number"
-            android:enabled="false"
-            android:hint="Month"
-            android:layout_above="@+id/textView2"
-            android:layout_toLeftOf="@+id/EndYear"
-            android:layout_toStartOf="@+id/EndYear"
-            android:layout_marginRight="21dp" />
-
-        <EditText
-            android:id="@+id/EndYear"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:background="#ffffff"
-            android:editable="true"
-            android:inputType="number"
-            android:enabled="false"
-            android:hint="Year"
-            android:layout_alignRight="@+id/textView2"
-            android:layout_alignEnd="@+id/textView2"
-            android:layout_alignTop="@+id/editText"
-            android:layout_marginTop="60dp" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:layout_below="@+id/textView"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/divider" />
-
-        <TextView
-            android:id="@+id/textView"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignTop="@+id/imageView"
-            android:layout_marginBottom="-45dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:text="Card Details"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:id="@+id/main"
+            android:layout_marginBottom="-60dp"
+            android:layout_alignParentBottom="true" >
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginTop="18dp"
-            android:background="#00ffffff"
-            android:onClick="registerEmail"
-            android:text="Finish"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_below="@+id/EndYear"
-            android:layout_alignRight="@+id/editText"
-            android:layout_alignEnd="@+id/editText" />
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/Background"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:background="#424242" />
+
+            <ImageView
+                android:id="@+id/line"
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:layout_below="@+id/Title"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/divider" />
+
+            <EditText
+                android:id="@+id/CardNumber"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffffff"
+                android:editable="true"
+                android:inputType="number"
+                android:layout_below="@+id/line"
+                android:enabled="true"
+                android:hint="Card Number" />
+
+            <EditText
+                android:id="@+id/CVC"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="#ffffff"
+                android:editable="true"
+                android:inputType="number"
+                android:enabled="true"
+                android:layout_alignTop="@+id/CardNumber"
+                android:layout_alignLeft="@+id/CardNumber"
+                android:layout_alignStart="@+id/CardNumber"
+                android:hint="CVC"
+                android:layout_marginTop="60dp" />
+
+            <EditText
+                android:id="@+id/EndMonth"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:background="#ffffff"
+                android:editable="true"
+                android:inputType="number"
+                android:enabled="true"
+                android:hint="Month"
+                android:layout_above="@+id/Finish"
+                android:layout_toLeftOf="@+id/EndYear"
+                android:layout_toStartOf="@+id/EndYear"
+                android:layout_marginRight="21dp" />
+
+            <EditText
+                android:id="@+id/EndYear"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:background="#ffffff"
+                android:editable="true"
+                android:inputType="number"
+                android:enabled="true"
+                android:hint="Year"
+                android:layout_alignRight="@+id/Finish"
+                android:layout_alignEnd="@+id/Finish"
+                android:layout_alignTop="@+id/CardNumber"
+                android:layout_marginTop="60dp" />
+
+            <TextView
+                android:id="@+id/Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/Background"
+                android:layout_marginBottom="-45dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Card Details"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#ffffff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="18dp"
+                android:background="#00ffffff"
+                android:onClick="registerCard"
+                android:text="Finish"
+                android:textColor="#ffffff"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_below="@+id/EndYear"
+                android:layout_alignRight="@+id/CardNumber"
+                android:layout_alignEnd="@+id/CardNumber" />
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>

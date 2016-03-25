@@ -80,4 +80,8 @@
     <string name="facebook_failed">Something didn\'t quite work, the sign up failed.</string>
     <string name="facebook_failed_button">Okay</string>
 
+    <string name="cardValidation_failed_title">Card validation failed</string>
+    <string name="cardValidation_failed">Something doesn\'t look right, could you check your details?</string>
+    <string name="cardValidation_failed_button">Okay</string>
+
 </resources>

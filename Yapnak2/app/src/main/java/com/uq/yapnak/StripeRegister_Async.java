@@ -11,12 +11,14 @@ import com.yapnak.gcmbackend.userEndpointApi.model.VoidEntity;
 import java.io.IOException;
 
 /**
- * Created by Joshua on 13/11/2015.
+ * Created by Joshua on 25/03/2016.
  */
-public class StripeCharge_Async extends AsyncTask<String, Void, VoidEntity> {
+public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
 
-    public StripeCharge_Async() {
+    Register register;
 
+    public StripeRegister_Async(Register register) {
+        this.register = register;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class StripeCharge_Async extends AsyncTask<String, Void, VoidEntity> {
         UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         VoidEntity response = new VoidEntity();
         try {
-            response = userApi.stripeCharge(strings[0]).execute();
+            response = userApi.stripeRegisterCard(strings[0], strings[1]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,6 +34,7 @@ public class StripeCharge_Async extends AsyncTask<String, Void, VoidEntity> {
     }
 
     protected void onPostExecute(VoidEntity response) {
-      Log.d("debug", "Charged: " + response.toString());
+        Log.d("debug", "Registered: " + response.toString());
     }
+
 }

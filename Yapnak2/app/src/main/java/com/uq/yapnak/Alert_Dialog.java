@@ -173,4 +173,16 @@ public class Alert_Dialog {
                 })
                 .show();
     }
+
+    public void cardValidationFailed() {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.cardValidation_failed_title)
+                .setMessage(R.string.cardValidation_failed)
+                .setPositiveButton(R.string.cardValidation_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 }
