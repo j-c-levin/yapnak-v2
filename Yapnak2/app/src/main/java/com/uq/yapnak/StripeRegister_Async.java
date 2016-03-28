@@ -1,5 +1,7 @@
 package com.uq.yapnak;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -26,7 +28,7 @@ public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
         UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         VoidEntity response = new VoidEntity();
         try {
-            response = userApi.stripeRegisterCard(strings[0], strings[1]).execute();
+            response = userApi.stripeRegisterCard(register.token,strings[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,6 +37,14 @@ public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
 
     protected void onPostExecute(VoidEntity response) {
         Log.d("debug", "Registered: " + response.toString());
+        if (Boolean.parseBoolean(response.getStatus())) {
+            SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
+            Intent intent = new Intent(register, MainList.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("userId", data.getString("userID", "none"));
+            register.startActivity(intent);
+        }
     }
 
 }

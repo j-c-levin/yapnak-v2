@@ -33,6 +33,7 @@ dependencies {
     compile 'org.apache.httpcomponents:httpmime:4.5.1'
     compile 'com.google.appengine.tools:appengine-gcs-client:0.5'
     compile 'com.stripe:stripe-java:1.45.0'
+    compile 'io.jsonwebtoken:jjwt:0.6.0'
 }
 
 appengine {

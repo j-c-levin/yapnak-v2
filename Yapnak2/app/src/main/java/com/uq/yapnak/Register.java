@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.util.TypedValue;
@@ -71,7 +72,7 @@ public class Register extends AppCompatActivity {
     String password;
     ProgressDialog spinner;
 
-    Token token;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +200,7 @@ public class Register extends AppCompatActivity {
                 registerInstruction.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                 registerInstruction.setText("2: Tap \"GET\" for a QR code that can be scanned in store.");
                 registerDataName.setText("Enter Mobile Number");
+                registerField.setInputType(InputType.TYPE_CLASS_NUMBER);
 //                registerFrame.startAnimation(anim2);
                 registrationProgress();
             }
@@ -245,6 +247,7 @@ public class Register extends AppCompatActivity {
                 registerDataName.setText("Enter Password");
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
                 registerField.setKeyListener((KeyListener) registerField.getTag());
+                registerField.setInputType(InputType.TYPE_CLASS_TEXT);
                 registerContinue.setClickable(true);
                 registerFrame.startAnimation(anim2);
             }
@@ -312,7 +315,7 @@ public class Register extends AppCompatActivity {
 
         Stripe stripe = null;
         try {
-            stripe = new Stripe("pk_test_6pRNASCoBOKtIshFeQd4XMUh");
+            stripe = new Stripe("pk_test_l54Tnxt1Zue4lJJPHZ4Vpu93");
             final Context context = this;
             final Register register = this;
             stripe.createToken(
@@ -320,7 +323,8 @@ public class Register extends AppCompatActivity {
                     new TokenCallback() {
                         public void onSuccess(Token token) {
                             // Send token to your server
-                            register.token = token;
+                            Log.d("Debug", "Got token: " + token.toString());
+                            register.token = token.getId();
                             spinner();
                             new Registration_Async(register).execute(password, mobileNumber, email);
                         }

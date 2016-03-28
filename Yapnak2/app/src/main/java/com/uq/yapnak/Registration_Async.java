@@ -1,6 +1,5 @@
 package com.uq.yapnak;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -41,7 +40,8 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
         register.spinner.hide();
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
-            new StripeRegister_Async(register).execute(register.token.toString(), response.getUserId());
+            Log.d("Debug", "New userID: " + response.getUserId());
+            new StripeRegister_Async(register).execute(response.getUserId());
             try {
                 SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
                 SharedPreferences.Editor editor = data.edit();
@@ -54,11 +54,11 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
                 editor.commit();
                 ParseInstallation.getCurrentInstallation().put("userId", response.getUserId());
                 ParseInstallation.getCurrentInstallation().saveInBackground();
-                Intent intent = new Intent(register, MainList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("userId", response.getUserId());
-                register.startActivity(intent);
+//                Intent intent = new Intent(register, MainList.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("userId", response.getUserId());
+//                register.startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
             }

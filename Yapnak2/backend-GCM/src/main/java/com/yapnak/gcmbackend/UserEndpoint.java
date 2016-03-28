@@ -29,6 +29,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.Channels;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -58,6 +59,13 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * An endpoint class we are exposing
@@ -1906,14 +1914,12 @@ public class UserEndpoint {
     public VoidEntity stripeRegisterCard(@Named("token") String token, @Named("userID") String userID) {
         VoidEntity response = new VoidEntity();
 
-        // Set your secret key: remember to change this to your live secret key in production
-        // See your keys here https://dashboard.stripe.com/account/apikeys
         Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
 
         // Create a Customer
         Map<String, Object> customerParams = new HashMap<String, Object>();
         customerParams.put("source", token);
-        customerParams.put("description", "Example customer");
+        customerParams.put("description", userID);
 
         Customer customer = null;
         try {
@@ -1926,10 +1932,42 @@ public class UserEndpoint {
         }
 
         //Save customerID in database
-
-        response.setStatus("True");
-        response.setMessage(customer.toString());
-        return response;
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "UPDATE user SET customerID = ? WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, customer.getId());
+                statement.setString(2, userID);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //customerID failed to update, no matching userID probably
+                    logger.warning("UserID not found for customerID");
+                    response.setStatus("False");
+                    response.setMessage("UserID not found for customerID");
+                    break queryBlock;
+                }
+                //CustomerID added to user
+                logger.info("CustomerID: " + customer.getId() + " successfully added to user: " + userID);
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
     }
 
     @ApiMethod(
@@ -1939,33 +1977,101 @@ public class UserEndpoint {
     public VoidEntity stripeCharge(@Named("userID") String userID) {
         VoidEntity response = new VoidEntity();
 
-        // Set your secret key: remember to change this to your live secret key in production
-        // See your keys here https://dashboard.stripe.com/account/apikeys
-        Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
-
-       //Retrieve customerID from database
-        String customerID = "";
-
-        // Create the charge on Stripe's servers - this will charge the user's card
+        Connection connection;
         try {
-            // Charge the Customer instead of the card
-            Map<String, Object> chargeParams = new HashMap<String, Object>();
-            chargeParams.put("amount", 500); // amount in cents, again
-            chargeParams.put("currency", "gbp");
-            chargeParams.put("customer", customerID);
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT customerID FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1,userID);
+                ResultSet rs = statement.executeQuery();
+                 if (!rs.next()){
+                 //UserID not found or customerID not set
+                     response.setStatus("False");
+                     response.setMessage("User not found or CustomerID not set");
+                     logger.warning("User " + userID + " not found or CustomerID not set");
+                     break queryBlock;
+                 }
+                 //CustomerId retreived
+                 logger.info("Retrieved customerID " + rs.getString("customerID") + " for user " + userID);
 
-            Charge charge = Charge.create(chargeParams);
-        } catch (Exception e) {
-            // The card has been declined
-            e.printStackTrace();
-            response.setStatus("False");
-            response.setMessage(e.toString());
+                Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
+
+                //Retrieve customerID from database
+                String customerID = rs.getString("customerID");
+
+                // Create the charge on Stripe's servers - this will charge the user's card
+                try {
+                    // Charge the Customer instead of the card
+                    Map<String, Object> chargeParams = new HashMap<String, Object>();
+                    chargeParams.put("amount", 500); // amount in pence
+                    chargeParams.put("currency", "gbp");
+                    chargeParams.put("customer", customerID);
+
+                    Charge charge = Charge.create(chargeParams);
+                } catch (Exception e) {
+                    // The card has been declined
+                    e.printStackTrace();
+                    response.setStatus("False");
+                    response.setMessage(e.toString());
+                    return response;
+                }
+
+                response.setStatus("True");
+
+                //Do something with the charge result
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
             return response;
         }
+    }
 
-        response.setStatus("True");
+    @ApiMethod(
+            name = "test",
+            path = "test",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity test() {
+        VoidEntity response = new VoidEntity();
 
-        //Do something with the charge result
+        Key key = MacProvider.generateKey();
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        Map<String, Object> m = new HashMap<>();
+        m.put("UserID", "josh5721");
+
+        String s = Jwts.builder().setId("hello")
+                .setIssuedAt(now)
+                .setExpiration(new Date(nowMillis + (1000 * 60 * 60 * 24)))
+                .signWith(signatureAlgorithm, key)
+                .setClaims(m)
+                .compact();
+
+        try {
+            Jws<Claims> jwtClaims =
+                    Jwts.parser().setSigningKey(key).parseClaimsJws(s);
+
+            response.setStatus("True");
+            response.setMessage(s + " " + jwtClaims.getBody().get("UserID") + " " + key.getEncoded());
+        } catch (SignatureException e) {
+            response.setMessage(e.toString());
+        }
 
         return response;
     }
