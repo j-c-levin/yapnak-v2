@@ -36,7 +36,8 @@ public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
     }
 
     protected void onPostExecute(VoidEntity response) {
-        Log.d("debug", "Registered: " + response.toString());
+        register.spinner.hide();
+        Log.d("debug", "Stripe Registered: " + response.toString());
         if (Boolean.parseBoolean(response.getStatus())) {
             SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
             Intent intent = new Intent(register, MainList.class);
@@ -44,6 +45,8 @@ public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("userId", data.getString("userID", "none"));
             register.startActivity(intent);
+        } else {
+
         }
     }
 

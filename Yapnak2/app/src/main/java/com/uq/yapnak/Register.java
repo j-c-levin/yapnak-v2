@@ -24,7 +24,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
@@ -279,12 +278,7 @@ public class Register extends AppCompatActivity {
 
                 Animation anim2 = AnimationUtils.loadAnimation(context, R.anim.registration_up_second);
                 cardForm.setVisibility(View.VISIBLE);
-                cardNumber.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d("Debug", "called");
-                    }
-                });
+                cardNumber.setText("4242424242424242");
                 cardForm.startAnimation(anim2);
             }
 
@@ -301,6 +295,7 @@ public class Register extends AppCompatActivity {
     }
 
     public void registerCard(View view) {
+        spinner();
         Card card = null;
         try {
             card = new Card(cardNumber.getText().toString(), Integer.parseInt(endMonth.getText().toString()), Integer.parseInt(endYear.getText().toString()), cvc.getText().toString());
@@ -309,6 +304,7 @@ public class Register extends AppCompatActivity {
                 return;
             }
         } catch (Exception e) {
+            spinner.hide();
             new Alert_Dialog(this).cardValidationFailed();
             return;
         }
@@ -325,15 +321,11 @@ public class Register extends AppCompatActivity {
                             // Send token to your server
                             Log.d("Debug", "Got token: " + token.toString());
                             register.token = token.getId();
-                            spinner();
                             new Registration_Async(register).execute(password, mobileNumber, email);
                         }
                         public void onError(Exception error) {
-                            // Show localized error message
-                            Toast.makeText(context,
-                                    error.getLocalizedMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
+                            spinner.hide();
+                            new Alert_Dialog(context).cardRegisterFailed(error.getLocalizedMessage());
                         }
                     }
             );

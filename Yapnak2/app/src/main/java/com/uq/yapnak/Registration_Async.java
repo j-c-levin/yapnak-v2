@@ -37,7 +37,6 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
     }
 
     protected void onPostExecute(RegisterUserEntity response) {
-        register.spinner.hide();
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
             Log.d("Debug", "New userID: " + response.getUserId());
@@ -54,15 +53,12 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
                 editor.commit();
                 ParseInstallation.getCurrentInstallation().put("userId", response.getUserId());
                 ParseInstallation.getCurrentInstallation().saveInBackground();
-//                Intent intent = new Intent(register, MainList.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                intent.putExtra("userId", response.getUserId());
-//                register.startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
+            register.spinner.hide();
+            new Alert_Dialog(register.getApplicationContext()).registrationFailed(response.getMessage());
             Log.d("debug", response.getMessage());
         }
     }

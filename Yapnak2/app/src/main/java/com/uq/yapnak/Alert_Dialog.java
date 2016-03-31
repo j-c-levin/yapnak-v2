@@ -185,4 +185,28 @@ public class Alert_Dialog {
                 })
                 .show();
     }
+
+    public void cardRegisterFailed(String message) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.cardRegistration_failed_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.cardRegistration_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void registrationFailed(String message) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.Registration_failed_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.Registration_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
 }

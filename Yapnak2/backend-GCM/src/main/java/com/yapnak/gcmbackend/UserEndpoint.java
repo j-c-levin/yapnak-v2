@@ -1920,6 +1920,7 @@ public class UserEndpoint {
         Map<String, Object> customerParams = new HashMap<String, Object>();
         customerParams.put("source", token);
         customerParams.put("description", userID);
+        logger.info("Attempting to register a card for user " + userID);
 
         Customer customer = null;
         try {
@@ -1928,8 +1929,10 @@ public class UserEndpoint {
             e.printStackTrace();
             response.setStatus("False");
             response.setMessage(e.toString());
+            logger.warning("FAILED: " + e.toString());
             return response;
         }
+        logger.info("successfully created a customer");
 
         //Save customerID in database
         Connection connection;
@@ -2012,6 +2015,7 @@ public class UserEndpoint {
 
                 // Create the charge on Stripe's servers - this will charge the user's card
                 try {
+                    logger.info("Charging user: " + userID);
                     // Charge the Customer instead of the card
                     Map<String, Object> chargeParams = new HashMap<String, Object>();
                     chargeParams.put("amount", 500); // amount in pence
@@ -2024,9 +2028,10 @@ public class UserEndpoint {
                     e.printStackTrace();
                     response.setStatus("False");
                     response.setMessage(e.toString());
+                    logger.warning("FAILED charge: " + e.toString());
                     return response;
                 }
-
+                logger.info("Charge succeeded");
                 response.setStatus("True");
 
                 //Do something with the charge result

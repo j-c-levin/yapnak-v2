@@ -84,4 +84,10 @@
     <string name="cardValidation_failed">Something doesn\'t look right, could you check your details?</string>
     <string name="cardValidation_failed_button">Okay</string>
 
+    <string name="cardRegistration_failed_title">We couldn\'t register your card:</string>
+    <string name="cardRegistration_failed_button">Let us know if this persists</string>
+
+    <string name="Registration_failed_title">We encountered a signup error:</string>
+    <string name="Registration_failed_button">Let us know if this continues</string>
+
 </resources>

@@ -15,4 +15,5 @@
     </system-properties>
     <use-google-connector-j>true</use-google-connector-j>
     <sessions-enabled>true</sessions-enabled>
+    <precompilation-enabled>false</precompilation-enabled>
 </appengine-web-app>
