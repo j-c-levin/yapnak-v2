@@ -98,14 +98,13 @@
             android:alpha="100" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="@string/get"
             android:id="@+id/get"
             android:layout_centerHorizontal="true"
             android:textColor="#ffffff"
-            android:textStyle="bold"
-            android:textSize="35sp"
+            android:textSize="25sp"
             android:layout_marginTop="50dp"
             android:onClick="onGetClick"
             android:nestedScrollingEnabled="false"
@@ -114,7 +113,8 @@
             android:layout_alignParentTop="false"
             android:background="@drawable/button_background"
             android:layout_alignParentStart="false"
-            android:alpha="0" />
+            android:alpha="0"
+            android:typeface="sans" />
 
         <ImageButton
             android:layout_width="30dp"
