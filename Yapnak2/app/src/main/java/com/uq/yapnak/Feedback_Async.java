@@ -3,9 +3,6 @@ package com.uq.yapnak;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.FeedbackEntity;
 
 import java.io.IOException;
@@ -22,7 +19,7 @@ public class Feedback_Async extends AsyncTask<String, Void, FeedbackEntity> {
 
     @Override
     protected FeedbackEntity doInBackground(String... strings) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         FeedbackEntity response = new FeedbackEntity();
         String s = "";
         for (String x : strings) {
@@ -32,7 +29,7 @@ public class Feedback_Async extends AsyncTask<String, Void, FeedbackEntity> {
         Log.d("debug", s);
         try {
             //clientID,isAccepted,offerId, rating, userID, comment
-            response = userApi.feedback(Integer.decode(strings[0]), Boolean.parseBoolean(strings[1]), Integer.decode(strings[2]), Integer.valueOf(strings[3]), strings[4]).setComment(strings[5]).execute();
+            response = UserEndpoint.userEndpointApi.feedback(Integer.decode(strings[0]), Boolean.parseBoolean(strings[1]), Integer.decode(strings[2]), Integer.valueOf(strings[3]), strings[4]).setComment(strings[5]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

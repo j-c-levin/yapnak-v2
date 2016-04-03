@@ -63,7 +63,7 @@ public class Landing extends AppCompatActivity {
                         public void onSuccess(Token token) {
                             // Send token to your server
                             Log.d("debug", token.toString());
-                            new StripeCharge_Async().execute(token.getId());
+//                            new StripeCharge_Async(this).execute(token.getId());
                         }
 
                         public void onError(Exception error) {

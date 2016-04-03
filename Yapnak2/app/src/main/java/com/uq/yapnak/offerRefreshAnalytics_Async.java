@@ -3,9 +3,6 @@ package com.uq.yapnak;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 
 import java.io.IOException;
@@ -23,10 +20,10 @@ public class offerRefreshAnalytics_Async extends AsyncTask<Double, Void, Void> {
 
     @Override
     protected Void doInBackground(Double... doubles) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         SimpleEntity response = new SimpleEntity();
         try {
-            response = userApi.offerRefreshAnalytics(doubles[0], doubles[1], userId).execute();
+            response = UserEndpoint.userEndpointApi.offerRefreshAnalytics(doubles[0], doubles[1], userId).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

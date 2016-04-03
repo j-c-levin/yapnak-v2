@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AboutUsEntity;
 
 import java.io.IOException;
@@ -25,10 +22,11 @@ public class About_Async extends AsyncTask<Void, Void, AboutUsEntity> {
 
     @Override
     protected AboutUsEntity doInBackground(Void... voids) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+
         AboutUsEntity response = new AboutUsEntity();
         try {
-            response = userApi.aboutUs().execute();
+            response = UserEndpoint.userEndpointApi.aboutUs().execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -6,10 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.parse.ParseInstallation;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
 
 import java.io.IOException;
@@ -27,10 +24,10 @@ public class FacebookSignup_Async extends AsyncTask<String,Void,RegisterUserEnti
 
     @Override
     protected RegisterUserEntity doInBackground(String... strings) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
         RegisterUserEntity response = new RegisterUserEntity();
         try {
-            response = userApi.registerUser(strings[0]).setEmail(strings[1]).setFirstName(strings[2].split(" ")[0]).setLastName(strings[2].split(" ")[1]).execute();
+            response = UserEndpoint.userEndpointApi.registerUser(strings[0]).setEmail(strings[1]).setFirstName(strings[2].split(" ")[0]).setLastName(strings[2].split(" ")[1]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

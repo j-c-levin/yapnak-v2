@@ -2,9 +2,6 @@ package com.uq.yapnak;
 
 import android.os.AsyncTask;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
 import java.io.IOException;
@@ -24,10 +21,10 @@ public class GetRegistrationOffers_Async extends AsyncTask<Double, Void, OfferLi
 
     @Override
     protected OfferListEntity doInBackground(Double... doubles) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         OfferListEntity response = new OfferListEntity();
         try {
-            response = userApi.getOffers(doubles[0], doubles[1], userId).execute();
+            response = UserEndpoint.userEndpointApi.getOffers(doubles[0], doubles[1], userId).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

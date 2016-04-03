@@ -295,7 +295,7 @@ public class Register extends AppCompatActivity {
     }
 
     public void registerCard(View view) {
-        spinner();
+
         Card card = null;
         try {
             card = new Card(cardNumber.getText().toString(), Integer.parseInt(endMonth.getText().toString()), Integer.parseInt(endYear.getText().toString()), cvc.getText().toString());
@@ -304,11 +304,10 @@ public class Register extends AppCompatActivity {
                 return;
             }
         } catch (Exception e) {
-            spinner.hide();
             new Alert_Dialog(this).cardValidationFailed();
             return;
         }
-
+        spinner();
         Stripe stripe = null;
         try {
             stripe = new Stripe("pk_test_l54Tnxt1Zue4lJJPHZ4Vpu93");
@@ -321,7 +320,7 @@ public class Register extends AppCompatActivity {
                             // Send token to your server
                             Log.d("Debug", "Got token: " + token.toString());
                             register.token = token.getId();
-                            new Registration_Async(register).execute(password, mobileNumber, email);
+                            new Registration_Async(register, context).execute(password, mobileNumber, email);
                         }
                         public void onError(Exception error) {
                             spinner.hide();

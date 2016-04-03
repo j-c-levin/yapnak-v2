@@ -1,14 +1,12 @@
 package com.uq.yapnak;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.parse.ParseInstallation;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
 
 import java.io.IOException;
@@ -19,17 +17,20 @@ import java.io.IOException;
 public class Registration_Async extends AsyncTask<String, Void, RegisterUserEntity> {
 
     Register register;
+    Context context;
 
-    public Registration_Async(Register register) {
+    public Registration_Async(Register register, Context context) {
+
         this.register = register;
+        this.context = context;
     }
 
     @Override
     protected RegisterUserEntity doInBackground(String... strings) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         RegisterUserEntity response = new RegisterUserEntity();
         try {
-            response = userApi.registerUser(strings[0]).setMobNo(strings[1]).setEmail(strings[2]).execute();
+            response = UserEndpoint.userEndpointApi.registerUser(strings[0]).setMobNo(strings[1]).setEmail(strings[2]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +41,7 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
         if (Boolean.parseBoolean(response.getStatus())) {
             //Valid login details, navigate
             Log.d("Debug", "New userID: " + response.getUserId());
-            new StripeRegister_Async(register).execute(response.getUserId());
+            new StripeRegister_Async(register, context).execute(response.getUserId());
             try {
                 SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
                 SharedPreferences.Editor editor = data.edit();
@@ -58,7 +59,7 @@ public class Registration_Async extends AsyncTask<String, Void, RegisterUserEnti
             }
         } else {
             register.spinner.hide();
-            new Alert_Dialog(register.getApplicationContext()).registrationFailed(response.getMessage());
+            new Alert_Dialog(context).registrationFailed(response.getMessage());
             Log.d("debug", response.getMessage());
         }
     }

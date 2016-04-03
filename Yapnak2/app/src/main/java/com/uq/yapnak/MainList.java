@@ -533,6 +533,7 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
     public void onGetClick(View card) {
         Intent intent = new Intent(this, QRCodeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         JSONObject json = new JSONObject();
         try {
             json.put("id", userId);
@@ -546,6 +547,11 @@ public class MainList extends AppCompatActivity implements GoogleApiClient.Conne
             String rightNow = s.format(new Date());
             Log.d("debug", "Right now: " + rightNow);
             json.put("datetime", rightNow);
+
+            TextView offerName = (TextView) parent.findViewById(R.id.offer_text);
+            intent.putExtra("OfferID", offerId.getText());
+            intent.putExtra("UserID", userId);
+            intent.putExtra("OfferName", offerName.getText());
         } catch (JSONException e) {
             e.printStackTrace();
         }

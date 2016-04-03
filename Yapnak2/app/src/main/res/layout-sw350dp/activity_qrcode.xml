@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/image_dialog_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity = "center">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="400dp"
-        android:background="@drawable/layoutborder"
-        android:padding="5dp">
+        android:layout_width="350dp"
+        android:layout_height="300dp"
+        android:background="@drawable/confirm_selection"
+        android:padding="5dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/relativeLayout">
 
-        <ImageView
-            android:id="@+id/qr_code"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_centerVertical="true"
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Offer Title"
+            android:id="@+id/offer_title"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:padding="5dp" />
+            android:textColor="#ffffff"
+            android:layout_marginTop="7dp"
+            android:textStyle="bold"
+            android:textAlignment="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Your code"
-            android:id="@+id/qr_title"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
+            android:text="£5"
+            android:id="@+id/price"
             android:textColor="#ffffff"
-            android:layout_marginTop="7dp"
-            android:textStyle="bold" />
+            android:textSize="65sp"
+            android:layout_centerInParent="true" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/close_qr"
-            android:textColor="@color/colorPrimary"
-            android:background="@drawable/qr_close"
-            android:text="Close"
-            android:onClick="close"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:text="CONFIRM"
+            android:id="@+id/confirm"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/button_background"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:onClick="purchaseMeal"
+            android:layout_alignBottom="@+id/close" />
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/close"
+            android:background="@drawable/close"
+            android:backgroundTint="#ffffff"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            style="@style/login_button" />
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="30dp"
+            android:onClick="close" />
+
     </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>

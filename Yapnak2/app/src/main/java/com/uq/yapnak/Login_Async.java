@@ -5,10 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.parse.ParseInstallation;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 
 import java.io.IOException;
@@ -26,10 +23,10 @@ public class Login_Async extends AsyncTask<String, Void, AuthenticateEntity> {
 
     @Override
     protected AuthenticateEntity doInBackground(String...params) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
         AuthenticateEntity response = new AuthenticateEntity();
         try {
-           response =  userApi.authenticateUser(params[0]).setEmail(params[1]).execute();
+           response =  UserEndpoint.userEndpointApi.authenticateUser(params[0]).setEmail(params[1]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

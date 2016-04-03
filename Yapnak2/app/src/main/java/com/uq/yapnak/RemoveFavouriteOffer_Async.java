@@ -3,9 +3,6 @@ package com.uq.yapnak;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.FavouriteOfferEntity;
 
 import java.io.IOException;
@@ -17,10 +14,10 @@ public class RemoveFavouriteOffer_Async extends AsyncTask<String, Void, Favourit
 
     @Override
     protected FavouriteOfferEntity doInBackground(String... values) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
         FavouriteOfferEntity response = new FavouriteOfferEntity();
         try {
-            response = userApi.removeFavouriteOffer(Integer.decode(values[0]), values[1]).execute();
+            response = UserEndpoint.userEndpointApi.removeFavouriteOffer(Integer.decode(values[0]), values[1]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

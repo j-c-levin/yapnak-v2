@@ -4,9 +4,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
 import org.apache.commons.io.IOUtils;
@@ -56,10 +53,10 @@ public class Search_Async extends AsyncTask<String, Void, OfferListEntity> {
             e.printStackTrace();
         }
 
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         OfferListEntity response = new OfferListEntity();
         try {
-            response = userApi.getOffers(latitude, longitude, userId).execute();
+            response = UserEndpoint.userEndpointApi.getOffers(latitude, longitude, userId).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -46,7 +46,8 @@
             android:layout_marginTop="24dp"
             android:background="@drawable/button_background"
             android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:onClick="purchaseMeal" />
 
         <Button
             android:layout_width="30dp"
@@ -57,7 +58,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="25dp"
-            android:layout_marginRight="30dp" />
+            android:layout_marginRight="30dp"
+            android:onClick="close" />
 
     </RelativeLayout>
 

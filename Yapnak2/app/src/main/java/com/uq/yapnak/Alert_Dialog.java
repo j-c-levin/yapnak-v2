@@ -10,6 +10,8 @@ import android.support.v7.app.AlertDialog;
 
 import com.google.android.gms.common.ConnectionResult;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by Joshua on 26/10/2015.
  */
@@ -198,7 +200,38 @@ public class Alert_Dialog {
                 .show();
     }
 
+    public void cardSaveFailed(Object object, Method method) {
+        final Object obj = object;
+        final Method meth = method;
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.cardRegistration_failed_title)
+                .setMessage(R.string.cardRegistration_failed)
+                .setPositiveButton(R.string.cardRegistration_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            meth.invoke(obj, new Object[0]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                })
+                .show();
+    }
+
     public void registrationFailed(String message) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.Registration_failed_title)
+                .setMessage(message)
+                .setPositiveButton(R.string.Registration_failed_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void purchaseFailed(String message) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.Registration_failed_title)
                 .setMessage(message)

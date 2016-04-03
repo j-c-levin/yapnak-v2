@@ -2,9 +2,6 @@ package com.uq.yapnak;
 
 import android.os.AsyncTask;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 import java.io.IOException;
@@ -22,10 +19,10 @@ public class UserDetails_Async extends AsyncTask<String, Void, UserDetailsEntity
 
     @Override
     protected UserDetailsEntity doInBackground(String... strings) {
-        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+//        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
         UserDetailsEntity response = new UserDetailsEntity();
         try {
-            response =  userApi.getUserDetails().setUserId(strings[0]).execute();
+            response =  UserEndpoint.userEndpointApi.getUserDetails().setUserId(strings[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

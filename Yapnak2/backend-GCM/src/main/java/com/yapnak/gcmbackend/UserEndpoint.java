@@ -1977,7 +1977,7 @@ public class UserEndpoint {
             name = "stripeCharge",
             path = "stripeCharge",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity stripeCharge(@Named("userID") String userID) {
+    public VoidEntity stripeCharge(@Named("userID") String userID, @Named("offerID") int offerID) {
         VoidEntity response = new VoidEntity();
 
         Connection connection;

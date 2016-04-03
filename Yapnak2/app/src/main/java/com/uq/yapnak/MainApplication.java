@@ -17,6 +17,9 @@ public class MainApplication extends Application{
         Parse.initialize(this, getResources().getString(R.string.app_id), getResources().getString(R.string.key));
         ParseInstallation.getCurrentInstallation().saveInBackground();
         ParseFacebookUtils.initialize(this);
+
+        new UserEndpoint();
+
 //        try {
 //            PackageInfo info = getPackageManager().getPackageInfo("com.uq.yapnak", PackageManager.GET_SIGNATURES);
 //            for (Signature signature : info.signatures) {

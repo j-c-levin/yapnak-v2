@@ -108,7 +108,7 @@
             android:textSize="25sp"
             android:layout_marginTop="35dp"
             android:onClick="onGetClick"
-            android:alpha="100"
+            android:alpha="0"
             android:nestedScrollingEnabled="false"
             android:clickable="false"
             android:enabled="false"
