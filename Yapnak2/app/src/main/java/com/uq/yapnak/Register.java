@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.stripe.android.Stripe;
@@ -55,7 +56,7 @@ public class Register extends AppCompatActivity {
     ImageView registerBackground;
     ImageView qrImage;
 
-    FrameLayout cardForm;
+    RelativeLayout cardForm;
     EditText cardNumber;
     EditText cvc;
     EditText endMonth;
@@ -87,7 +88,7 @@ public class Register extends AppCompatActivity {
         registerField.setTag(registerField.getKeyListener());
         registerField.setKeyListener(null);
 
-        cardForm = (FrameLayout) findViewById(R.id.card_form);
+        cardForm = (RelativeLayout) findViewById(R.id.card_form);
         cardNumber = (EditText) findViewById(R.id.CardNumber);
         cvc = (EditText) findViewById(R.id.CVC);
         endMonth = (EditText) findViewById(R.id.EndMonth);

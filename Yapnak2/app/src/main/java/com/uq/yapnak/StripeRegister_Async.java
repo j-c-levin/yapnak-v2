@@ -29,7 +29,8 @@ public class StripeRegister_Async extends AsyncTask<String, Void, VoidEntity> {
 //        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         VoidEntity response = new VoidEntity();
         try {
-            response = UserEndpoint.userEndpointApi.stripeRegisterCard(register.token,strings[0]).execute();
+            SharedPreferences data = register.getSharedPreferences("Yapnak", 0);
+            response = UserEndpoint.userEndpointApi.stripeRegisterCard(register.token, data.getString("accessToken", null), strings[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

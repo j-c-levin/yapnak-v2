@@ -1911,28 +1911,10 @@ public class UserEndpoint {
             name = "stripeRegisterCard",
             path = "stripeRegisterCard",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity stripeRegisterCard(@Named("token") String token, @Named("userID") String userID) {
+    public VoidEntity stripeRegisterCard(@Named("stripeToken") String stripeToken, @Named("userID") String userID, @Named("token") String token) {
         VoidEntity response = new VoidEntity();
 
         Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
-
-        // Create a Customer
-        Map<String, Object> customerParams = new HashMap<String, Object>();
-        customerParams.put("source", token);
-        customerParams.put("description", userID);
-        logger.info("Attempting to register a card for user " + userID);
-
-        Customer customer = null;
-        try {
-            customer = Customer.create(customerParams);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus("False");
-            response.setMessage(e.toString());
-            logger.warning("FAILED: " + e.toString());
-            return response;
-        }
-        logger.info("successfully created a customer");
 
         //Save customerID in database
         Connection connection;
@@ -1949,11 +1931,57 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String query = "UPDATE user SET customerID = ? WHERE userID = ?";
+
+                String query = "SELECT accessTokenKey FROM user WHERE userID = ?";
+                logger.info("Retrieving access token key for " + userID);
                 PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userID);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //No user found
+                    response.setStatus("False");
+                    response.setMessage("No user found");
+                    logger.warning("No user found");
+                    break queryBlock;
+                }
+                //User found, checking token
+                logger.info("User found, checking token");
+
+                Jws<Claims> tokenClaim = null;
+                try {
+                    tokenClaim = Jwts.parser().setSigningKey(rs.getString("accessTokenKey").getBytes()).parseClaimsJws(token);
+                    logger.info("Token is valid");
+                } catch (Exception e) {
+                    logger.warning("Token is not valid");
+                    response.setStatus("False");
+                    response.setMessage("Token is not valid");
+                    break queryBlock;
+                }
+
+                // Create a Customer
+                Map<String, Object> customerParams = new HashMap<String, Object>();
+                customerParams.put("source", stripeToken);
+                customerParams.put("description", tokenClaim.getBody().getSubject());
+                logger.info("Attempting to register a card for user " + userID);
+
+                Customer customer = null;
+                try {
+                    customer = Customer.create(customerParams);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.setStatus("False");
+                    response.setMessage(e.toString());
+                    logger.warning("FAILED: " + e.toString());
+                    return response;
+                }
+                logger.info("successfully created a customer");
+
+                query = "UPDATE user SET customerID = ? WHERE userID = ?";
+                statement = connection.prepareStatement(query);
                 statement.setString(1, customer.getId());
                 statement.setString(2, userID);
                 int success = statement.executeUpdate();
+
                 if (success == -1) {
                     //customerID failed to update, no matching userID probably
                     logger.warning("UserID not found for customerID");
@@ -1963,6 +1991,7 @@ public class UserEndpoint {
                 }
                 //CustomerID added to user
                 logger.info("CustomerID: " + customer.getId() + " successfully added to user: " + userID);
+
                 response.setStatus("True");
             } finally {
                 connection.close();
@@ -1977,7 +2006,7 @@ public class UserEndpoint {
             name = "stripeCharge",
             path = "stripeCharge",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity stripeCharge(@Named("userID") String userID, @Named("offerID") int offerID) {
+    public VoidEntity stripeCharge(@Named("userID") String userID, @Named("offerID") int offerID, @Named("token") String token) {
         VoidEntity response = new VoidEntity();
 
         Connection connection;
@@ -1994,19 +2023,55 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT customerID FROM user WHERE userID = ?";
+
+                String query = "SELECT accessTokenKey, paymentNonce FROM user WHERE userID = ?";
+                logger.info("Retrieving access token key and nonce for " + userID);
                 PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1,userID);
+                statement.setString(1, userID);
                 ResultSet rs = statement.executeQuery();
-                 if (!rs.next()){
-                 //UserID not found or customerID not set
-                     response.setStatus("False");
-                     response.setMessage("User not found or CustomerID not set");
-                     logger.warning("User " + userID + " not found or CustomerID not set");
-                     break queryBlock;
-                 }
-                 //CustomerId retreived
-                 logger.info("Retrieved customerID " + rs.getString("customerID") + " for user " + userID);
+
+                if (!rs.next()) {
+                    //No user found
+                    response.setStatus("False");
+                    response.setMessage("No user found");
+                    logger.warning("No user found");
+                    break queryBlock;
+                }
+                //User found, checking token
+                logger.info("User found, checking token");
+
+                Jws<Claims> tokenClaim = null;
+                try {
+                    tokenClaim = Jwts.parser().setSigningKey(rs.getString("accessTokenKey").getBytes()).parseClaimsJws(token);
+                    logger.info("Token is valid");
+                } catch (Exception e) {
+                    logger.warning("Token is not valid");
+                    response.setStatus("False");
+                    response.setMessage("Token is not valid");
+                    break queryBlock;
+                }
+
+                if (!rs.getString("paymentNonce").equals(tokenClaim.getBody().get("nonce"))) {
+                    logger.warning("Nonce does not match");
+                    response.setStatus("False");
+                    response.setMessage("Nonce does not match");
+                    break queryBlock;
+                }
+                logger.info("Nonce matches");
+
+                query = "SELECT customerID FROM user WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userID);
+                rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //UserID not found or customerID not set
+                    response.setStatus("False");
+                    response.setMessage("User not found or CustomerID not set");
+                    logger.warning("User " + userID + " not found or CustomerID not set");
+                    break queryBlock;
+                }
+                //CustomerId retreived
+                logger.info("Retrieved customerID " + rs.getString("customerID") + " for user " + userID);
 
                 Stripe.apiKey = "sk_test_Rw0ipO6EUu040b8uDcXIiTgh";
 
@@ -2032,14 +2097,45 @@ public class UserEndpoint {
                     return response;
                 }
                 logger.info("Charge succeeded");
+
                 response.setStatus("True");
 
                 //Do something with the charge result
+                logger.info("Removing nonce");
+                query = "UPDATE user SET nonce = ? WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, "");
+                statement.setString(2, userID);
+
+                int success = statement.executeUpdate();
+                if (success == -1 ){
+                    //Could not update nonce
+                    logger.warning("Could not update nonce, continuing anyway");
+                    response.setMessage("Could not update nonce, continuing anyway");
+                }
+                //Nonce updated
+                logger.info("Nonce updated");
+
+                logger.info("Updating claims");
+                query = "INSERT INTO claims (userID, offerID) VALUES (?,?)";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, tokenClaim.getBody().getSubject());
+                statement.setInt(2, offerID);
+
+                success = statement.executeUpdate();
+                     if (success == -1 ){
+                 //Could not update claims
+                     logger.warning("Could not update claims, continuing anyway");
+                     response.setMessage("Could not update claims, continuing anyway");
+                 }
+                 //Claims updated
+                 logger.info("Claims updated");
+
             } finally {
                 connection.close();
                 return response;
             }
-        }  finally {
+        } finally {
             return response;
         }
     }
@@ -2059,11 +2155,11 @@ public class UserEndpoint {
         Date now = new Date(nowMillis);
 
         Map<String, Object> m = new HashMap<>();
-        m.put("UserID", "josh5721");
-
-        String s = Jwts.builder().setId("hello")
+        m.put("nonce", "nonceHere");
+        String s = Jwts.builder()
+                .setSubject("josh5721")
                 .setIssuedAt(now)
-                .setExpiration(new Date(nowMillis + (1000 * 60 * 60 * 24)))
+                .setExpiration(new Date(nowMillis + (1000 * 60 * 20)))
                 .signWith(signatureAlgorithm, key)
                 .setClaims(m)
                 .compact();
@@ -2081,4 +2177,379 @@ public class UserEndpoint {
         return response;
     }
 
+    @ApiMethod(
+            name = "registerUser_v2",
+            path = "registerUser_v2",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public RegisterUserEntityv2 registerUserV2(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Named("promoCode") @Nullable String promoCode) {
+        RegisterUserEntityv2 response = new RegisterUserEntityv2();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query;
+                PreparedStatement statement;
+                String userId;
+                if (email != null) {
+                    query = "SELECT COUNT(*),userID FROM user WHERE email = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, email);
+                    userId = email;
+                    logger.info("searching for registered email: " + email);
+                } else if (mobNo != null) {
+                    query = "SELECT COUNT(*) FROM user WHERE mobNo = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, mobNo);
+                    userId = mobNo;
+                    logger.info("searching for registered number: " + mobNo);
+                } else {
+                    //user details are missing
+                    response.setStatus("False");
+                    response.setMessage("User email or mobile number missing");
+                    logger.info("User email or mobile number missing");
+                    break queryBlock;
+                }
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    //User already exists in the system
+                    response.setStatus("False");
+                    response.setMessage("User already registered");
+                    response.setUserId(rs.getString("userID"));
+                    logger.warning("User already registered");
+                    break queryBlock;
+                }
+                logger.info("no user found, registering");
+                //User needs to be registered
+                query = "INSERT INTO user (userID, firstName, lastName, mobNo, email, password) VALUES (?,?,?,?,?,?)";
+                statement = connection.prepareStatement(query);
+                String realUserId = "";
+                if (!Character.isLetter(userId.charAt(0))) {
+                    int start = randInt() / 1000;
+                    String[] chars = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+                    userId = chars[(start % 9)] + userId.substring(1);
+                    logger.info("Replacing first: " + userId);
+                }
+                try {
+                    userId = userId.split("@")[0];
+                    logger.info(userId);
+                    if (userId.length() > 3) {
+                        for (int i = 0; i < 3; i++) {
+                            if (!Character.isLetterOrDigit((int) userId.charAt(i))) {
+                                realUserId += String.valueOf(randInt()).substring(0, 1);
+                            } else {
+                                realUserId += userId.charAt(i);
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < userId.length(); i++) {
+                            logger.info("Here be: " + userId.charAt(i));
+                            if (!Character.isLetterOrDigit((int) userId.charAt(i))) {
+                                realUserId += String.valueOf(randInt()).substring(0, 1);
+                            } else {
+                                realUserId += userId.charAt(i);
+                            }
+                        }
+                        logger.info("realUserId not long enough, expanding");
+                        while (realUserId.length() < 4) {
+                            realUserId += String.valueOf(randInt()).substring(0, 1);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.warning("EXCEPTION realUserId not long enough, expanding");
+                    while (realUserId.length() < 4) {
+                        realUserId += String.valueOf(randInt()).substring(0, 1);
+                    }
+                }
+                realUserId += randInt();
+                logger.info("Final: " + realUserId);
+                statement.setString(1, realUserId);
+                statement.setString(2, (firstName == null) ? "" : firstName);
+                statement.setString(3, (lastName == null) ? "" : lastName);
+                statement.setString(4, (mobNo == null) ? "" : mobNo);
+                statement.setString(5, (email == null) ? "" : email);
+                statement.setString(6, hashPassword(password));
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Insert failed
+                    logger.warning("Registration insert FAILED");
+                    response.setStatus("False");
+                    response.setMessage("Registration insert failed");
+                    break queryBlock;
+                }
+                response.setUserId(realUserId);
+
+                Key key = MacProvider.generateKey();
+
+                SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+                long nowMillis = System.currentTimeMillis();
+                Date now = new Date(nowMillis);
+
+                String refreshToken = Jwts.builder()
+                        .setSubject(realUserId)
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(nowMillis + (1000 * 60 * 60 * 24 * 7 * 8)))
+                        .signWith(signatureAlgorithm, key)
+                        .compact();
+                response.setRefreshToken(refreshToken);
+
+                query = "UPDATE user SET (refreshTokenKey) VALUE (?) WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, key.getEncoded().toString());
+                statement.setString(2, realUserId);
+                logger.info("update: " + query);
+
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    //Failed to update user RefreshToken
+                    logger.warning("Failed to update user RefreshToken");
+                    response.setStatus("False");
+                    break queryBlock;
+                }
+                //Updates user refresh token
+                logger.info("Set user refresh token");
+
+                key = MacProvider.generateKey();
+
+                String nonce = hashPassword(String.valueOf(randInt() + randInt() + randInt())).substring(10 - 20);
+
+                signatureAlgorithm = SignatureAlgorithm.HS256;
+
+                nowMillis = System.currentTimeMillis();
+                now = new Date(nowMillis);
+
+                Map<String, Object> m = new HashMap<>();
+                m.put("nonce", nonce);
+
+                String access = Jwts.builder()
+                        .setSubject(realUserId)
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(nowMillis + (1000 * 60 * 20)))
+                        .signWith(signatureAlgorithm, key)
+                        .setClaims(m)
+                        .compact();
+
+                response.setAccessToken(access);
+
+                query = "UPDATE user SET (accessTokenKey, purchaseNonce) VALUES (?, ?) WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, key.getEncoded().toString());
+                statement.setString(2, nonce);
+                statement.setString(3, realUserId);
+
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    //Failed to update user RefreshToken
+                    logger.warning("Failed to update user RefreshToken");
+                    response.setStatus("False");
+                    break queryBlock;
+                }
+                //Updates user refresh token
+                logger.info("Set user refresh token");
+
+//                response.setRefreshToken(GenerateRefreshToken(realUserId, connection));
+//                    response.setAccessToken(GenerateAccessToken(realUserId));
+
+                if (promoCode == null) {
+                    logger.info("Registration insert success");
+                    response.setStatus("True");
+                    break queryBlock;
+                }
+
+                //find promoId
+                query = "SELECT promoId FROM promo WHERE promoCode = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, promoCode);
+                rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //ID not found
+                    logger.info("No promoID found for " + promoCode);
+                    response.setMessage("User inserted but promo code invalid");
+                    response.setStatus("False");
+                    break queryBlock;
+                }
+                logger.info("Found promoID " + rs.getInt("promoId"));
+                //add to promo redeemed table
+                query = "INSERT INTO promoRedeemed (promoId,userId) VALUES (?,?)";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, rs.getInt("promoId"));
+                statement.setString(2, realUserId);
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    logger.warning("Insert to promoRedeemed failed");
+                    response.setStatus("False");
+                    response.setStatus("Insert to promoRedeemed failed");
+                    break queryBlock;
+                }
+                response.setMessage("Promo code accepted");
+                //Update user points
+                query = "UPDATE user SET loyaltyPoints = 10 where userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, realUserId);
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    logger.warning("Insert to update user loyalty points");
+                    response.setStatus("False");
+                    response.setStatus("Insert to update user loyalty points");
+                }
+                //Points update done
+                logger.info("Registration insert and promo redeemed success");
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    String GenerateRefreshToken(String userID, Connection connection) {
+        String response = "";
+
+        try {
+            queryBlock:
+            try {
+//                String query = "SELECT COUNT(*) FROM user WHERE userID = ?";
+//                logger.info("Searching for user to reset refresh token: " + userID);
+//                PreparedStatement statement = connection.prepareStatement(query);
+//                statement.setString(1, userID);
+//                logger.info("query: " + query);
+//                ResultSet rs = statement.executeQuery();
+//                logger.info("searched: " + rs);
+//                rs.next();
+//                logger.info("found: " + rs.getInt(0));
+//                if (rs.getInt(0) == 0) {
+//                    //User does not exist
+//                    logger.warning("UserID not found for token refresh");
+//                    break queryBlock;
+//                }
+//                //USer found, resetting refresh token
+//                logger.info("User found, generating refresh token");
+
+                Key key = MacProvider.generateKey();
+
+                SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+                long nowMillis = System.currentTimeMillis();
+                Date now = new Date(nowMillis);
+
+                String refreshToken = Jwts.builder()
+                        .setSubject(userID)
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(nowMillis + (1000 * 60 * 60 * 24 * 7 * 8)))
+                        .signWith(signatureAlgorithm, key)
+                        .compact();
+
+                String query = "UPDATE user SET (refreshTokenKey) VALUE (?) WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, key.getEncoded().toString());
+                statement.setString(2, userID);
+                logger.info("update: " + query);
+
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Failed to update user RefreshToken
+                    logger.warning("Failed to update user RefreshToken");
+                    response = "False";
+                    break queryBlock;
+                }
+                //Updates user refresh token
+                logger.info("Set user refresh token");
+                response = refreshToken;
+            } finally {
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    String GenerateAccessToken(String userID) {
+        String response = "";
+
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT COUNT(*) from user WHERE userID = ?";
+                logger.info("Searching for user to reset refresh token: " + userID);
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userID);
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(0) == 0) {
+                    //User does not exist
+                    logger.warning("UserID not found for token refresh");
+                    response = "False";
+                    break queryBlock;
+                }
+                //USer found, resetting refresh token
+                logger.info("User found, generating refresh token");
+
+                Key key = MacProvider.generateKey();
+
+                String nonce = hashPassword(String.valueOf(randInt() + randInt() + randInt())).substring(10 - 20);
+
+                SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+                long nowMillis = System.currentTimeMillis();
+                Date now = new Date(nowMillis);
+
+                Map<String, Object> m = new HashMap<>();
+                m.put("nonce", nonce);
+
+                String refreshToken = Jwts.builder()
+                        .setSubject(userID)
+                        .setIssuedAt(now)
+                        .setExpiration(new Date(nowMillis + (1000 * 60 * 20)))
+                        .signWith(signatureAlgorithm, key)
+                        .setClaims(m)
+                        .compact();
+
+                query = "UPDATE user SET (accessTokenKey, purchaseNonce) VALUES (?, ?) WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, key.getEncoded().toString());
+                statement.setString(2, nonce);
+                statement.setString(3, userID);
+
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Failed to update user RefreshToken
+                    logger.warning("Failed to update user RefreshToken");
+                    response = "False";
+                    break queryBlock;
+                }
+                //Updates user refresh token
+                logger.info("Set user refresh token");
+                response = refreshToken;
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
 }

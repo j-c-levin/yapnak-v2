@@ -118,6 +118,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.uq.yapnak.Landing" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4c3ad80240be573bb0485220006bd4cae6f65098" />
     </application>
 
 </manifest>

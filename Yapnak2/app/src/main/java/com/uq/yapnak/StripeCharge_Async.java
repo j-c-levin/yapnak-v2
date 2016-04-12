@@ -1,5 +1,6 @@
 package com.uq.yapnak;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -23,7 +24,8 @@ public class StripeCharge_Async extends AsyncTask<String, Void, VoidEntity> {
 //        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         VoidEntity response = new VoidEntity();
         try {
-            response = UserEndpoint.userEndpointApi.stripeCharge(Integer.parseInt(strings[1]),strings[0]).execute();
+            SharedPreferences data = qrActivity.getSharedPreferences("Yapnak", 0);
+            response = UserEndpoint.userEndpointApi.stripeCharge(Integer.parseInt(strings[1]), data.getString("accessToken", null), strings[0]).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
